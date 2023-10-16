@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">ETago</string>
+
+
+    <!--ONBOARDING HEADING AND DESCRIPTIONS-->
+    <string name="feature_1">Image Upload and Processing</string>
+    <string name="feature_2">Privacy</string>
+    <string name="feature_3">Image Censorship</string>
+    <string name="feature_4">Alerts</string>
+    <string name="feat_desc_1">Upload or capture product review images.</string>
+    <string name="feat_desc_2">Scan images to identify exposed personal information.</string>
+    <string name="feat_desc_3">Automatic censorship options, allowing users to review and confirm the redactions before saving or sharing the images.</string>
+    <string name="feat_desc_4">Notifies users and provides guidance on appropriate actions to take, ensuring user privacy and data protection.</string>
+
+
 </resources>

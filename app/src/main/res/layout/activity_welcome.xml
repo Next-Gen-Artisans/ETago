@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Welcome"
+    android:orientation="vertical"
+
+    >
+
+    <ImageView
+        android:id="@+id/welcome_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/etago_logo"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        />
+
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Hello!"
+        android:textSize="32sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/alt_black"
+        android:layout_marginTop="80dp"
+
+        />
+
+    <TextView
+        android:id="@+id/welcome_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Please choose how you want to proceed"
+        android:textAlignment="center"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/montserrat_regular"
+        android:textColor="@color/alt_black"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/welcome_login_btn"
+        android:layout_width="303dp"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat_bold"
+        android:layout_gravity="center"
+        android:background="@drawable/custom_btn_bg_2"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:layout_marginTop="125dp"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/welcome_signup_btn"
+        android:layout_width="303dp"
+        android:layout_height="wrap_content"
+        android:text="Sign Up"
+        android:textColor="@color/light_blue"
+        android:fontFamily="@font/montserrat_bold"
+        android:layout_gravity="center"
+        android:background="@color/transparent"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+
+        />
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>

@@ -1,0 +1,10 @@
+<!-- res/drawable/custom_spinner_color.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <solid android:color="#FFFFFF" /> <!-- Set the desired color, e.g., red (#FF0000) -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>
