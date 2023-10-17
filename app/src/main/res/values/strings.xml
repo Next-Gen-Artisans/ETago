@@ -13,4 +13,8 @@
     <string name="feat_desc_4">Notifies users and provides guidance on appropriate actions to take, ensuring user privacy and data protection.</string>
 
 
+    <!--NAVIGATION DRAWER-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>

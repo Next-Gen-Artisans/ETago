@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/group1"
+        >
+
+        <item
+            android:id="@+id/nav_home1"
+            android:icon="@drawable/menu_home_icon"
+            android:title="Home"
+            >
+
+        </item>
+
+    </group>
+
+    <item
+        android:id="@+id/nav_upload"
+        android:title="Upload"/>
+    <item
+        android:id="@+id/nav_capture"
+        android:title="Capture"/>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/group2">
+
+        <item
+            android:id="@+id/nav_profile1"
+            android:icon="@drawable/menu_user_icon"
+            android:title="Profile" />
+
+
+    </group>
+    <item
+        android:id="@+id/nav_profile_info"
+        android:title="Profile Information"/>
+    <item
+        android:id="@+id/nav_change_pass"
+        android:title="Change Password"/>
+    <item
+        android:id="@+id/nav_change_email"
+        android:title="Change Email"/>
+    <item
+        android:id="@+id/nav_switch_accounts"
+        android:title="Switch Accounts"/>
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout"/>
+
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/group3"
+        >
+        <item
+            android:id="@+id/nav_settings1"
+            android:icon="@drawable/menu_settings_icon"
+            android:title="Settings" />
+
+
+    </group>
+
+    <item
+        android:id="@+id/nav_privacy_policy"
+        android:title="Privacy Policy"/>
+    <item
+        android:id="@+id/nav_terms"
+        android:title="Terms of Use"/>
+    <item
+        android:id="@+id/nav_push_notif"
+        android:title="Push Notifications"/>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/group4"
+        >
+        <item
+            android:id="@+id/nav_about1"
+            android:icon="@drawable/menu_info_icon"
+            android:title="About us" />
+
+    </group>
+
+    <item
+        android:id="@+id/nav_about_etago"
+        android:title="About E-Tago"/>
+    <item
+        android:id="@+id/nav_share"
+        android:title="Share"/>
+    <item
+        android:id="@+id/nav_feedback"
+        android:title="Rate us/Feedback"/>
+
+</menu>

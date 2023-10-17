@@ -1,0 +1,5 @@
+<!-- round_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/white" /> <!-- Set the background color -->
+    <corners android:radius="50dp" /> <!-- Adjust the radius as needed to control the roundness -->
+</shape>

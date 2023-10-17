@@ -7,4 +7,24 @@
      </style>
 
      <style name="Theme.ETago" parent="Base.Theme.ETago" />
- </resources>
+
+    <!--Rounded Image View-->
+    <style name="roundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- You can adjust this value to control the roundness -->
+    </style>
+
+    <!--CUSTOM MENU ITEM-->
+    <style name="AppDrawerMenuItemStyle">
+        <item name="android:textAppearance">@style/MenuItemTextAppearance</item>
+        <item name="android:divider">@drawable/divider_line</item>
+    </style>
+
+    <style name="MenuItemTextAppearance">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textColor">@color/alt_black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+
+</resources>

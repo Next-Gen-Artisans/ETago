@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/orange"
+    android:gravity="bottom"
+    android:padding="20dp"
+    >
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/round_bg"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textSize="24sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/alt_black"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Email"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_medium"
+        android:textColor="@color/alt_black"
+
+        />
+
+</LinearLayout>
