@@ -2,6 +2,7 @@ package com.nextgenartisans.etago;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,8 +34,15 @@ public class Onboarding extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Change status bar color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
+        }
+
         //Make app full screen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_onboarding);
 
@@ -41,6 +50,8 @@ public class Onboarding extends AppCompatActivity {
         nextBtn = findViewById(R.id.next_btn);
         backBtn = findViewById(R.id.back_btn);
 
+        // Set backBtn to INVISIBLE initially
+        backBtn.setVisibility(View.INVISIBLE);
 
         skipBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +134,16 @@ public class Onboarding extends AppCompatActivity {
 
             setUpIndicator(position);
 
+            // Check if it's the last view pager
+            if (position == onboardingViewPagerAdapter.getCount() - 1) {
+                // Set the text of nextBtn to "Get Started"
+                nextBtn.setText("Get Started");
+            } else {
+                // Set the text of nextBtn to "Next" for other pages
+                nextBtn.setText("Next");
+            }
+
+            // Toggle the visibility of backBtn based on position
             if(position > 0 ){
                 backBtn.setVisibility(View.VISIBLE);
             }
