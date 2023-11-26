@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
     android:orientation="vertical"
+    android:background="@color/white"
     >
 
     <LinearLayout
@@ -122,18 +123,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/forgot_pass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="Forgot Password?"
-                android:textSize="12sp"
-                android:fontFamily="@font/montserrat_medium"
-                android:textColor="@color/white"
-                android:layout_marginTop="15dp"
-                />
-
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/login_btn"
                 android:layout_width="match_parent"
@@ -147,13 +136,25 @@
                 android:layout_marginTop="30dp"
                 />
 
+            <TextView
+                android:id="@+id/forgot_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Forgot Password?"
+                android:textSize="12sp"
+                android:fontFamily="@font/montserrat_medium"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                />
+
             <LinearLayout
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 >
 
                 <View

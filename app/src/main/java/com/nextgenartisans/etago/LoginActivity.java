@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -66,10 +67,10 @@ public class LoginActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
 
-        //Make app full screen
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        //Set Content View
         setContentView(R.layout.activity_login);
+
+
         //Set id for clickable text and buttons
         loginBtn = findViewById(R.id.login_btn);
         loginBackBtn = findViewById(R.id.login_back_btn);
@@ -121,8 +122,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //Remove hint when input text has content
-
-
 
 
         textSignUp.setOnClickListener(new View.OnClickListener() {
@@ -212,6 +211,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
+
+
+
 }

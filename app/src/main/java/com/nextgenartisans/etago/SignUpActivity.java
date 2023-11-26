@@ -2,6 +2,7 @@ package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -15,6 +16,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -55,10 +57,9 @@ public class SignUpActivity extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
 
-        //Make app full screen
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        //Set Content View
         setContentView(R.layout.activity_sign_up);
+
         //Set id for clickable text and buttons
         signUpBtn = findViewById(R.id.signup_btn);
         textLogIn = findViewById(R.id.text_log_in);
@@ -220,11 +221,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
     }
+
+
 }

@@ -14,6 +14,8 @@ import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class Splash extends AppCompatActivity {
 
@@ -41,7 +43,16 @@ public class Splash extends AppCompatActivity {
             checkInternetConnection();
         } else {
             // Not the first time, skip check
-            navigateToNextScreen();
+            // Check if the user is already logged in using Firebase Authentication
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                // User is logged in, navigate directly to the Main Activity
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                navigateToNextScreen();
+            }
         }
     }
 

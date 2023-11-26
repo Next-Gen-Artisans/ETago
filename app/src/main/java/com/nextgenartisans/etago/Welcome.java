@@ -1,9 +1,12 @@
 package com.nextgenartisans.etago;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,10 +29,6 @@ public class Welcome extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
 
-        //Make app full screen
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
         setContentView(R.layout.activity_welcome);
 
         welcomeLoginBtn = findViewById(R.id.welcome_login_btn);
@@ -40,7 +39,6 @@ public class Welcome extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(Welcome.this, LoginActivity.class);
                 startActivity(i);
-                finish();
             }
         });
 
@@ -49,11 +47,8 @@ public class Welcome extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(Welcome.this, SignUpActivity.class);
                 startActivity(i);
-                finish();
             }
         });
-
-
 
     }
 }
