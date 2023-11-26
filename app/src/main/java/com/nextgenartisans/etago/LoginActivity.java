@@ -92,8 +92,6 @@ public class LoginActivity extends AppCompatActivity {
         userPass = findViewById(R.id.user_pass);
         mAuth = FirebaseAuth.getInstance();
 
-
-
         //Remove animation when input text is focused by user
         userEmail.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
@@ -120,9 +118,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-        //Remove hint when input text has content
-
 
         textSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,6 +203,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(LoginActivity.this, ForgotPass.class);
+                startActivity(i);
+                finish();
             }
         });
 

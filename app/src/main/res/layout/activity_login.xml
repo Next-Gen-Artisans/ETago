@@ -141,7 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:text="Forgot Password?"
+                android:text="@string/forgot_pass_txt"
                 android:textSize="12sp"
                 android:fontFamily="@font/montserrat_medium"
                 android:textColor="@color/white"

@@ -34,7 +34,6 @@
             android:icon="@drawable/menu_user_icon"
             android:title="Profile" />
 
-
     </group>
     <item
         android:id="@+id/nav_profile_info"
@@ -45,12 +44,7 @@
     <item
         android:id="@+id/nav_change_email"
         android:title="Change Email"/>
-    <item
-        android:id="@+id/nav_switch_accounts"
-        android:title="Switch Accounts"/>
-    <item
-        android:id="@+id/nav_logout"
-        android:title="Logout"/>
+
 
 
     <group
@@ -87,6 +81,10 @@
     </group>
 
     <item
+        android:id="@+id/nav_help"
+        android:title="Help"/>
+
+    <item
         android:id="@+id/nav_about_etago"
         android:title="About E-Tago"/>
     <item
@@ -95,5 +93,17 @@
     <item
         android:id="@+id/nav_feedback"
         android:title="Rate us/Feedback"/>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/group5"
+        >
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout"/>
+
+    </group>
+
+
 
 </menu>

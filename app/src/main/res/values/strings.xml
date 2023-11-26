@@ -12,6 +12,12 @@
     <string name="feat_desc_3">Automatic censorship options, allowing users to review and confirm the redactions before saving or sharing the images.</string>
     <string name="feat_desc_4">Notifies users and provides guidance on appropriate actions to take, ensuring user privacy and data protection.</string>
 
+    <!--FORGOT PASSWORD -->
+    <string name="forgot_pass_txt"><u>Forgot Password?</u></string>
+    <string name="forgot_pass_msg">Please provide your email for the instructions for password reset.</string>
+    <string name="forgot_pass_dialog_title">Password Reset Instructions have been sent</string>
+    <string name="forgot_pass_dialog_text">A password reset has been sent to your email address. Please check your email to reset your password and then login.</string>
+
 
     <!--NAVIGATION DRAWER-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
