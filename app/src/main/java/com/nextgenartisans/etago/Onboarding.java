@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,8 +42,15 @@ public class Onboarding extends AppCompatActivity {
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
 
-        //Make app full screen
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // Check if Onboarding is already completed
+        SharedPreferences preferences = getSharedPreferences("OnboardingPrefs", MODE_PRIVATE);
+        boolean onboardingCompleted = preferences.getBoolean("onboarding_completed", false);
+
+        if (onboardingCompleted) {
+            // Onboarding already completed, skip it
+            navigateToWelcome();
+            return;
+        }
 
         setContentView(R.layout.activity_onboarding);
 
@@ -57,9 +65,9 @@ public class Onboarding extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(Onboarding.this, Welcome.class);
-                startActivity(i);
-                finish();
+                // Set Onboarding as completed
+                preferences.edit().putBoolean("onboarding_completed", true).apply();
+                navigateToWelcome();
 
             }
         });
@@ -72,9 +80,9 @@ public class Onboarding extends AppCompatActivity {
                     mSlideViewPager.setCurrentItem(getItem(1),true);
                 }
                 else {
-                    Intent i = new Intent(Onboarding.this, Welcome.class);
-                    startActivity(i);
-                    finish();
+                    // Set Onboarding as completed
+                    preferences.edit().putBoolean("onboarding_completed", true).apply();
+                    navigateToWelcome();
                 }
 
             }
@@ -161,6 +169,12 @@ public class Onboarding extends AppCompatActivity {
 
     private int getItem(int i){
         return mSlideViewPager.getCurrentItem() + i;
+    }
+
+    private void navigateToWelcome() {
+        Intent i = new Intent(Onboarding.this, Welcome.class);
+        startActivity(i);
+        finish();
     }
 
 

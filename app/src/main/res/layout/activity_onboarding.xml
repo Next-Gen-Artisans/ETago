@@ -17,38 +17,32 @@
         android:text="Skip"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
         android:fontFamily="@font/montserrat_semibold"
         />
-
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/slide_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginVertical="200dp"
+        android:layout_marginVertical="175dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
-    
-    <ImageView
-        android:id="@+id/back_btn_cover"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/back_arr_ellipse"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+
+
 
     <ImageButton
         android:id="@+id/back_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/arrow"
+        android:src="@drawable/baseline_arrow_back_24"
         android:background="@color/transparent"
-        app:layout_constraintTop_toTopOf="@id/back_btn_cover"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"

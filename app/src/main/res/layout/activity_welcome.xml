@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".Welcome"
     android:orientation="vertical"
-
+    android:background="@color/white"
     >
 
     <ImageView
         android:id="@+id/welcome_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/etago_logo"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:src="@drawable/e_tago_splash_logo_dark"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
         />
@@ -64,7 +64,7 @@
         android:layout_width="303dp"
         android:layout_height="wrap_content"
         android:text="Sign Up"
-        android:textColor="@color/light_blue"
+        android:textColor="@color/alt_black"
         android:fontFamily="@font/montserrat_bold"
         android:layout_gravity="center"
         android:background="@color/transparent"

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     app:flow_horizontalAlign="center"
     android:background="@color/white"
-
+    android:gravity="center_vertical"
     >
     
     <ImageView
