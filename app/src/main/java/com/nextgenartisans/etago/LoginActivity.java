@@ -173,7 +173,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // TODO LOGIN BACKEND
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -222,7 +221,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
         // TODO FB AND GOOGLE LOGIN BACKEND
 
         // Initialize the custom progress dialog
@@ -239,14 +237,12 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
 
 
         facebookLoginBtn.setOnClickListener(new View.OnClickListener() {
@@ -275,7 +271,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     int RC_SIGN_IN = 40;
-    private void googleSignIn(){
+
+    private void googleSignIn() {
         mGoogleSignInClient.signOut();
         Intent i = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(i, RC_SIGN_IN);
@@ -285,7 +282,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == RC_SIGN_IN){
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
             try {
@@ -293,9 +290,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Show the custom dialog with progress
                 customSignInDialog.setMessage("Authenticating...");
-                customSignInDialog.showProgress(true);
+                customSignInDialog.showAuthProgress(true);
                 customSignInDialog.setProceedButtonVisible(false);
                 customSignInDialog.show();
+
 
                 firebaseAuth(account.getIdToken());
 
@@ -303,7 +301,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Handle error
                 // Update dialog to show error message
                 customSignInDialog.setMessage("Authentication failed.");
-                customSignInDialog.showProgress(false);
+                customSignInDialog.showAuthFailedProgress(false);
             }
 
 
@@ -326,7 +324,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 // Authentication failed
                                 customSignInDialog.setMessage("Authentication failed.");
-                                customSignInDialog.showProgress(false);
+                                customSignInDialog.showAuthFailedProgress(false);
                             }
                         } else {
                             // Handle the sign in error (e.g., display a message)
@@ -349,16 +347,27 @@ public class LoginActivity extends AppCompatActivity {
                         // Redirect to main activity or update UI
                         // Authentication success
                         customSignInDialog.setMessage("Account authenticated.");
-                        customSignInDialog.showProgress(false); // Show check icon
+                        customSignInDialog.showAuthProgress(false); // Show check icon
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
 
 
                     } else {
-                        // User does not exist, create a new user document
-                        createUserInFirestore(firebaseUser);
+                        customSignInDialog.setMessage("Account does not exist.");
+                        customSignInDialog.showAuthFailedProgress(false); // Show check icon
+                        //customSignInDialog.setProceedButtonVisible(true); // Show proceed button
+
+                        // User does not exist, prompt to sign up
+                        promptSignUp();
+
+                        //createUserInFirestore(firebaseUser);
                     }
                 } else {
-                    // Handle errors here
+                    customSignInDialog.setMessage("Account does not exist.");
+                    customSignInDialog.showAuthFailedProgress(false); // Show check icon
+                    //customSignInDialog.setProceedButtonVisible(true); // Show proceed button
+
+                    // User does not exist, prompt to sign up
+                    promptSignUp();
                 }
             }
         });
@@ -382,7 +391,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Redirect to main activity or update UI
                         // Authentication success
                         customSignInDialog.setMessage("Account authenticated.");
-                        customSignInDialog.showProgress(false); // Show check icon
+                        customSignInDialog.showAuthProgress(false); // Show check icon
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
                     }
                 })
@@ -395,6 +404,14 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    private void promptSignUp() {
+        // Prompt the user to sign up
+        Toast.makeText(LoginActivity.this, "No existing account found. Please sign up first.", Toast.LENGTH_LONG).show();
+        customSignInDialog.dismiss();
+        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
 
 }

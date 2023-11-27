@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
@@ -25,6 +26,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -54,6 +61,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     FirebaseFirestore db;
+    GoogleSignInClient mGoogleSignInClient;
+    private CustomSignInDialog customSignInDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +90,11 @@ public class SignUpActivity extends AppCompatActivity {
         signupFooter = findViewById(R.id.signup_footer);
         signupOptions = findViewById(R.id.signup_options);
         signupForm = findViewById(R.id.signup_form);
+
+
+        //FIREBASE INSTANCE
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         //Set id for input text
         signupUsernameInput = findViewById(R.id.signup_username_input);
@@ -90,8 +103,6 @@ public class SignUpActivity extends AppCompatActivity {
         userSignupUsername = findViewById(R.id.user_signup_username);
         userSignupEmail = findViewById(R.id.user_signup_email);
         userSignupPass = findViewById(R.id.user_signup_pass);
-
-
 
 
         //Remove animation when input text is focused by user
@@ -135,7 +146,6 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
 
-
         textLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,15 +174,15 @@ public class SignUpActivity extends AppCompatActivity {
                 email = userSignupEmail.getText().toString();
                 password = userSignupPass.getText().toString();
 
-                if (TextUtils.isEmpty(username)){
+                if (TextUtils.isEmpty(username)) {
                     Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (TextUtils.isEmpty(password)){
+                if (TextUtils.isEmpty(password)) {
                     Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -190,7 +200,6 @@ public class SignUpActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = mAuth.getCurrentUser();
-
 
 
                                     Toast.makeText(SignUpActivity.this, "Account created.",
@@ -215,6 +224,26 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        // Initialize the custom progress dialog
+        customSignInDialog = new CustomSignInDialog(this);
+
+        // Setting the listener for the proceed button in the dialog
+        customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                customSignInDialog.dismiss(); // Dismiss the dialog
+                updateUI(); // Call updateUI when the proceed button is clicked
+
+            }
+        });
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         // TODO FB AND GOOGLE SIGN UP BACKEND
         facebookSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,67 +255,138 @@ public class SignUpActivity extends AppCompatActivity {
         googleSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
+                googleSignIn();
             }
         });
 
     }
 
-    private void firebaseAuth(String idToken) {
-        try {
-            if (idToken != null) {
-                // Got an ID token from Google. Use it to authenticate
-                // with Firebase.
-                AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
-                mAuth.signInWithCredential(firebaseCredential)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
+    int RC_SIGN_IN = 40;
 
-                                    FirebaseUser user = mAuth.getCurrentUser();
+    private void googleSignIn() {
+        mGoogleSignInClient.signOut();
+        Intent i = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(i, RC_SIGN_IN);
+    }
 
-                                    HashMap<String, Object> map = new HashMap<>();
-                                    map.put("id",user.getUid());
-                                    map.put("username",user.getDisplayName());
-                                    map.put("email",user.getEmail().toString());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
-                                    // Add a new document with a generated ID
-                                    db.collection("users")
-                                            .add(user)
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                @Override
-                                                public void onSuccess(DocumentReference documentReference) {
-                                                    Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error adding document", e);
-                                                }
-                                            });
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
 
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithCredential:success");
-                                    updateUI();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "signInWithCredential:failure", task.getException());
-                                }
-                            }
-                        });
+                // Show the custom dialog with progress
+                customSignInDialog.setMessage("Creating account...");
+                customSignInDialog.showAuthProgress(true);
+                customSignInDialog.setProceedButtonVisible(false);
+                customSignInDialog.show();
+
+                firebaseAuth(account.getIdToken());
+
+            } catch (ApiException e) {
+                // Handle error
+                // Update dialog to show error message
+                customSignInDialog.setMessage("Creating account failed.");
+                customSignInDialog.showAuthFailedProgress(false);
             }
-        } catch (Exception e) {
-            Log.d(TAG, e.toString());
+
+
         }
+
+    }
+
+    private void firebaseAuth(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            if (firebaseUser != null) {
+                                // Check if user already exists in Firestore
+                                checkUserInFirestore(firebaseUser);
+
+                            } else {
+                                // Authentication failed
+                                customSignInDialog.setMessage("Authentication failed.");
+                                customSignInDialog.showAuthFailedProgress(false);
+                            }
+                        } else {
+                            // Handle the sign in error (e.g., display a message)
+                        }
+                    }
+                });
+    }
+
+    private void checkUserInFirestore(FirebaseUser firebaseUser) {
+        DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null && document.exists()) {
+                        // User already exists in Firestore, just log in
+                        Log.d(TAG, "User already exists in Firestore.");
+
+                        // Redirect to main activity or update UI
+                        // Authentication success
+                        customSignInDialog.setMessage("Account created.");
+                        customSignInDialog.showAuthProgress(false); // Show check icon
+                        customSignInDialog.setProceedButtonVisible(true); // Show proceed button
+
+
+                    } else {
+                        // User does not exist, create a new user document
+                        createUserInFirestore(firebaseUser);
+                    }
+                } else {
+                    // Handle errors here
+                }
+            }
+        });
+    }
+
+    private void createUserInFirestore(FirebaseUser firebaseUser) {
+        Users users = new Users();
+        users.setUserID(firebaseUser.getUid());
+        users.setUsername(firebaseUser.getDisplayName());
+        users.setEmail(firebaseUser.getEmail());
+        users.setProfilePic(firebaseUser.getPhotoUrl().toString());
+
+        db.collection("Users").document(firebaseUser.getUid())
+                .set(users)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Successfully added new user
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+
+                        // Redirect to main activity or update UI
+                        // Authentication success
+                        customSignInDialog.setMessage("Account created.");
+                        customSignInDialog.showAuthProgress(false); // Show check icon
+                        customSignInDialog.setProceedButtonVisible(true); // Show proceed button
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the error
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
 
     private void updateUI() {
-
-
-
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(i);
+        finish();
     }
 
 

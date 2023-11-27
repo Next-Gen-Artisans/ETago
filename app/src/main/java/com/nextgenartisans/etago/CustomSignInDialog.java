@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class CustomSignInDialog extends Dialog {
 
     private TextView progressText;
     private ProgressBar progressBar;
-    private ImageView checkIcon;
+    private ImageView checkIcon, xIcon;
     private AppCompatButton proceedButton;
 
     public CustomSignInDialog(Context context) {
@@ -37,16 +38,34 @@ public class CustomSignInDialog extends Dialog {
         progressText = view.findViewById(R.id.signing_in_dialog_title);
         progressBar = view.findViewById(R.id.signingin_progbar);
         checkIcon = view.findViewById(R.id.check_icon);
+        xIcon = view.findViewById(R.id.x_icon);
         proceedButton = view.findViewById(R.id.return_login_dialog_btn);
         setContentView(view);
 
         // Set the background of the dialog window to transparent
         Window window = getWindow();
         if (window != null) {
-            window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
 
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(window.getAttributes());
+
+            // Set the size of the dialog
+            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+            // Set the position of the dialog
+            layoutParams.gravity = Gravity.CENTER;
+
+            // Set the amount of dimming for the background
+            layoutParams.dimAmount = 0.5f; // you can adjust the value as per your need
+
+            // Apply the updated layout parameters to the dialog window
+            window.setAttributes(layoutParams);
+
+            // This line is required to apply the dimming
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
 
 
     }
@@ -55,9 +74,14 @@ public class CustomSignInDialog extends Dialog {
         progressText.setText(message);
     }
 
-    public void showProgress(boolean show) {
+    public void showAuthProgress(boolean show) {
         progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         checkIcon.setVisibility(show ? View.GONE : View.VISIBLE);
+    }
+
+    public void showAuthFailedProgress(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        xIcon.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     public void setProceedButtonClickListener(View.OnClickListener listener) {
