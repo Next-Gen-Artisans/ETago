@@ -26,12 +26,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -45,6 +53,7 @@ public class SignUpActivity extends AppCompatActivity {
     TextView textLogIn;
 
     FirebaseAuth mAuth;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +229,63 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
             }
         });
+
+    }
+
+    private void firebaseAuth(String idToken) {
+        try {
+            if (idToken != null) {
+                // Got an ID token from Google. Use it to authenticate
+                // with Firebase.
+                AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
+                mAuth.signInWithCredential(firebaseCredential)
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+
+                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                    HashMap<String, Object> map = new HashMap<>();
+                                    map.put("id",user.getUid());
+                                    map.put("username",user.getDisplayName());
+                                    map.put("email",user.getEmail().toString());
+
+
+                                    // Add a new document with a generated ID
+                                    db.collection("users")
+                                            .add(user)
+                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error adding document", e);
+                                                }
+                                            });
+
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "signInWithCredential:success");
+                                    updateUI();
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "signInWithCredential:failure", task.getException());
+                                }
+                            }
+                        });
+            }
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
+    }
+
+    private void updateUI() {
+
+
 
     }
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-
+    android:background="@color/white"
     tools:openDrawer="start"
     android:id="@+id/drawer_layout"
     >
@@ -110,6 +110,7 @@
                     android:elevation="10dp"
                     app:cardCornerRadius="25dp"
                     android:layout_marginTop="20dp"
+                    android:background="@color/white"
                     >
 
                     <LinearLayout
@@ -118,6 +119,7 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
+                        android:background="@color/white"
                         >
 
                         <TextView
@@ -150,6 +152,7 @@
                     app:cardCornerRadius="25dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"
+                    android:background="@color/white"
                     >
 
                     <LinearLayout
@@ -158,6 +161,7 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
+                        android:background="@color/white"
                         >
 
                         <TextView
@@ -199,6 +203,9 @@
         app:menu="@menu/main_menu"
         android:layout_gravity="start"
         app:itemTextAppearance="@style/MenuItemTextAppearance"
+        android:background="@color/white"
+        app:itemTextColor="@color/alt_black"
+        app:itemIconTint="@color/alt_black"
         />
 
 

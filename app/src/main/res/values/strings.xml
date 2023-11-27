@@ -18,6 +18,9 @@
     <string name="forgot_pass_dialog_title">Password Reset Instructions have been sent</string>
     <string name="forgot_pass_dialog_text">A password reset has been sent to your email address. Please check your email to reset your password and then login.</string>
 
+    <!--GOOGLE/FB SIGN IN-->
+    <string name="account_signin_txt">Creating account...</string>
+
 
     <!--NAVIGATION DRAWER-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
