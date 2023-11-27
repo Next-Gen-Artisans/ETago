@@ -8,6 +8,13 @@
 
      <style name="Theme.ETago" parent="Base.Theme.ETago" />
 
+    <!--MENU ITEM TEXT STYLE-->
+    <style name="menuText">
+        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="color">@color/alt_black</item>
+        <item name="iconTint">@color/alt_black</item>
+    </style>
+
     <!--Rounded Image View-->
     <style name="roundedImageView">
         <item name="cornerFamily">rounded</item>

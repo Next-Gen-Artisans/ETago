@@ -21,6 +21,11 @@
     <!--GOOGLE/FB SIGN IN-->
     <string name="account_signin_txt">Creating account...</string>
 
+    <!--FB SIGN UP-->
+    <string name="facebook_app_id">1066984481151589</string>
+    <string name="fb_login_protocol_scheme">fb1066984481151589</string>
+    <string name="facebook_client_token">b940256518cb285e4066b724af809521</string>
+
 
     <!--NAVIGATION DRAWER-->
     <string name="navigation_drawer_open">Open navigation drawer</string>

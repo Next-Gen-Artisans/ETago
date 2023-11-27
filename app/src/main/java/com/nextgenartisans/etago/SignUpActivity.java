@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -62,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseFirestore db;
     GoogleSignInClient mGoogleSignInClient;
+    CallbackManager mCallbackManager;
     private CustomSignInDialog customSignInDialog;
 
     @Override
@@ -244,7 +247,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // TODO FB AND GOOGLE SIGN UP BACKEND
+        // TODO FB SIGN UP
         facebookSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -336,7 +339,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                         // Redirect to main activity or update UI
                         // Authentication success
-                        customSignInDialog.setMessage("Account already exists. Logging in.");
+                        customSignInDialog.setMessage("Account already exists. Proceed to log in.");
                         customSignInDialog.showAuthProgress(false); // Show check icon
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
 

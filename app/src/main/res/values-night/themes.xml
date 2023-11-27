@@ -3,5 +3,17 @@
     <style name="Base.Theme.ETago" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
     </style>
+
+    <!--MENU ITEM TEXT STYLE-->
+    <style name="Style_TextView">
+        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="color">@color/alt_black</item>
+        <item name="iconTint">@color/alt_black</item>
+    </style>
+
+
+
+
 </resources>

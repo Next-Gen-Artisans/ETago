@@ -1,5 +1,7 @@
 package com.nextgenartisans.etago;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -8,10 +10,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -21,9 +25,16 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -43,9 +54,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Find the TextViews by their IDs
     TextView usernameTextView;
     TextView emailTextView;
+    ShapeableImageView userProfilePic;
 
     // Create a variable to store the selected item ID
     private int selectedMenuItemId = R.id.nav_home1;
+
+    LogoutDialog logoutDialog;
 
 
     @Override
@@ -59,15 +73,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
 
-        //Make app full screen
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-
+        //Custom Logout Dialog
+        logoutDialog = new LogoutDialog(MainActivity.this);
 
         //Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -76,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //TextViews
         headerView = navigationView.getHeaderView(0);
+        userProfilePic = (ShapeableImageView) headerView.findViewById(R.id.drawer_user_profile_pic);
         usernameTextView = (TextView) headerView.findViewById(R.id.drawer_username);
         emailTextView = (TextView) headerView.findViewById(R.id.drawer_user_email);
 
@@ -85,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }else {
             // Set the username and email based on the Firebase user's information
+            loadUserProfilePicture();
             String username = user.getDisplayName(); // Replace with your user data
             String email = user.getEmail(); // Replace with your user data
 
@@ -139,7 +154,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void loadUserProfilePicture() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Users") // Replace with your actual collection name
+                .document(user.getUid())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            String imageUrl = documentSnapshot.getString("profilePic"); // Replace with your field name
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                Glide.with(MainActivity.this)
+                                        .load(imageUrl)
+                                        .into(userProfilePic);
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle any errors
+                    }
+                });
+    }
 
+    public void goToWelcome() {
+        // Start the WelcomeActivity
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(MainActivity.this, Welcome.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -161,31 +207,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
         }
         else if (id == R.id.nav_logout) {
-            // Create a custom AlertDialog for confirmation
-            new AlertDialog.Builder(this)
-                    .setTitle("Confirm Logout")
-                    .setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Handle the Logout item by signing out the user from Firebase
-                            FirebaseAuth.getInstance().signOut();
-                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // If the user clicks "No," do nothing or dismiss the dialog
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
+//            // Create a custom AlertDialog for confirmation
+//            new AlertDialog.Builder(this)
+//                    .setTitle("Confirm Logout")
+//                    .setMessage("Are you sure you want to log out?")
+//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            // Handle the Logout item by signing out the user from Firebase
+//                            FirebaseAuth.getInstance().signOut();
+//                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                            startActivity(intent);
+//                            finish();
+//                        }
+//                    })
+//                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            // If the user clicks "No," do nothing or dismiss the dialog
+//                            dialog.dismiss();
+//                        }
+//                    })
+//                    .show();
+            //Show Dialog
+            logoutDialog.show();
+
+
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
+
 
     @Override
     public void onBackPressed() {
