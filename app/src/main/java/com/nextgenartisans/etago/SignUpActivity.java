@@ -336,7 +336,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                         // Redirect to main activity or update UI
                         // Authentication success
-                        customSignInDialog.setMessage("Account created.");
+                        customSignInDialog.setMessage("Account already exists. Logging in.");
                         customSignInDialog.showAuthProgress(false); // Show check icon
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
 
@@ -385,6 +385,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void updateUI() {
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    private void promptLogin(){
+        mGoogleSignInClient.signOut();
+        //mAuth.signOut();
+        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(i);
         finish();
     }
