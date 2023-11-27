@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,30 +40,13 @@ public class CustomSignInDialog extends Dialog {
         proceedButton = view.findViewById(R.id.return_login_dialog_btn);
         setContentView(view);
 
-        // Ensure the background of the dialog is transparent to show LoginActivity behind it
+        // Set the background of the dialog window to transparent
         Window window = getWindow();
         if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-            layoutParams.copyFrom(window.getAttributes());
-
-            // Set the size of the dialog
-            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-            // Set the position of the dialog
-            layoutParams.gravity = Gravity.CENTER;
-
-            // Set the amount of dimming for the background
-            layoutParams.dimAmount = 0.5f; // you can adjust the value as per your need
-
-            // Apply the updated layout parameters to the dialog window
-            window.setAttributes(layoutParams);
-
-            // This line is required to apply the dimming
-            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         }
+
 
 
     }

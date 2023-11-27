@@ -232,10 +232,12 @@ public class LoginActivity extends AppCompatActivity {
         customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateUI(); // Call updateUI when the proceed button is clicked
                 customSignInDialog.dismiss(); // Dismiss the dialog
+                updateUI(); // Call updateUI when the proceed button is clicked
+
             }
         });
+
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -295,8 +297,6 @@ public class LoginActivity extends AppCompatActivity {
                 customSignInDialog.setProceedButtonVisible(false);
                 customSignInDialog.show();
 
-
-
                 firebaseAuth(account.getIdToken());
 
             } catch (ApiException e) {
@@ -353,7 +353,6 @@ public class LoginActivity extends AppCompatActivity {
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
 
 
-
                     } else {
                         // User does not exist, create a new user document
                         createUserInFirestore(firebaseUser);
@@ -385,7 +384,6 @@ public class LoginActivity extends AppCompatActivity {
                         customSignInDialog.setMessage("Account authenticated.");
                         customSignInDialog.showProgress(false); // Show check icon
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
