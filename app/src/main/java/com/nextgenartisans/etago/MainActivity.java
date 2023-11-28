@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -34,6 +37,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import android.Manifest;
+
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,10 +61,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView emailTextView;
     ShapeableImageView userProfilePic;
 
-    // Create a variable to store the selected item ID
-    private int selectedMenuItemId = R.id.nav_home1;
 
     LogoutDialog logoutDialog;
+
+    //MEDIA PERMISSIONS
+    private static final int STORAGE_PERMISSION_CODE = 1;
+
+    //
 
 
     @Override
@@ -74,7 +82,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+
+
         setContentView(R.layout.activity_main);
+
+        //TODO CHECK FOR MEDIA PERMISSIONS
+        //checkForPermissions();
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -152,7 +165,103 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+
+
+
     }
+
+    private void checkForPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "You have already granted this permission,", Toast.LENGTH_SHORT).show();
+
+        } else {
+            // Permissions have already been granted
+            requestStoragePermissions();
+            //loadPhotos();
+        }
+    }
+
+    private void requestStoragePermissions() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Log.d(TAG, "Showing Media Permission Dialog");
+            MediaPermissionDialog mediaPermissionDialog = new MediaPermissionDialog(this);
+            mediaPermissionDialog.show();
+            mediaPermissionDialog.mediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Prompt the user once explanation has been shown
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            STORAGE_PERMISSION_CODE);
+
+                    loadPhotos();
+                }
+            });
+            mediaPermissionDialog.cancelMediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mediaPermissionDialog.dismiss();
+                }
+            });
+
+        } else {
+            Log.d(TAG, "Requesting Permission Directly");
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        }
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                // Permission granted. You can access photos here.
+                loadPhotos();
+            } else {
+                // Permission denied.
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void loadPhotos() {
+        // Implement logic to load and display photos from external storage
+        Log.d(TAG, "Photos loaded.");
+        //Toast.makeText(this, "Photos loaded.", Toast.LENGTH_SHORT).show();
+        // Assuming photos are loaded successfully, update Firestore
+        updateFirestoreUserAgreedMedia();
+    }
+
+    private void updateFirestoreUserAgreedMedia() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (user != null) {
+            db.collection("Users").document(user.getUid())
+                    .update("userAgreedMedia", true)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Successfully updated the document
+                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Handle the failure
+                            Log.w(TAG, "Error updating document", e);
+                        }
+                    });
+        } else {
+            // Handle the case where the user is null
+            Log.e(TAG, "User is null, cannot update Firestore");
+        }
+    }
+
+
 
     private void loadUserProfilePicture() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -207,29 +316,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(intent);
         }
         else if (id == R.id.nav_logout) {
-//            // Create a custom AlertDialog for confirmation
-//            new AlertDialog.Builder(this)
-//                    .setTitle("Confirm Logout")
-//                    .setMessage("Are you sure you want to log out?")
-//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            // Handle the Logout item by signing out the user from Firebase
-//                            FirebaseAuth.getInstance().signOut();
-//                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//                            startActivity(intent);
-//                            finish();
-//                        }
-//                    })
-//                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            // If the user clicks "No," do nothing or dismiss the dialog
-//                            dialog.dismiss();
-//                        }
-//                    })
-//                    .show();
             //Show Dialog
             logoutDialog.show();
-
 
         }
 
