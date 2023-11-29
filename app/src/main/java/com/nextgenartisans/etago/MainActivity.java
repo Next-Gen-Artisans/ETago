@@ -2,6 +2,8 @@ package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -67,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //MEDIA PERMISSIONS
     private static final int STORAGE_PERMISSION_CODE = 1;
 
-    //
+    //PHOTO PICKER
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
 
     @Override

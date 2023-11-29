@@ -1,5 +1,6 @@
 package com.nextgenartisans.etago;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -50,7 +51,12 @@ public class LogoutDialog extends Dialog {
                 // Redirect to LoginActivity
                 FirebaseAuth.getInstance().signOut();
                 Context context = getContext();
-                context.startActivity(new Intent(context, Welcome.class));
+                context.startActivity(new Intent(context, Welcome.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+
+                // If context is an instance of an Activity, close it
+                if (context instanceof Activity) {
+                    ((Activity) context).finish();
+                }
 
                 dismiss();
 
