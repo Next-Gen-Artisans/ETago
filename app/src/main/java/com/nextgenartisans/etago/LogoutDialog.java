@@ -20,7 +20,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LogoutDialog extends Dialog {
-
     LinearLayout logoutDialogButtons;
     AppCompatButton logoutDialogBtn, cancelLogoutDialogBtn;
 
@@ -48,20 +47,28 @@ public class LogoutDialog extends Dialog {
         logoutDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Redirect to LoginActivity
+                // Sign out from FirebaseAuth
                 FirebaseAuth.getInstance().signOut();
-                Context context = getContext();
-                context.startActivity(new Intent(context, Welcome.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
 
-                // If context is an instance of an Activity, close it
-                if (context instanceof Activity) {
-                    ((Activity) context).finish();
-                }
+                // Create an Intent to start the Welcome activity
+                Intent intent = new Intent(getContext(), Welcome.class);
 
+                // Set flags to clear the activity stack and start a new task
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                // Start the Welcome activity
+                getContext().startActivity(intent);
+
+                // Dismiss the dialog
                 dismiss();
 
+                // If the context is an instance of an Activity, close it
+                if (getContext() instanceof Activity) {
+                    ((Activity) getContext()).finish();
+                }
             }
         });
+
 
         cancelLogoutDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override

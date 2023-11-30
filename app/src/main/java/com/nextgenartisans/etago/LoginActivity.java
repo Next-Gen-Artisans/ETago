@@ -84,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+        finish();
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
         finish();
@@ -231,6 +232,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 customSignInDialog.dismiss(); // Dismiss the dialog
+
                 updateUI(); // Call updateUI when the proceed button is clicked
 
             }

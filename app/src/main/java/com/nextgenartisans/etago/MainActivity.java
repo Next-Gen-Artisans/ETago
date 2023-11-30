@@ -39,8 +39,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import android.Manifest;
 
+import android.Manifest;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LogoutDialog logoutDialog;
 
     //MEDIA PERMISSIONS
-    private static final int STORAGE_PERMISSION_CODE = 1;
+    public static final int STORAGE_PERMISSION_CODE = 1;
 
     //PHOTO PICKER
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
@@ -85,12 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-
-
         setContentView(R.layout.activity_main);
 
-        //TODO CHECK FOR MEDIA PERMISSIONS
-        //checkForPermissions();
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -109,11 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         usernameTextView = (TextView) headerView.findViewById(R.id.drawer_username);
         emailTextView = (TextView) headerView.findViewById(R.id.drawer_user_email);
 
-        if(user == null){
+        if (user == null) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
             finish();
-        }else {
+        } else {
             // Set the username and email based on the Firebase user's information
             loadUserProfilePicture();
             String username = user.getDisplayName(); // Replace with your user data
@@ -143,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Navigation Drawer Menu
         navigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.setDrawerIndicatorEnabled(false); // Disable the default hamburger icon
         toggle.setHomeAsUpIndicator(R.drawable.menu); // Set your custom icon
         drawerLayout.addDrawerListener(toggle);
@@ -169,51 +165,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-
+        //TODO CHECK FOR MEDIA PERMISSIONS
+        checkForPermissions();
 
     }
+
 
     private void checkForPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "You have already granted this permission,", Toast.LENGTH_SHORT).show();
-
-        } else {
-            // Permissions have already been granted
-            requestStoragePermissions();
-            //loadPhotos();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Check if we should show an explanation
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Show custom media permission dialog
+                MediaPermissionDialog mediaPermissionDialog = new MediaPermissionDialog(this);
+                mediaPermissionDialog.show();
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        STORAGE_PERMISSION_CODE);
+            }
         }
     }
-
-    private void requestStoragePermissions() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Log.d(TAG, "Showing Media Permission Dialog");
-            MediaPermissionDialog mediaPermissionDialog = new MediaPermissionDialog(this);
-            mediaPermissionDialog.show();
-            mediaPermissionDialog.mediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Prompt the user once explanation has been shown
-                    ActivityCompat.requestPermissions(MainActivity.this,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            STORAGE_PERMISSION_CODE);
-
-                    loadPhotos();
-                }
-            });
-            mediaPermissionDialog.cancelMediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mediaPermissionDialog.dismiss();
-                }
-            });
-
-        } else {
-            Log.d(TAG, "Requesting Permission Directly");
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-        }
-    }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -221,22 +193,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-                // Permission granted. You can access photos here.
-                loadPhotos();
+                Log.d(TAG, "Permission granted.");
+                updateFirestoreUserAgreedMedia();
             } else {
-                // Permission denied.
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Permission denied.");
+
             }
         }
     }
 
-    private void loadPhotos() {
-        // Implement logic to load and display photos from external storage
-        Log.d(TAG, "Photos loaded.");
-        //Toast.makeText(this, "Photos loaded.", Toast.LENGTH_SHORT).show();
-        // Assuming photos are loaded successfully, update Firestore
-        updateFirestoreUserAgreedMedia();
-    }
+
+
 
     private void updateFirestoreUserAgreedMedia() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -263,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.e(TAG, "User is null, cannot update Firestore");
         }
     }
-
 
 
     private void loadUserProfilePicture() {
@@ -302,23 +269,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.nav_home1){
+        if (id == R.id.nav_home1) {
             return true;
         }
-        if(id == R.id.nav_profile1) {
+        if (id == R.id.nav_profile1) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         }
-        if(id == R.id.nav_settings1) {
+        if (id == R.id.nav_settings1) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
 
         }
-        if(id == R.id.nav_about1) {
+        if (id == R.id.nav_about1) {
             Intent intent = new Intent(MainActivity.this, AboutAppActivity.class);
             startActivity(intent);
-        }
-        else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
             //Show Dialog
             logoutDialog.show();
 
@@ -329,19 +295,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
-
-
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             // Close the drawer if it's open
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            // Open the drawer if it's closed
-            super.onBackPressed();
+            // Check if user is logged in
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                // User is not logged in, so don't do anything or redirect to the Welcome/Log in Activity
+                // Example: Redirect to Welcome Activity
+                Intent intent = new Intent(MainActivity.this, Welcome.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } else {
+                // User is logged in, follow the default behavior
+                super.onBackPressed();
+            }
         }
     }
+
 
     // Function to get the height of the status bar
     private int getStatusBarHeight() {

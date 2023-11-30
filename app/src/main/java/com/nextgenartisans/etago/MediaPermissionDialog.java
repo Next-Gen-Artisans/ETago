@@ -11,9 +11,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.Manifest;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.app.ActivityCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -23,8 +26,12 @@ public class MediaPermissionDialog extends Dialog {
     AppCompatButton mediaPermissionDialogBtn, cancelMediaPermissionDialogBtn;
     TextView mediaPermissionDialogTitle, mediaPermissionDialogText;
 
+
+    private int storagePermissionCode;
+
     public MediaPermissionDialog(@NonNull Context context) {
         super(context);
+        this.storagePermissionCode = storagePermissionCode;
     }
 
     @Override
@@ -45,6 +52,28 @@ public class MediaPermissionDialog extends Dialog {
         mediaPermissionDialogButtons = findViewById(R.id.media_permission_dialog_buttons);
         mediaPermissionDialogBtn = findViewById(R.id.media_permission_dialog_btn);
         cancelMediaPermissionDialogBtn = findViewById(R.id.cancel_media_permission_dialog_btn);
+
+        mediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // User clicked to grant permission
+                // Request the actual permission from MainActivity
+                if (getContext() instanceof MainActivity) {
+                    ActivityCompat.requestPermissions((MainActivity) getContext(),
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            MainActivity.STORAGE_PERMISSION_CODE);
+                }
+                dismiss();
+            }
+        });
+
+        cancelMediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // User cancelled the dialog
+                dismiss();
+            }
+        });
 
     }
 
