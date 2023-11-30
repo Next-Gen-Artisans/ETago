@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Check if we should show an explanation
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 // Show custom media permission dialog
-                MediaPermissionDialog mediaPermissionDialog = new MediaPermissionDialog(this);
+                MediaPermissionDialog mediaPermissionDialog = new MediaPermissionDialog(this, STORAGE_PERMISSION_CODE);
                 mediaPermissionDialog.show();
             } else {
                 // No explanation needed, we can request the permission.
@@ -202,8 +202,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-
-
 
 
     private void updateFirestoreUserAgreedMedia() {
