@@ -50,6 +50,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -173,14 +174,12 @@ public class SignUpActivity extends AppCompatActivity {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username, email, password;
-
-                username = String.valueOf(userSignupUsername);
-                email = userSignupEmail.getText().toString();
-                password = userSignupPass.getText().toString();
+                String username = userSignupUsername.getText().toString();
+                String email = userSignupEmail.getText().toString();
+                String password = userSignupPass.getText().toString();
 
                 if (TextUtils.isEmpty(username)) {
-                    Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Enter username.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(email)) {
@@ -188,42 +187,36 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Enter password.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Before your Firebase Authentication code, show terms and conditions
+                customSignInDialog.setMessage("Creating account...");
+                customSignInDialog.showAuthProgress(true);
+                customSignInDialog.setProceedButtonVisible(false);
+                customSignInDialog.show();
 
+                // Create user with Firebase Auth
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                // Dismiss the progress dialog when Firebase task is complete
-                                //showTermsDialog();
-
-                                if (task.isSuccessful()) {
+                                if (!task.isSuccessful()) {
+                                    if (task.getException() != null) {
+                                        Log.e(TAG, "Failed to create account: " + task.getException().getMessage());
+                                        // Show more descriptive error based on the exception
+                                        customSignInDialog.setMessage(task.getException().getMessage());
+                                        customSignInDialog.setProceedButtonVisible(true);
+                                    } else {
+                                        Log.e(TAG, "Failed to create account for an unknown reason.");
+                                        customSignInDialog.setMessage("Failed to create account for an unknown reason.");
+                                        customSignInDialog.setProceedButtonVisible(true);
+                                    }
+                                    customSignInDialog.showAuthFailedProgress(false);
+                                } else {
                                     FirebaseUser user = mAuth.getCurrentUser();
 
-                                    // Show the custom dialog with progress
-                                    customSignInDialog.setMessage("Creating account...");
-                                    customSignInDialog.showAuthProgress(true);
-                                    customSignInDialog.setProceedButtonVisible(false);
-                                    customSignInDialog.show();
-
-                                    FirebaseAuth var = FirebaseAuth.getInstance();
-                                    var.signOut();
-
-                                    Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-                                    startActivity(i);
-                                    finish();
-
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    // Handle error
-                                    // Update dialog to show error message
-                                    customSignInDialog.setMessage("Creating account failed.");
-                                    customSignInDialog.showAuthFailedProgress(false);
-
+                                    createUserInFirestoreManual(user, username);
                                 }
                             }
                         });
@@ -239,11 +232,10 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 customSignInDialog.dismiss(); // Dismiss the dialog
-                updateUI(); // Call updateUI when the proceed button is clicked
+                promptLogin(); // Call updateUI when the proceed button is clicked
 
             }
         });
-
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -270,6 +262,39 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    private void createUserInFirestoreManual(FirebaseUser firebaseUser, String username) {
+        // Prepare user data
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("email", firebaseUser.getEmail());
+        userMap.put("numCensoredImgs", 0);
+        userMap.put("profilePic", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "default_profile_pic_url");
+        userMap.put("userAgreedMedia", false);
+        userMap.put("userAgreedTermsAndPrivacyPolicy", false);
+        userMap.put("userID", firebaseUser.getUid());
+        userMap.put("username", username);
+        // Add other user details as needed
+
+        // Store in Firestore
+        db.collection("Users").document(firebaseUser.getUid())
+                .set(userMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        customSignInDialog.setMessage("Account created successfully.");
+                        customSignInDialog.showAuthProgress(false);
+                        customSignInDialog.setProceedButtonVisible(true);
+                        // Redirect to login or main activity as required
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        customSignInDialog.setMessage("Failed to create account.");
+                        customSignInDialog.showAuthFailedProgress(false);
+                    }
+                });
+    }
+
     int RC_SIGN_IN = 40;
 
     private void googleSignIn() {
@@ -289,7 +314,7 @@ public class SignUpActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
                 //TODO TERMS AND CONDITIONS
-                //showTermsDialog();
+
 
                 // Show the custom dialog with progress
                 customSignInDialog.setMessage("Creating account...");
@@ -311,57 +336,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void showTermsDialog() {
-        termsOfServiceDialog = new TermsOfServiceDialog(this);
-
-
-        termsOfServiceDialog.termsText.setOnClickListener(view -> {
-            openWebView("https://drive.google.com/file/d/1gsOzWWpFXeKpeeb5aZ5OsB1QfXCZDI6D/view?usp=drive_link");
-        });
-        termsOfServiceDialog.privacyText.setOnClickListener(view -> {
-            openWebView("https://drive.google.com/file/d/1ecGdBb3ygro_43CvgehtJ6DNcljnC03O/view?usp=drive_link");
-        });
-
-        termsOfServiceDialog.agreeTermsDialogBtn.setOnClickListener(view -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                FirebaseFirestore.getInstance()
-                        .collection("Users")
-                        .document(user.getUid())
-                        .update("userAgreedTermsAndPrivacyPolicy", true)
-                        .addOnSuccessListener(aVoid -> {
-                            Log.d(TAG, "User agreement updated");
-                            termsOfServiceDialog.dismiss();
-                            // Redirect the user to the LoginActivity or main app screen
-                            Intent i = new Intent(SignUpActivity.this, MainActivity.class);
-                            startActivity(i);
-                            finish();
-                        })
-                        .addOnFailureListener(e -> Log.d(TAG, "Error updating user agreement", e));
-            } else {
-                // Handle the case where the user is null
-                Log.e(TAG, "User is null, cannot update Firestore");
-            }
-        });
-
-        termsOfServiceDialog.setOnCancelListener(dialogInterface -> {
-            finish();
-        });
-
-        termsOfServiceDialog.show();
-    }
-
-    private void openWebView(String url) {
-        // Intent to open WebView Activity
-        Intent intent = new Intent(this, TermsAndConditionsWebView.class);
-        intent.putExtra("url", url);
-        startActivity(intent);
-    }
-
-
-
-
-
     private void firebaseAuth(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -376,11 +350,11 @@ public class SignUpActivity extends AppCompatActivity {
 
                             } else {
                                 // Authentication failed
-                                customSignInDialog.setMessage("Authentication failed.");
+                                customSignInDialog.setMessage("Creating account failed.");
                                 customSignInDialog.showAuthFailedProgress(false);
                             }
                         } else {
-                            // Handle the sign in error (e.g., display a message)
+                            Log.d(TAG, "Authenticating user failed.");
                         }
                     }
                 });
@@ -409,7 +383,7 @@ public class SignUpActivity extends AppCompatActivity {
                         createUserInFirestore(firebaseUser);
                     }
                 } else {
-                    // Handle errors here
+                    Log.d(TAG, "Checking user in firestore failed.");
                 }
             }
         });
@@ -452,7 +426,7 @@ public class SignUpActivity extends AppCompatActivity {
         finish();
     }
 
-    private void promptLogin(){
+    private void promptLogin() {
         mGoogleSignInClient.signOut();
         //mAuth.signOut();
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);

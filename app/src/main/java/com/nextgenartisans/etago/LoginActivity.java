@@ -84,6 +84,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+        // Dismiss the dialog if it's showing
+        if (customSignInDialog.isShowing()) {
+            customSignInDialog.dismiss();
+        }
+
         finish();
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
@@ -187,9 +192,15 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Enter password.", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                // Show the custom dialog indicating progress
+                customSignInDialog.setMessage("Logging in...");
+                customSignInDialog.showAuthProgress(true);
+                customSignInDialog.setProceedButtonVisible(false);
+                customSignInDialog.show();
 
 
                 mAuth.signInWithEmailAndPassword(email, password)
@@ -198,19 +209,26 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
                                 if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Toast.makeText(getApplicationContext(), "Login Successful.",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(i);
-                                    finish();
+                                    //Update dialog
 
-                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                    // Sign in success, check if user exists in Firestore
+                                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                                    if (firebaseUser != null) {
+                                        checkUserInFirestore(firebaseUser);
+                                    }
 
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.makeText(LoginActivity.this, "Incorrect credentials.",
                                             Toast.LENGTH_SHORT).show();
+
+                                    // Show the custom dialog indicating failed authentication progress
+                                    customSignInDialog.setMessage("Incorrect credentials.");
+                                    customSignInDialog.showAuthProgress(true);
+                                    customSignInDialog.showAuthFailedProgress(false);
+                                    customSignInDialog.setProceedButtonVisible(true);
+
 
                                 }
                             }
@@ -336,43 +354,44 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUserInFirestore(FirebaseUser firebaseUser) {
-        DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document != null && document.exists()) {
-                        // User already exists in Firestore, just log in
-                        Log.d(TAG, "User already exists in Firestore.");
+        db.collection("Users").document(firebaseUser.getUid())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            // User exists in Firestore, proceed to main activity
+                            customSignInDialog.setMessage("Authentication successful.");
+                            customSignInDialog.showAuthProgress(false);
+                            customSignInDialog.setProceedButtonVisible(true);
+                            customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    updateUI();
+                                }
+                            });
+                        } else {
+                            // User does not exist in Firestore, prompt to sign up
+                            customSignInDialog.setMessage("No account found with this email. Please sign up.");
+                            customSignInDialog.showAuthFailedProgress(false);
+                            customSignInDialog.setProceedButtonVisible(true);
+                            customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    promptSignUp();
+                                }
+                            });
 
-                        // Redirect to main activity or update UI
-                        // Authentication success
-                        customSignInDialog.setMessage("Account authenticated.");
-                        customSignInDialog.showAuthProgress(false); // Show check icon
-                        customSignInDialog.setProceedButtonVisible(true); // Show proceed button
-
-
-                    } else {
-                        customSignInDialog.setMessage("Account does not exist.");
-                        customSignInDialog.showAuthFailedProgress(false); // Show check icon
-                        //customSignInDialog.setProceedButtonVisible(true); // Show proceed button
-
-                        // User does not exist, prompt to sign up
-                        promptSignUp();
-
-                        //createUserInFirestore(firebaseUser);
+                        }
                     }
-                } else {
-                    customSignInDialog.setMessage("Account does not exist.");
-                    customSignInDialog.showAuthFailedProgress(false); // Show check icon
-                    //customSignInDialog.setProceedButtonVisible(true); // Show proceed button
-
-                    // User does not exist, prompt to sign up
-                    promptSignUp();
-                }
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        customSignInDialog.setMessage("Failed to check Firestore: " + e.getMessage());
+                        customSignInDialog.showAuthFailedProgress(false);
+                    }
+                });
     }
 
     private void createUserInFirestore(FirebaseUser firebaseUser) {

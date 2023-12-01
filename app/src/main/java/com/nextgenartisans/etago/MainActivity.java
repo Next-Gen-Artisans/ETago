@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -71,6 +74,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Call the method to load user data when the activity starts
+        loadUserData();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         } else {
             // Set the username and email based on the Firebase user's information
+            loadUserData();
             loadUserProfilePicture();
             String username = user.getDisplayName(); // Replace with your user data
             String email = user.getEmail(); // Replace with your user data
@@ -190,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+
     private void loadUserProfilePicture() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Users") // Replace with your actual collection name
@@ -203,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             if (imageUrl != null && !imageUrl.isEmpty()) {
                                 Glide.with(MainActivity.this)
                                         .load(imageUrl)
+                                        .placeholder(R.drawable.round_bg)
                                         .into(userProfilePic);
                             }
                         }
@@ -214,6 +227,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         // Handle any errors
                     }
                 });
+    }
+
+    private void loadUserData() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
+
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()) {
+                        // Extract the profile picture, username, and email
+                        String profilePicUrl = documentSnapshot.getString("profilePic");
+                        String username = documentSnapshot.getString("username");
+                        String email = documentSnapshot.getString("email");
+
+                        // Update the UI with the retrieved data
+                        updateUI(profilePicUrl, username, email);
+                    } else {
+                        // Document does not exist, handle this case
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Handle the error
+                }
+            });
+        }
+    }
+
+    private void updateUI(String profilePicUrl, String username, String email) {
+        // Set the profile picture using Glide or another image loading library
+        if (profilePicUrl != null && !profilePicUrl.equals("default_profile_pic_url")) {
+            Glide.with(MainActivity.this)
+                    .load(profilePicUrl)
+                    .placeholder(R.drawable.round_bg) // Replace with your default image
+                    .into(userProfilePic);
+        } else {
+            userProfilePic.setImageResource(R.drawable.round_bg); // Set default image
+        }
+
+        // Set the username and email
+        usernameTextView.setText(username != null ? username : "Username");
+        emailTextView.setText(email != null ? email : "Email");
     }
 
     public void goToWelcome() {
