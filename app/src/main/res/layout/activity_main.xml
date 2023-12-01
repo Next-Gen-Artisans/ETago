@@ -91,14 +91,6 @@
 
                         />
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/user_image"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/user_alt"
-                        android:layout_marginLeft="10dp"
-                        />
-
 
                 </LinearLayout>
 
@@ -123,6 +115,7 @@
                         >
 
                         <TextView
+                            android:id="@+id/cardview_capture_txt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"
@@ -165,6 +158,7 @@
                         >
 
                         <TextView
+                            android:id="@+id/cardview_upload_txt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAlignment="center"

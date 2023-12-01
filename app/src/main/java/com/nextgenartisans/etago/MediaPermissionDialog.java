@@ -29,7 +29,7 @@ public class MediaPermissionDialog extends Dialog {
 
     private int storagePermissionCode;
 
-    public MediaPermissionDialog(@NonNull Context context, int storagePermissionCode) {
+    public MediaPermissionDialog(@NonNull Context context) {
         super(context);
         this.storagePermissionCode = storagePermissionCode;
     }

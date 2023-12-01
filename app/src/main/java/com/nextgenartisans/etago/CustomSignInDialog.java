@@ -26,8 +26,6 @@ public class CustomSignInDialog extends Dialog {
     private AppCompatButton proceedButton;
 
     public CustomSignInDialog(Context context) {
-
-
         super(context, R.style.Theme_ETago);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         init();

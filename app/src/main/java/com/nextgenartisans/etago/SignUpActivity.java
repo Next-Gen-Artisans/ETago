@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class SignUpActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     CallbackManager mCallbackManager;
     private CustomSignInDialog customSignInDialog;
+    private TermsOfServiceDialog termsOfServiceDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,23 +192,23 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Before your Firebase Authentication code:
-                ProgressDialogFragment progressDialogFragment = new ProgressDialogFragment();
-                progressDialogFragment.show(getSupportFragmentManager(), "progress_dialog");
+                // Before your Firebase Authentication code, show terms and conditions
 
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 // Dismiss the progress dialog when Firebase task is complete
-                                progressDialogFragment.dismiss();
+                                //showTermsDialog();
 
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = mAuth.getCurrentUser();
 
-
-                                    Toast.makeText(SignUpActivity.this, "Account created.",
-                                            Toast.LENGTH_SHORT).show();
+                                    // Show the custom dialog with progress
+                                    customSignInDialog.setMessage("Creating account...");
+                                    customSignInDialog.showAuthProgress(true);
+                                    customSignInDialog.setProceedButtonVisible(false);
+                                    customSignInDialog.show();
 
                                     FirebaseAuth var = FirebaseAuth.getInstance();
                                     var.signOut();
@@ -217,8 +219,10 @@ public class SignUpActivity extends AppCompatActivity {
 
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                    // Handle error
+                                    // Update dialog to show error message
+                                    customSignInDialog.setMessage("Creating account failed.");
+                                    customSignInDialog.showAuthFailedProgress(false);
 
                                 }
                             }
@@ -239,6 +243,8 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -282,6 +288,9 @@ public class SignUpActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
+                //TODO TERMS AND CONDITIONS
+                //showTermsDialog();
+
                 // Show the custom dialog with progress
                 customSignInDialog.setMessage("Creating account...");
                 customSignInDialog.showAuthProgress(true);
@@ -301,6 +310,57 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
     }
+
+    public void showTermsDialog() {
+        termsOfServiceDialog = new TermsOfServiceDialog(this);
+
+
+        termsOfServiceDialog.termsText.setOnClickListener(view -> {
+            openWebView("https://drive.google.com/file/d/1gsOzWWpFXeKpeeb5aZ5OsB1QfXCZDI6D/view?usp=drive_link");
+        });
+        termsOfServiceDialog.privacyText.setOnClickListener(view -> {
+            openWebView("https://drive.google.com/file/d/1ecGdBb3ygro_43CvgehtJ6DNcljnC03O/view?usp=drive_link");
+        });
+
+        termsOfServiceDialog.agreeTermsDialogBtn.setOnClickListener(view -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                FirebaseFirestore.getInstance()
+                        .collection("Users")
+                        .document(user.getUid())
+                        .update("userAgreedTermsAndPrivacyPolicy", true)
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "User agreement updated");
+                            termsOfServiceDialog.dismiss();
+                            // Redirect the user to the LoginActivity or main app screen
+                            Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+                            startActivity(i);
+                            finish();
+                        })
+                        .addOnFailureListener(e -> Log.d(TAG, "Error updating user agreement", e));
+            } else {
+                // Handle the case where the user is null
+                Log.e(TAG, "User is null, cannot update Firestore");
+            }
+        });
+
+        termsOfServiceDialog.setOnCancelListener(dialogInterface -> {
+            finish();
+        });
+
+        termsOfServiceDialog.show();
+    }
+
+    private void openWebView(String url) {
+        // Intent to open WebView Activity
+        Intent intent = new Intent(this, TermsAndConditionsWebView.class);
+        intent.putExtra("url", url);
+        startActivity(intent);
+    }
+
+
+
+
 
     private void firebaseAuth(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);

@@ -2,19 +2,15 @@ package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -25,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     Toolbar toolbar;
 
-    ImageButton imageButton;
-
     FirebaseAuth auth;
     FirebaseUser user;
 
@@ -59,19 +54,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     View headerView;
 
     // Find the TextViews by their IDs
-    TextView usernameTextView;
+    TextView usernameTextView, usernameHeaderTextView, cardViewCaptureTxt, cardViewUploadTxt;
     TextView emailTextView;
     ShapeableImageView userProfilePic;
+
+    //Main Buttons
+    CardView cardViewCapture, cardViewUpload;
+    LinearLayout buttonContainers, cardViewCaptureContainer, cardViewUploadContainer;
+    ImageButton captureImageButton, uploadImageButton;
 
 
     LogoutDialog logoutDialog;
 
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
-
-    //PHOTO PICKER
-    ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +80,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
 
-
         setContentView(R.layout.activity_main);
 
-
+        //Firebase
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
@@ -99,11 +94,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.custom_toolbar);
 
+        //Containers
+        cardViewCapture = findViewById(R.id.cardview_capture);
+        cardViewUpload = findViewById(R.id.cardview_upload);
+        buttonContainers = findViewById(R.id.button_containers);
+        cardViewCaptureContainer = findViewById(R.id.cardview_capture_container);
+        cardViewUploadContainer = findViewById(R.id.cardview_upload_container);
+
+
         //TextViews
         headerView = navigationView.getHeaderView(0);
         userProfilePic = (ShapeableImageView) headerView.findViewById(R.id.drawer_user_profile_pic);
         usernameTextView = (TextView) headerView.findViewById(R.id.drawer_username);
         emailTextView = (TextView) headerView.findViewById(R.id.drawer_user_email);
+        usernameHeaderTextView = findViewById(R.id.user_name);
+        cardViewCaptureTxt = findViewById(R.id.cardview_capture_txt);
+        cardViewUploadTxt = findViewById(R.id.cardview_upload_txt);
+
+        //Main Buttons
+        captureImageButton = findViewById(R.id.capture_image_btn);
+        uploadImageButton = findViewById(R.id.upload_image_btn);
+
 
         if (user == null) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
@@ -130,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
         }
+
+        //TODO DISPLAY TERMS AND CONDITIONS, REQUEST PERMISSIONS
+
 
 
         //Toolbar
@@ -164,70 +178,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-
-        //TODO CHECK FOR MEDIA PERMISSIONS
-        checkForPermissions();
-
-    }
-
-
-    private void checkForPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Check if we should show an explanation
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Show custom media permission dialog
-                MediaPermissionDialog mediaPermissionDialog = new MediaPermissionDialog(this, STORAGE_PERMISSION_CODE);
-                mediaPermissionDialog.show();
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        STORAGE_PERMISSION_CODE);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Permission granted.");
-                updateFirestoreUserAgreedMedia();
-            } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Permission denied.");
+        uploadImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
             }
-        }
-    }
-
-
-    private void updateFirestoreUserAgreedMedia() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        if (user != null) {
-            db.collection("Users").document(user.getUid())
-                    .update("userAgreedMedia", true)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Successfully updated the document
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Handle the failure
-                            Log.w(TAG, "Error updating document", e);
-                        }
-                    });
-        } else {
-            // Handle the case where the user is null
-            Log.e(TAG, "User is null, cannot update Firestore");
-        }
+        });
     }
 
 
@@ -255,13 +211,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         // Handle any errors
                     }
                 });
-    }
-
-    public void goToWelcome() {
-        // Start the WelcomeActivity
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(MainActivity.this, Welcome.class);
-        startActivity(intent);
     }
 
     @Override
