@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Custom Dialogs
     LogoutDialog logoutDialog;
     ExitAppDialog exitAppDialog;
+    TermsOfServiceDialog termsOfServiceDialog;
 
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //On Back Pressed Variables
     private boolean doubleBackToExitPressedOnce = false;
     private Handler handler = new Handler();
+
+    //
 
     @Override
     protected void onStart() {
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Custom Dialogs
         logoutDialog = new LogoutDialog(MainActivity.this);
         exitAppDialog = new ExitAppDialog(MainActivity.this);
+        termsOfServiceDialog = new TermsOfServiceDialog(MainActivity.this);
 
         //Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -236,8 +240,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showTermsOfServiceDialog() {
-        TermsOfServiceDialog termsOfServiceDialog = new TermsOfServiceDialog(this);
-        termsOfServiceDialog.show();
+        if(!termsOfServiceDialog.isShowing()){
+            termsOfServiceDialog.show();
+        }else{
+            Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
