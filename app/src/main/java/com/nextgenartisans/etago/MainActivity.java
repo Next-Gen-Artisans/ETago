@@ -2,15 +2,19 @@ package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -21,7 +25,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -211,6 +214,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         // Handle any errors
                     }
                 });
+    }
+
+    public void goToWelcome() {
+        // Start the WelcomeActivity
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(MainActivity.this, Welcome.class);
+        startActivity(intent);
     }
 
     @Override
