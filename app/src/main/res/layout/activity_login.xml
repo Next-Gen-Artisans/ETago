@@ -87,6 +87,7 @@
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
                     android:inputType="textEmailAddress"
+                    android:textColor="@color/alt_black"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -120,6 +121,7 @@
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
                     android:inputType="textPassword"
+                    android:textColor="@color/alt_black"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>

@@ -85,6 +85,7 @@
                 android:background="@drawable/outline_drawable"
                 android:backgroundTint="@color/orange"
                 android:inputType="textEmailAddress"
+                android:textColor="@color/alt_black"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
