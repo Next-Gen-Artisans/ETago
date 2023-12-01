@@ -208,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (currentUser != null) {
             DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
-
             docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -350,6 +349,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Close the drawer if it's open
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
+            moveTaskToBack(true); // Move the task containing this activity to the back of the activity stack.
             // Check if user is logged in
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 // User is not logged in, so don't do anything or redirect to the Welcome/Log in Activity

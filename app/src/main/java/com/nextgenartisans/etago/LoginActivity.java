@@ -90,8 +90,9 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
-        this.finish();
+        finish();
     }
 
     @Override
@@ -209,7 +210,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                     //Update dialog
-
 
                                     // Sign in success, check if user exists in Firestore
                                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
