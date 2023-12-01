@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,6 +75,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
+
+    //On Back Pressed Variables
+    private boolean doubleBackToExitPressedOnce = false;
+    private Handler handler = new Handler();
 
     @Override
     protected void onStart() {
@@ -349,19 +354,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Close the drawer if it's open
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            moveTaskToBack(true); // Move the task containing this activity to the back of the activity stack.
-            // Check if user is logged in
-            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-                // User is not logged in, so don't do anything or redirect to the Welcome/Log in Activity
-                // Example: Redirect to Welcome Activity
-                Intent intent = new Intent(MainActivity.this, Welcome.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            } else {
-                // User is logged in, follow the default behavior
+            //moveTaskToBack(true); // Move the task containing this activity to the back of the activity stack.
+            // If doubleBackToExitPressedOnce is true, finish the activity
+            if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
+                return;
             }
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            // If the user does not press back within 2 seconds, reset the flag
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+
         }
     }
 
