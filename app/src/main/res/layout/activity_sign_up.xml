@@ -75,6 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/gray"
+                app:cursorColor="@color/alt_black"
                 >
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -82,11 +83,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Username"
-                    android:fontFamily="@font/montserrat_light"
+                    android:fontFamily="@font/montserrat_regular"
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
                     android:inputType="text"
                     android:textColor="@color/alt_black"
+                    android:textCursorDrawable="@drawable/cursor_drawable"
                     />
 
 
@@ -108,6 +110,7 @@
                 android:layout_height="wrap_content"
                 app:passwordToggleTint="@color/gray"
                 android:textColorHint="@color/gray"
+                app:cursorColor="@color/alt_black"
                 >
 
 
@@ -116,11 +119,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email"
-                    android:fontFamily="@font/montserrat_light"
+                    android:fontFamily="@font/montserrat_regular"
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
                     android:inputType="textEmailAddress"
                     android:textColor="@color/alt_black"
+                    android:textCursorDrawable="@drawable/cursor_drawable"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -142,6 +146,7 @@
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/gray"
                 android:textColorHint="@color/gray"
+                app:cursorColor="@color/alt_black"
                 >
 
 
@@ -150,11 +155,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:fontFamily="@font/montserrat_light"
+                    android:fontFamily="@font/montserrat_regular"
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
                     android:inputType="textPassword"
                     android:textColor="@color/alt_black"
+                    android:textCursorDrawable="@drawable/cursor_drawable"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>

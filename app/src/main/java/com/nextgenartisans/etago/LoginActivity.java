@@ -284,7 +284,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(LoginActivity.this, ForgotPass.class);
                 startActivity(i);
-                finish();
             }
         });
 

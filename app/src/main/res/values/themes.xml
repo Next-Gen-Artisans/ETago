@@ -15,6 +15,11 @@
         <item name="iconTint">@color/alt_black</item>
     </style>
 
+    <!--TEXT CURSOR-->
+    <style name="textInput">
+        <item name="android:textCursorDrawable">@color/alt_black</item>
+    </style>
+
     <!--Rounded Image View-->
     <style name="roundedImageView">
         <item name="cornerFamily">rounded</item>

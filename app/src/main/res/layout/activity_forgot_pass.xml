@@ -73,6 +73,7 @@
             android:layout_height="wrap_content"
             android:textColorHint="@color/gray"
             android:layout_marginTop="50dp"
+            app:cursorColor="@color/alt_black"
             >
 
             <com.google.android.material.textfield.TextInputEditText
@@ -80,12 +81,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="EMail"
-                android:fontFamily="@font/montserrat_light"
+                android:fontFamily="@font/montserrat_regular"
                 android:textSize="14sp"
                 android:background="@drawable/outline_drawable"
                 android:backgroundTint="@color/orange"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/alt_black"
+                android:textCursorDrawable="@drawable/cursor_drawable"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>

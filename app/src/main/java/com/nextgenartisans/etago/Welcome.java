@@ -39,7 +39,6 @@ public class Welcome extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(Welcome.this, LoginActivity.class);
                 startActivity(i);
-                finish();
 
             }
         });
@@ -49,7 +48,6 @@ public class Welcome extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(Welcome.this, SignUpActivity.class);
                 startActivity(i);
-                finish();
             }
         });
 
