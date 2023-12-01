@@ -70,8 +70,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LinearLayout buttonContainers, cardViewCaptureContainer, cardViewUploadContainer;
     ImageButton captureImageButton, uploadImageButton;
 
-
+    //Custom Dialogs
     LogoutDialog logoutDialog;
+    ExitAppDialog exitAppDialog;
 
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
@@ -107,8 +108,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        //Custom Logout Dialog
+        //Custom Dialogs
         logoutDialog = new LogoutDialog(MainActivity.this);
+        exitAppDialog = new ExitAppDialog(MainActivity.this);
 
         //Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -355,24 +357,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             //moveTaskToBack(true); // Move the task containing this activity to the back of the activity stack.
-            // If doubleBackToExitPressedOnce is true, finish the activity
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-            // If the user does not press back within 2 seconds, reset the flag
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
-            }, 2000);
+            exitAppDialog.show();
+//            // If doubleBackToExitPressedOnce is true, finish the activity
+//            if (doubleBackToExitPressedOnce) {
+//                super.onBackPressed();
+//                return;
+//            }
+//
+//            this.doubleBackToExitPressedOnce = true;
+//            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+//
+//            // If the user does not press back within 2 seconds, reset the flag
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    doubleBackToExitPressedOnce = false;
+//                }
+//            }, 2000);
 
         }
+        super.onBackPressed();
     }
 
 

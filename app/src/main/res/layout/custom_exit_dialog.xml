@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="25dp"
+    android:background="@drawable/forgot_pass_round_bg"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:id="@+id/exit_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exiting E-Tago"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/exit_dialog_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Are you sure want to exit app?"
+        android:fontFamily="@font/montserrat_medium"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="20dp" />
+
+    <LinearLayout
+        android:id="@+id/exit_dialog_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        >
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancel_exit_dialog_btn"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@color/transparent"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/exit_dialog_btn"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:text="Exit"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/return_btn_bg"
+            />
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>
