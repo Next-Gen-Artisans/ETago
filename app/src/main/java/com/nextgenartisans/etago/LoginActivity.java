@@ -89,10 +89,9 @@ public class LoginActivity extends AppCompatActivity {
             customSignInDialog.dismiss();
         }
 
-        finish();
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
-        finish();
+        this.finish();
     }
 
     @Override

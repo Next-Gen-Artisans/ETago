@@ -21,9 +21,6 @@
             android:name=".TermsAndConditionsWebView"
             android:exported="false" />
         <activity
-            android:name=".TermsAndConditionsWebView"
-            android:exported="false" />
-        <activity
             android:name=".AboutAppActivity"
             android:exported="false" />
         <activity

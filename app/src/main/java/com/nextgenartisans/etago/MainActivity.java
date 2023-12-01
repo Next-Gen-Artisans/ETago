@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         // Call the method to load user data when the activity starts
         loadUserData();
+
+        // Show terms of service dialog
+        checkUserAgreement();
     }
 
     @Override
@@ -159,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //TODO DISPLAY TERMS AND CONDITIONS, REQUEST PERMISSIONS
 
 
-
         //Toolbar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -200,6 +202,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    private void checkUserAgreement() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
+
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists() && documentSnapshot.contains("userAgreedTermsAndPrivacyPolicy")) {
+                        boolean hasAgreed = documentSnapshot.getBoolean("userAgreedTermsAndPrivacyPolicy");
+                        if (!hasAgreed) {
+                            // User has not agreed yet, show the terms of service dialog
+                            showTermsOfServiceDialog();
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "User did not agree to terms and privacy policy!");
+                }
+            });
+        }
+    }
+
+    private void showTermsOfServiceDialog() {
+        TermsOfServiceDialog termsOfServiceDialog = new TermsOfServiceDialog(this);
+        termsOfServiceDialog.show();
+    }
 
 
     private void loadUserProfilePicture() {

@@ -1,5 +1,7 @@
 package com.nextgenartisans.etago;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -16,7 +19,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class TermsOfServiceDialog extends Dialog {
     LinearLayout termsPrivacyLayout;
@@ -26,6 +34,7 @@ public class TermsOfServiceDialog extends Dialog {
 
     public TermsOfServiceDialog(@NonNull Context context) {
         super(context);
+        setCancelable(false);
     }
 
     @Override
@@ -49,28 +58,51 @@ public class TermsOfServiceDialog extends Dialog {
         agreeTermsDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Sign out from FirebaseAuth
-                FirebaseAuth.getInstance().signOut();
-
-                // Create an Intent to start the Welcome activity
-                Intent intent = new Intent(getContext(), Welcome.class);
-
-                // Set flags to clear the activity stack and start a new task
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                // Start the Welcome activity
-                getContext().startActivity(intent);
-
-                // Dismiss the dialog
-                dismiss();
-
-                // If the context is an instance of an Activity, close it
-                if (getContext() instanceof Activity) {
-                    ((Activity) getContext()).finish();
+                // Update the Firestore document for the user to indicate they have agreed
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    DocumentReference userDocRef = db.collection("Users").document(currentUser.getUid());
+                    userDocRef.update("userAgreedTermsAndPrivacyPolicy", true)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    // Successfully updated the user's agreement status
+                                    dismiss();
+                                    // Proceed with the main activity or other logic after the user has agreed
+                                    Log.d(TAG,"USER AGREED ON DIALOG");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG,"USER DID NOT AGREE ON DIALOG");
+                                }
+                            });
                 }
             }
         });
 
+        termsText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWebView("https://drive.google.com/file/d/1gsOzWWpFXeKpeeb5aZ5OsB1QfXCZDI6D/view?usp=drive_link");
+            }
+        });
+
+        privacyText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWebView("https://drive.google.com/file/d/1ecGdBb3ygro_43CvgehtJ6DNcljnC03O/view?usp=drive_link");
+            }
+        });
+
+    }
+
+    private void openWebView(String url) {
+        Intent intent = new Intent(getContext(), TermsAndConditionsWebView.class);
+        intent.putExtra("url", url);
+        getContext().startActivity(intent);
     }
 
 
