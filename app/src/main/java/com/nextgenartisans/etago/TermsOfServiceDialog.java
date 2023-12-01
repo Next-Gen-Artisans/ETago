@@ -2,7 +2,6 @@ package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
@@ -70,12 +70,14 @@ public class TermsOfServiceDialog extends Dialog {
                                     // Successfully updated the user's agreement status
                                     dismiss();
                                     // Proceed with the main activity or other logic after the user has agreed
+                                    Toast.makeText(getContext(), "You have agreed to E-Tago's terms and conditions.", Toast.LENGTH_LONG).show();
                                     Log.d(TAG,"USER AGREED ON DIALOG");
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getContext(), "You have not agreed to E-Tago's terms and conditions due to app error.", Toast.LENGTH_LONG).show();
                                     Log.d(TAG,"USER DID NOT AGREE ON DIALOG");
                                 }
                             });
@@ -86,23 +88,25 @@ public class TermsOfServiceDialog extends Dialog {
         termsText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openWebView("https://drive.google.com/file/d/1gsOzWWpFXeKpeeb5aZ5OsB1QfXCZDI6D/view?usp=drive_link");
+                openWebView("https://drive.google.com/file/d/1gsOzWWpFXeKpeeb5aZ5OsB1QfXCZDI6D/view?usp=drive_link", "Terms of Service");
             }
         });
 
         privacyText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openWebView("https://drive.google.com/file/d/1ecGdBb3ygro_43CvgehtJ6DNcljnC03O/view?usp=drive_link");
+                openWebView("https://drive.google.com/file/d/1ecGdBb3ygro_43CvgehtJ6DNcljnC03O/view?usp=drive_link", "Privacy Policy");
             }
         });
 
     }
 
-    private void openWebView(String url) {
+    private void openWebView(String url, String webViewText) {
         Intent intent = new Intent(getContext(), TermsAndConditionsWebView.class);
         intent.putExtra("url", url);
+        intent.putExtra("webViewText", webViewText);
         getContext().startActivity(intent);
+
     }
 
 

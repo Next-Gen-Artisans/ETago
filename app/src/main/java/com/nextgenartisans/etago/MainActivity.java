@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loadUserData();
 
         // Show terms of service dialog
+
         checkUserAgreement();
     }
 
@@ -242,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showTermsOfServiceDialog() {
         if(!termsOfServiceDialog.isShowing()){
             termsOfServiceDialog.show();
+            Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
         }
