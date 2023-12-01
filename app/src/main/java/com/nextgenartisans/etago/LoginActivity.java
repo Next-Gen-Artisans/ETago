@@ -408,7 +408,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void promptSignUp() {
         // Prompt the user to sign up
-        FirebaseAuth.getInstance().signOut();
         Toast.makeText(LoginActivity.this, "No existing account found. Please sign up first.", Toast.LENGTH_LONG).show();
         customSignInDialog.dismiss();
         Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
