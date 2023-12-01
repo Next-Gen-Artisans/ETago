@@ -84,6 +84,7 @@
                 android:textSize="14sp"
                 android:background="@drawable/outline_drawable"
                 android:backgroundTint="@color/orange"
+                android:inputType="textEmailAddress"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>

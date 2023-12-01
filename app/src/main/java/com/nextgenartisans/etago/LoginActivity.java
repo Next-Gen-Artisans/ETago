@@ -373,6 +373,9 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // User does not exist in Firestore, prompt to sign up
                             customSignInDialog.setMessage("No account found with this email. Please sign up.");
+                            //TODO SIGNOUT ON FAILED NO ACCOUNT
+                            FirebaseAuth.getInstance().signOut();
+
                             customSignInDialog.showAuthFailedProgress(false);
                             customSignInDialog.setProceedButtonVisible(true);
                             customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {

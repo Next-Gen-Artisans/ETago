@@ -85,6 +85,7 @@
                     android:fontFamily="@font/montserrat_light"
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
+                    android:inputType="text"
                     />
 
 
@@ -117,7 +118,7 @@
                     android:fontFamily="@font/montserrat_light"
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
-
+                    android:inputType="textEmailAddress"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -150,7 +151,7 @@
                     android:fontFamily="@font/montserrat_light"
                     android:textSize="14sp"
                     android:background="@drawable/custom_edittext_bg"
-
+                    android:inputType="textPassword"
                     />
 
             </com.google.android.material.textfield.TextInputLayout>

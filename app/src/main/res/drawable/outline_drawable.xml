@@ -4,5 +4,5 @@
     <stroke
         android:width="3dp"
         android:color="@color/dark_blue"/>
-    <corners android:radius="25dp" /> <!-- Adjust the radius for rounded corners -->
+    <corners android:radius="10dp" /> <!-- Adjust the radius for rounded corners -->
 </shape>
