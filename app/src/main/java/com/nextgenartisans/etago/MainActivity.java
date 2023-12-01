@@ -321,7 +321,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Set the username and email
         usernameTextView.setText(username != null ? username : "Username");
+        // Split the username to get the first name
+        if (username != null && !username.isEmpty()) {
+            String[] nameParts = username.split(" ");
+            String firstName = nameParts[0]+"!";
+            usernameHeaderTextView.setText(firstName);
+        } else {
+            usernameHeaderTextView.setText("Username");
+        }
+
         emailTextView.setText(email != null ? email : "Email");
+
+
     }
 
     public void goToWelcome() {
