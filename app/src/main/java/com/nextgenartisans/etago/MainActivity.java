@@ -206,12 +206,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        //TODO IMPLEMENT ANDROID APP
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
+
+        captureImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
     }
 
     private void checkUserAgreement() {
@@ -351,15 +360,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_profile1) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
+
         }
         if (id == R.id.nav_settings1) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
 
+
         }
         if (id == R.id.nav_about1) {
             Intent intent = new Intent(MainActivity.this, AboutAppActivity.class);
             startActivity(intent);
+
         } else if (id == R.id.nav_logout) {
             //Show Dialog
             logoutDialog.show();

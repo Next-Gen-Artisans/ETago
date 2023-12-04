@@ -18,6 +18,15 @@
         android:theme="@style/Theme.ETago"
         tools:targetApi="31">
         <activity
+            android:name=".EditPassActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditEmailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditUsernameActivity"
+            android:exported="false" />
+        <activity
             android:name=".TermsAndConditionsWebView"
             android:exported="false" />
         <activity
