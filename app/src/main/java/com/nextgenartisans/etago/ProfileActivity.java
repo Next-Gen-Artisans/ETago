@@ -189,7 +189,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, EditUsernameActivity.class);
                 startActivity(intent);
-
+                finish();
             }
         });
 
@@ -198,6 +198,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, EditEmailActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -206,6 +207,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, EditPassActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 

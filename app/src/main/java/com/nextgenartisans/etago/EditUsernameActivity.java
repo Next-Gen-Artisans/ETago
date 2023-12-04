@@ -1,10 +1,12 @@
 package com.nextgenartisans.etago;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -13,9 +15,19 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditUsernameActivity extends AppCompatActivity {
 
@@ -105,19 +117,98 @@ public class EditUsernameActivity extends AppCompatActivity {
             }
         });
 
+        //BACK BUTTON TO PROFILE ACTIVITY
         editUsernameBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent i = new Intent(EditUsernameActivity.this, ProfileActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        updateUsernameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String currentPassword = editUsernamePassInput.getText().toString();
+                String newUsername = editUsernameNewInput.getText().toString();
+                String confirmUsername = editUsernameConfirmInput.getText().toString();
+
+                // Initialize the custom dialog
+                CustomSignInDialog customSignInDialog = new CustomSignInDialog(EditUsernameActivity.this);
+
+                // Check if all fields are filled
+                if (currentPassword.isEmpty() || newUsername.isEmpty() || confirmUsername.isEmpty()) {
+                    Toast.makeText(EditUsernameActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Check if new username and confirm username match
+                if (!newUsername.equals(confirmUsername)) {
+                    Toast.makeText(EditUsernameActivity.this, "Usernames do not match.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Display the dialog indicating the authentication process is starting
+                customSignInDialog.setMessage("Authenticating...");
+                customSignInDialog.showAuthProgress(true);
+                customSignInDialog.show();
+
+                // Authenticate with Firebase
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+                    user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // Update username in Firestore
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("Users").document(user.getUid())
+                                        .update("username", newUsername)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                customSignInDialog.setMessage("Username updated successfully.");
+                                                customSignInDialog.showAuthProgress(false);
+
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                customSignInDialog.setMessage("Failed to update username.");
+                                                customSignInDialog.showAuthFailedProgress(true);
+
+                                            }
+                                        });
+                            } else {
+                                customSignInDialog.setMessage("Authentication failed.");
+                                customSignInDialog.showAuthFailedProgress(true);
+                            }
+                            customSignInDialog.setProceedButtonVisible(true);
+                            customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    customSignInDialog.dismiss();
+                                    finish();
+                                }
+                            });
+                        }
+                    });
+                }
 
             }
         });
 
-        editUsernameBackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
 
 
     }

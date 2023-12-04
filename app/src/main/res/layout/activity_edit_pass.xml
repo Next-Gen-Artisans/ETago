@@ -87,7 +87,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textColorHint="@color/gray"
-                    app:cursorColor="@color/alt_black">
+                    app:cursorColor="@color/alt_black"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/gray"
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_pass_pass_input"
@@ -110,7 +113,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textColorHint="@color/gray"
-                    app:cursorColor="@color/alt_black">
+                    app:cursorColor="@color/alt_black"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/gray"
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_pass_new_input"
@@ -133,7 +139,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textColorHint="@color/gray"
-                    app:cursorColor="@color/alt_black">
+                    app:cursorColor="@color/alt_black"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/gray"
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_pass_confirm_input"
