@@ -122,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.custom_toolbar);
 
+        // Inside onCreate method
+        navigationView.setCheckedItem(R.id.nav_home1);
+
         //Containers
         cardViewCapture = findViewById(R.id.cardview_capture);
         cardViewUpload = findViewById(R.id.cardview_upload);
@@ -354,21 +357,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        // Set the item as checked to update the UI
+        item.setChecked(true);
+
         if (id == R.id.nav_home1) {
             return true;
         }
         if (id == R.id.nav_profile1) {
+            navigationView.setCheckedItem(R.id.nav_profile1);
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
 
+
+
         }
         if (id == R.id.nav_settings1) {
+            navigationView.setCheckedItem(R.id.nav_settings1);
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
 
 
+
         }
         if (id == R.id.nav_about1) {
+            navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(MainActivity.this, AboutAppActivity.class);
             startActivity(intent);
 
