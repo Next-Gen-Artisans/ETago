@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago.profile;
+package com.nextgenartisans.etago;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +28,6 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 
 public class EditUsernameActivity extends AppCompatActivity {
 

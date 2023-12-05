@@ -1,19 +1,25 @@
-package com.nextgenartisans.etago.login_signup;
+package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,12 +48,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nextgenartisans.etago.MainActivity;
-import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.onboarding.Welcome;
-import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
-import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
-import com.nextgenartisans.etago.models.Users;
 
 import java.util.HashMap;
 import java.util.Map;

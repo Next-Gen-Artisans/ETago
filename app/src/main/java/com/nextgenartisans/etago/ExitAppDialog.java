@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago.dialogs;
+package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.nextgenartisans.etago.R;
 
 public class ExitAppDialog extends Dialog {
     LinearLayout exitDialogButtons;

@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago.dialogs;
+package com.nextgenartisans.etago;
 
 import android.app.Dialog;
 import android.content.Context;

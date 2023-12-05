@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago.dialogs;
+package com.nextgenartisans.etago;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,8 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.onboarding.TermsAndConditionsWebView;
 
 public class TermsOfServiceDialog extends Dialog {
     LinearLayout termsPrivacyLayout;

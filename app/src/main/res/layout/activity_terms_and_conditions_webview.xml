@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".onboarding.TermsAndConditionsWebView">
+    tools:context=".TermsAndConditionsWebView">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/home_header"

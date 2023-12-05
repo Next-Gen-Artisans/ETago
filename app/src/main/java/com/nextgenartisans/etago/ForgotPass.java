@@ -1,9 +1,17 @@
-package com.nextgenartisans.etago.profile;
+package com.nextgenartisans.etago;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -12,20 +20,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.content.ContextCompat;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.dialogs.ForgotPassDialogEditPass;
 
-public class ForgotPassEditPass extends AppCompatActivity {
+public class ForgotPass extends AppCompatActivity {
 
     LinearLayout forgotPassHeader, forgotPassBody;
     ImageButton forgotPassBackBtn;
@@ -51,7 +52,7 @@ public class ForgotPassEditPass extends AppCompatActivity {
         }
 
         //Set Content View
-        setContentView(R.layout.activity_forgot_pass_edit_pass);
+        setContentView(R.layout.activity_forgot_pass);
 
         //Set id for clickable text and buttons
         forgotPassHeader = findViewById(R.id.forgot_pass_header);
@@ -81,7 +82,7 @@ public class ForgotPassEditPass extends AppCompatActivity {
         forgotPassBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(ForgotPassEditPass.this, EditPassActivity.class);
+                Intent i = new Intent(ForgotPass.this, LoginActivity.class);
                 startActivity(i);
                 finish();
             }
@@ -90,7 +91,7 @@ public class ForgotPassEditPass extends AppCompatActivity {
         cancelPassResBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(ForgotPassEditPass.this, EditPassActivity.class);
+                Intent i = new Intent(ForgotPass.this, LoginActivity.class);
                 startActivity(i);
                 finish();
             }
@@ -103,7 +104,7 @@ public class ForgotPassEditPass extends AppCompatActivity {
             public void onClick(View view) {
                 String email = forgotPassUserEmail.getText().toString().trim();
                 if (email.isEmpty()) {
-                    Toast.makeText(ForgotPassEditPass.this, "Please enter your email address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgotPass.this, "Please enter your email address", Toast.LENGTH_SHORT).show();
                 } else {
                     // Show progress bar
                     forgotPassProgBar.setVisibility(View.VISIBLE);
@@ -119,12 +120,12 @@ public class ForgotPassEditPass extends AppCompatActivity {
                             if (task.isSuccessful()) {
 
                                 //Show Dialog
-                                ForgotPassDialogEditPass forgotPassDialogEditPass = new ForgotPassDialogEditPass(ForgotPassEditPass.this);
-                                forgotPassDialogEditPass.show();
+                                ForgotPassDialog forgotPassDialog = new ForgotPassDialog(ForgotPass.this);
+                                forgotPassDialog.show();
 
 
                             } else {
-                                Toast.makeText(ForgotPassEditPass.this, "Failed to send reset email: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(ForgotPass.this, "Failed to send reset email: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     });

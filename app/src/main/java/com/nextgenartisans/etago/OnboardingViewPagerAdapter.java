@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago.onboarding;
+package com.nextgenartisans.etago;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
-
-import com.nextgenartisans.etago.R;
 
 import org.w3c.dom.Text;
 

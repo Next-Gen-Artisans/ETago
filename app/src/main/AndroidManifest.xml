@@ -18,16 +18,16 @@
         android:theme="@style/Theme.ETago"
         tools:targetApi="31">
         <activity
-            android:name=".profile.EditPassActivity"
+            android:name=".EditPassActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.EditEmailActivity"
+            android:name=".EditEmailActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.EditUsernameActivity"
+            android:name=".EditUsernameActivity"
             android:exported="false" />
         <activity
-            android:name=".onboarding.TermsAndConditionsWebView"
+            android:name=".TermsAndConditionsWebView"
             android:exported="false" />
         <activity
             android:name=".AboutAppActivity"
@@ -36,31 +36,31 @@
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".profile.ProfileActivity"
+            android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".login_signup.ForgotPass"
+            android:name=".ForgotPass"
             android:exported="false" />
         <activity
-            android:name=".profile.ForgotPassEditPass"
+            android:name=".ForgotPassEditPass"
             android:exported="false" />
         <activity
-            android:name=".login_signup.SignUpActivity"
+            android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".login_signup.LoginActivity"
+            android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".onboarding.Welcome"
+            android:name=".Welcome"
             android:exported="false" />
         <activity
-            android:name=".onboarding.Onboarding"
+            android:name=".Onboarding"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".onboarding.Splash"
+            android:name=".Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
