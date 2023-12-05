@@ -45,6 +45,7 @@ import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.onboarding.Welcome;
 import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 import com.nextgenartisans.etago.models.Users;
+import com.nextgenartisans.etago.profile.NewPassActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -79,6 +80,8 @@ public class LoginActivity extends AppCompatActivity {
             customSignInDialog.dismiss();
         }
 
+
+        //TODO SET UP NEW PASSWORD
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
