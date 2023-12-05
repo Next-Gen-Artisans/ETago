@@ -1,8 +1,5 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.onboarding;
 
-import static android.content.ContentValues.TAG;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
@@ -11,7 +8,6 @@ import androidx.core.content.ContextCompat;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,12 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.nextgenartisans.etago.MainActivity;
+import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
 
 public class TermsAndConditionsWebView extends AppCompatActivity {
 

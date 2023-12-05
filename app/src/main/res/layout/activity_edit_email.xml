@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".EditEmailActivity">
+    tools:context=".profile.EditEmailActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/edit_email_header"

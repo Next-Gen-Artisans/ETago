@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -14,12 +14,15 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 
-public class ForgotPassDialog extends Dialog {
+import com.nextgenartisans.etago.MainActivity;
+import com.nextgenartisans.etago.R;
+
+public class ForgotPassDialogEditPass extends Dialog {
 
     LinearLayout passResetDialogButtons;
-    AppCompatButton returnLoginBtn;
+    AppCompatButton returMainBtn;
 
-    public ForgotPassDialog(@NonNull Context context) {
+    public ForgotPassDialogEditPass(@NonNull Context context) {
         super(context);
     }
 
@@ -27,7 +30,7 @@ public class ForgotPassDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.custom_forgot_pass_dialog);
+        setContentView(R.layout.custom_forgot_pass_dialog_edit_pass);
 
         // Set the background of the dialog window to transparent
         Window window = getWindow();
@@ -37,10 +40,10 @@ public class ForgotPassDialog extends Dialog {
         }
 
         passResetDialogButtons = findViewById(R.id.pass_reset_dialog_buttons);
-        returnLoginBtn = findViewById(R.id.return_login_dialog_btn);
+        returMainBtn = findViewById(R.id.return_main_dialog_btn);
 
 
-        returnLoginBtn.setOnClickListener(new View.OnClickListener() {
+        returMainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Dismiss the dialog
@@ -48,7 +51,7 @@ public class ForgotPassDialog extends Dialog {
 
                 // Redirect to LoginActivity
                 Context context = getContext();
-                context.startActivity(new Intent(context, LoginActivity.class));
+                context.startActivity(new Intent(context, MainActivity.class));
                 // If you want to finish the current activity as well, you might need to use a callback or a broadcast receiver
 
             }

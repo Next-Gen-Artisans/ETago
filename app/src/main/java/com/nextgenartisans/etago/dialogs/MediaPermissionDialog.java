@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -19,6 +19,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.nextgenartisans.etago.MainActivity;
+import com.nextgenartisans.etago.R;
 
 public class MediaPermissionDialog extends Dialog {
 

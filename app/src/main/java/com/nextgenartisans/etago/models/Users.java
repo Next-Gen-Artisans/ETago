@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.models;
 
 import com.google.type.Date;
 

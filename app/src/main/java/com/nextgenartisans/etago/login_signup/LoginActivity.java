@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.login_signup;
 
 import static android.content.ContentValues.TAG;
 
@@ -9,29 +9,19 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -47,14 +37,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Objects;
+import com.nextgenartisans.etago.MainActivity;
+import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.onboarding.Welcome;
+import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
+import com.nextgenartisans.etago.models.Users;
 
 public class LoginActivity extends AppCompatActivity {
 

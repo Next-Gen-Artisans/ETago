@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".EditPassActivity">
+    tools:context=".profile.EditPassActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/edit_pass_header"
