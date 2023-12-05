@@ -91,8 +91,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loadUserData();
 
         // Show terms of service dialog
-
         checkUserAgreement();
+
+
     }
 
     @Override
@@ -253,10 +254,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showTermsOfServiceDialog() {
-        if(!termsOfServiceDialog.isShowing()){
+        if (!termsOfServiceDialog.isShowing()) {
             termsOfServiceDialog.show();
             Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
         }
 
@@ -336,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Split the username to get the first name
         if (username != null && !username.isEmpty()) {
             String[] nameParts = username.split(" ");
-            String firstName = nameParts[0]+"!";
+            String firstName = nameParts[0] + "!";
             usernameHeaderTextView.setText(firstName);
         } else {
             usernameHeaderTextView.setText("Username");
@@ -357,30 +358,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        // Set the item as checked to update the UI
-        item.setChecked(true);
 
         if (id == R.id.nav_home1) {
             return true;
         }
         if (id == R.id.nav_profile1) {
-            navigationView.setCheckedItem(R.id.nav_profile1);
+            //navigationView.setCheckedItem(R.id.nav_profile1);
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
 
 
-
         }
         if (id == R.id.nav_settings1) {
-            navigationView.setCheckedItem(R.id.nav_settings1);
+            //navigationView.setCheckedItem(R.id.nav_settings1);
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
 
 
-
         }
         if (id == R.id.nav_about1) {
-            navigationView.setCheckedItem(R.id.nav_about1);
+            //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(MainActivity.this, AboutAppActivity.class);
             startActivity(intent);
 

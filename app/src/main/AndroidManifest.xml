@@ -42,6 +42,9 @@
             android:name=".ForgotPass"
             android:exported="false" />
         <activity
+            android:name=".ForgotPassEditPass"
+            android:exported="false" />
+        <activity
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity

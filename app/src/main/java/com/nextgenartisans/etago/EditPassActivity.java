@@ -1,5 +1,6 @@
 package com.nextgenartisans.etago;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
@@ -14,9 +15,16 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class EditPassActivity extends AppCompatActivity {
 
@@ -28,6 +36,7 @@ public class EditPassActivity extends AppCompatActivity {
     private TextInputLayout editPassInputLayout1, editPassInputLayout2, editPassInputLayout3;
     private TextInputEditText editPassPassInput, editPassNewInput, editPassConfirmInput;
     private AppCompatButton updatePassBtn;
+    CustomSignInDialog customSignInDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +72,8 @@ public class EditPassActivity extends AppCompatActivity {
         editPassNewInput = findViewById(R.id.edit_pass_new_input);
         editPassConfirmInput = findViewById(R.id.edit_pass_confirm_input);
 
+        customSignInDialog = new CustomSignInDialog(EditPassActivity.this);
+
         //Remove animation when input text is focused by user
         editPassPassInput.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
@@ -86,7 +97,7 @@ public class EditPassActivity extends AppCompatActivity {
                 // When the input field loses focus, check if it has content
                 if (editPassNewInput.getText().toString().isEmpty()) {
                     // Restore the hint text only if the input is empty
-                    editPassInputLayout2.setHint("New Username");
+                    editPassInputLayout2.setHint("New Password");
                 }
             }
         });
@@ -100,7 +111,7 @@ public class EditPassActivity extends AppCompatActivity {
                 // When the input field loses focus, check if it has content
                 if (editPassConfirmInput.getText().toString().isEmpty()) {
                     // Restore the hint text only if the input is empty
-                    editPassInputLayout3.setHint("Confirm Username");
+                    editPassInputLayout3.setHint("Confirm Password");
                 }
             }
         });
@@ -115,9 +126,83 @@ public class EditPassActivity extends AppCompatActivity {
             }
         });
 
+        updatePassBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String currentPassword = editPassPassInput.getText().toString();
+                String newPassword = editPassNewInput.getText().toString();
+                String confirmNewPassword = editPassConfirmInput.getText().toString();
 
 
+                if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
+                    Toast.makeText(EditPassActivity.this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!newPassword.equals(confirmNewPassword)) {
+                    Toast.makeText(EditPassActivity.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                customSignInDialog.setMessage("Updating Password...");
+                customSignInDialog.showAuthProgress(true);
+                customSignInDialog.show();
+
+                // Proceed with Firebase password update
+                updatePassword(currentPassword, newPassword);
+            }
+        });
+
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Start ForgotPass activity
+                Intent intent = new Intent(EditPassActivity.this, ForgotPassEditPass.class);
+                startActivity(intent);
+            }
+        });
 
 
     }
+
+    private void updatePassword(String currentPassword, String newPassword) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // Password update successful
+                                    customSignInDialog.setMessage("Password update successful. ");
+                                    customSignInDialog.showAuthProgress(false);
+                                } else {
+                                    // Handle failure
+                                    customSignInDialog.setMessage("Failed to update password: " + task.getException().getMessage());
+                                    customSignInDialog.showAuthFailedProgress(true);
+                                }
+                            }
+                        });
+                    } else {
+                        // Handle re-authentication failure
+                        customSignInDialog.setMessage("Authentication failed: " + task.getException().getMessage());
+                        customSignInDialog.showAuthFailedProgress(true);
+                    }
+                    customSignInDialog.setProceedButtonVisible(true);
+                    customSignInDialog.setProceedButtonClickListener(v -> {
+                        customSignInDialog.dismiss();
+                        finish();
+                    });
+
+                }
+            });
+        }
+    }
+
+
 }

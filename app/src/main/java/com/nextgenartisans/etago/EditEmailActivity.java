@@ -92,7 +92,7 @@ public class EditEmailActivity extends AppCompatActivity {
                 // When the input field loses focus, check if it has content
                 if (editEmailNewInput.getText().toString().isEmpty()) {
                     // Restore the hint text only if the input is empty
-                    editEmailInputLayout2.setHint("New Username");
+                    editEmailInputLayout2.setHint("New Email");
                 }
             }
         });
@@ -106,7 +106,7 @@ public class EditEmailActivity extends AppCompatActivity {
                 // When the input field loses focus, check if it has content
                 if (editEmailConfirmInput.getText().toString().isEmpty()) {
                     // Restore the hint text only if the input is empty
-                    editEmailInputLayout3.setHint("Confirm Username");
+                    editEmailInputLayout3.setHint("Confirm Email");
                 }
             }
         });
