@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.profile;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -13,6 +13,9 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+
+import com.nextgenartisans.etago.home.MainActivity;
+import com.nextgenartisans.etago.R;
 
 public class ForgotPassDialogEditPass extends Dialog {
 

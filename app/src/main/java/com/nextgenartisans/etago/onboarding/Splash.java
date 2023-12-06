@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.onboarding;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.nextgenartisans.etago.home.MainActivity;
+import com.nextgenartisans.etago.R;
 
 public class Splash extends AppCompatActivity {
 

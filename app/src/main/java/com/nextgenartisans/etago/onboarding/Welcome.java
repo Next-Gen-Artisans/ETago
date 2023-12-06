@@ -1,18 +1,19 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.onboarding;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.login_signup.LoginActivity;
+import com.nextgenartisans.etago.login_signup.SignUpActivity;
 
 public class Welcome extends AppCompatActivity {
 

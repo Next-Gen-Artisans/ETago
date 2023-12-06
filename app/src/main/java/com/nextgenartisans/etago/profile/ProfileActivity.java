@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.profile;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -31,6 +31,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.nextgenartisans.etago.home.MainActivity;
+import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.about_us.AboutAppActivity;
+import com.nextgenartisans.etago.dialogs.LogoutDialog;
+import com.nextgenartisans.etago.login_signup.LoginActivity;
+import com.nextgenartisans.etago.settings.SettingsActivity;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

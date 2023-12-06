@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.profile;
 
 import android.content.Intent;
 import android.os.Build;
@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.nextgenartisans.etago.R;
 
 public class ForgotPassEditPass extends AppCompatActivity {
 

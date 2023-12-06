@@ -1,8 +1,7 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,7 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.nextgenartisans.etago.home.MainActivity;
+import com.nextgenartisans.etago.R;
 
 public class MediaPermissionDialog extends Dialog {
 

@@ -1,25 +1,19 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.login_signup;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.CallbackManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -45,30 +38,52 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.nextgenartisans.etago.home.MainActivity;
+import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.model.Users;
+import com.nextgenartisans.etago.onboarding.Welcome;
+import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 
-import java.util.HashMap;
-import java.util.Map;
+public class LoginActivity extends AppCompatActivity {
 
-public class SignUpActivity extends AppCompatActivity {
+    LinearLayout loginHeader, loginFooter, loginOptions;
+    CardView loginForm;
+    ImageButton loginBackBtn, facebookLoginBtn, googleLoginBtn;
+    TextInputLayout loginEmailInput, loginPassInput;
+    TextInputEditText userEmail, userPass;
+    TextView forgotPass, textSignUp;
+    AppCompatButton loginBtn;
 
-
-    LinearLayout signupHeader, signupFooter, signupOptions;
-    ImageButton signupBackBtn, facebookSignupBtn, googleSignupBtn;
-    CardView signupForm;
-    TextInputLayout signupUsernameInput, signupEmailInput, signupPassInput;
-    TextInputEditText userSignupUsername, userSignupEmail, userSignupPass;
-    AppCompatButton signUpBtn;
-    TextView textLogIn;
-
+    //Firebase Authentication and Firestore
     FirebaseAuth mAuth;
     FirebaseFirestore db;
     GoogleSignInClient mGoogleSignInClient;
-    CallbackManager mCallbackManager;
     private CustomSignInDialog customSignInDialog;
-    private TermsOfServiceDialog termsOfServiceDialog;
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            updateUI();
+        }
+    }
+
+    private void updateUI() {
+        // Dismiss the dialog if it's showing
+        if (customSignInDialog.isShowing()) {
+            customSignInDialog.dismiss();
+        }
+
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,106 +97,86 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         //Set Content View
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_login);
+
 
         //Set id for clickable text and buttons
-        signUpBtn = findViewById(R.id.signup_btn);
-        textLogIn = findViewById(R.id.text_log_in);
-        facebookSignupBtn = findViewById(R.id.facebook_signup_btn);
-        googleSignupBtn = findViewById(R.id.google_signup_btn);
-        signupBackBtn = findViewById(R.id.signup_back_btn);
+        loginBtn = findViewById(R.id.login_btn);
+        loginBackBtn = findViewById(R.id.login_back_btn);
+        facebookLoginBtn = findViewById(R.id.facebook_login_btn);
+        googleLoginBtn = findViewById(R.id.google_login_btn);
+        forgotPass = findViewById(R.id.forgot_pass);
+        textSignUp = findViewById(R.id.text_sign_up);
 
         //Set id for non-interactive components
-        signupHeader = findViewById(R.id.signup_header);
-        signupFooter = findViewById(R.id.signup_footer);
-        signupOptions = findViewById(R.id.signup_options);
-        signupForm = findViewById(R.id.signup_form);
+        loginHeader = findViewById(R.id.login_header);
+        loginFooter = findViewById(R.id.login_footer);
+        loginOptions = findViewById(R.id.login_options);
+        loginForm = findViewById(R.id.login_form);
 
+        //Set id for input text
+        loginEmailInput = findViewById(R.id.login_email_input);
+        loginPassInput = findViewById(R.id.login_pass_input);
+        userEmail = findViewById(R.id.user_email);
+        userPass = findViewById(R.id.user_pass);
 
         //FIREBASE INSTANCE
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        //Set id for input text
-        signupUsernameInput = findViewById(R.id.signup_username_input);
-        signupEmailInput = findViewById(R.id.signup_email_input);
-        signupPassInput = findViewById(R.id.signup_pass_input);
-        userSignupUsername = findViewById(R.id.user_signup_username);
-        userSignupEmail = findViewById(R.id.user_signup_email);
-        userSignupPass = findViewById(R.id.user_signup_pass);
-
-
         //Remove animation when input text is focused by user
-        userSignupUsername.setOnFocusChangeListener((view, hasFocus) -> {
+        userEmail.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
                 // When the input field is selected (has focus), clear the hint text
-                signupUsernameInput.setHint("");
+                loginEmailInput.setHint("");
             } else {
                 // When the input field loses focus, check if it has content
-                if (userSignupUsername.getText().toString().isEmpty()) {
+                if (userEmail.getText().toString().isEmpty()) {
                     // Restore the hint text only if the input is empty
-                    signupUsernameInput.setHint("Username");
+                    loginEmailInput.setHint("Email");
                 }
             }
         });
 
-        userSignupEmail.setOnFocusChangeListener((view, hasFocus) -> {
+        userPass.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
                 // When the input field is selected (has focus), clear the hint text
-                signupEmailInput.setHint("");
+                loginPassInput.setHint("");
             } else {
                 // When the input field loses focus, check if it has content
-                if (userSignupEmail.getText().toString().isEmpty()) {
+                if (userPass.getText().toString().isEmpty()) {
                     // Restore the hint text only if the input is empty
-                    signupEmailInput.setHint("Email");
+                    loginPassInput.setHint("Password");
                 }
             }
         });
 
-        userSignupPass.setOnFocusChangeListener((view, hasFocus) -> {
-            if (hasFocus) {
-                // When the input field is selected (has focus), clear the hint text
-                signupPassInput.setHint("");
-            } else {
-                // When the input field loses focus, check if it has content
-                if (userSignupPass.getText().toString().isEmpty()) {
-                    // Restore the hint text only if the input is empty
-                    signupPassInput.setHint("Password");
-                }
-            }
-        });
-
-
-        textLogIn.setOnClickListener(new View.OnClickListener() {
+        textSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+                Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(i);
                 finish();
             }
         });
 
-        signupBackBtn.setOnClickListener(new View.OnClickListener() {
+        loginBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(SignUpActivity.this, Welcome.class);
+                Intent i = new Intent(LoginActivity.this, Welcome.class);
                 startActivity(i);
                 finish();
             }
         });
 
-        // TODO SIGN UP BACKEND
-        signUpBtn.setOnClickListener(new View.OnClickListener() {
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = userSignupUsername.getText().toString();
-                String email = userSignupEmail.getText().toString();
-                String password = userSignupPass.getText().toString();
+                String email, password;
 
-                if (TextUtils.isEmpty(username)) {
-                    Toast.makeText(getApplicationContext(), "Enter username.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                email = userEmail.getText().toString();
+                password = userPass.getText().toString();
+
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(getApplicationContext(), "Enter email.", Toast.LENGTH_SHORT).show();
                     return;
@@ -191,38 +186,50 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-                customSignInDialog.setMessage("Creating account...");
+                // Show the custom dialog indicating progress
+                customSignInDialog.setMessage("Logging in...");
                 customSignInDialog.showAuthProgress(true);
                 customSignInDialog.setProceedButtonVisible(false);
                 customSignInDialog.show();
 
-                // Create user with Firebase Auth
-                mAuth.createUserWithEmailAndPassword(email, password)
+
+                mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (!task.isSuccessful()) {
-                                    if (task.getException() != null) {
-                                        Log.e(TAG, "Failed to create account: " + task.getException().getMessage());
-                                        // Show more descriptive error based on the exception
-                                        customSignInDialog.setMessage(task.getException().getMessage());
-                                        customSignInDialog.setProceedButtonVisible(true);
-                                    } else {
-                                        Log.e(TAG, "Failed to create account for an unknown reason.");
-                                        customSignInDialog.setMessage("Failed to create account for an unknown reason.");
-                                        customSignInDialog.setProceedButtonVisible(true);
-                                    }
-                                    customSignInDialog.showAuthFailedProgress(false);
-                                } else {
-                                    FirebaseUser user = mAuth.getCurrentUser();
 
-                                    createUserInFirestoreManual(user, username);
+                                if (task.isSuccessful()) {
+                                    //Update dialog
+
+                                    // Sign in success, check if user exists in Firestore
+                                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                                    if (firebaseUser != null) {
+                                        checkUserInFirestore(firebaseUser);
+                                    }
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Toast.makeText(LoginActivity.this, "Incorrect credentials.",
+                                            Toast.LENGTH_SHORT).show();
+
+                                    // Show the custom dialog indicating failed authentication progress
+                                    customSignInDialog.setMessage("Incorrect credentials.");
+                                    customSignInDialog.showAuthProgress(true);
+                                    customSignInDialog.showAuthFailedProgress(false);
+                                    customSignInDialog.setProceedButtonVisible(true);
+
+
                                 }
                             }
                         });
 
+
             }
+
         });
+
+
+        // TODO FB AND GOOGLE LOGIN BACKEND
 
         // Initialize the custom progress dialog
         customSignInDialog = new CustomSignInDialog(this);
@@ -232,7 +239,8 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 customSignInDialog.dismiss(); // Dismiss the dialog
-                promptLogin(); // Call updateUI when the proceed button is clicked
+
+                updateUI(); // Call updateUI when the proceed button is clicked
 
             }
         });
@@ -245,54 +253,29 @@ public class SignUpActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // TODO FB SIGN UP
-        facebookSignupBtn.setOnClickListener(new View.OnClickListener() {
+
+        facebookLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        googleSignupBtn.setOnClickListener(new View.OnClickListener() {
+        googleLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 googleSignIn();
             }
         });
 
-    }
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(LoginActivity.this, ForgotPass.class);
+                startActivity(i);
+            }
+        });
 
-    private void createUserInFirestoreManual(FirebaseUser firebaseUser, String username) {
-        // Prepare user data
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("email", firebaseUser.getEmail());
-        userMap.put("numCensoredImgs", 0);
-        userMap.put("profilePic", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "default_profile_pic_url");
-        userMap.put("userAgreedMedia", false);
-        userMap.put("userAgreedTermsAndPrivacyPolicy", false);
-        userMap.put("userID", firebaseUser.getUid());
-        userMap.put("username", username);
-        // Add other user details as needed
-
-        // Store in Firestore
-        db.collection("Users").document(firebaseUser.getUid())
-                .set(userMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        customSignInDialog.setMessage("Account created successfully.");
-                        customSignInDialog.showAuthProgress(false);
-                        customSignInDialog.setProceedButtonVisible(true);
-                        // Redirect to login or main activity as required
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        customSignInDialog.setMessage("Failed to create account.");
-                        customSignInDialog.showAuthFailedProgress(false);
-                    }
-                });
     }
 
     int RC_SIGN_IN = 40;
@@ -313,21 +296,19 @@ public class SignUpActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
-                //TODO TERMS AND CONDITIONS
-
-
                 // Show the custom dialog with progress
-                customSignInDialog.setMessage("Creating account...");
+                customSignInDialog.setMessage("Authenticating...");
                 customSignInDialog.showAuthProgress(true);
                 customSignInDialog.setProceedButtonVisible(false);
                 customSignInDialog.show();
+
 
                 firebaseAuth(account.getIdToken());
 
             } catch (ApiException e) {
                 // Handle error
                 // Update dialog to show error message
-                customSignInDialog.setMessage("Creating account failed.");
+                customSignInDialog.setMessage("Authentication failed.");
                 customSignInDialog.showAuthFailedProgress(false);
             }
 
@@ -350,43 +331,58 @@ public class SignUpActivity extends AppCompatActivity {
 
                             } else {
                                 // Authentication failed
-                                customSignInDialog.setMessage("Creating account failed.");
+                                customSignInDialog.setMessage("Authentication failed.");
                                 customSignInDialog.showAuthFailedProgress(false);
                             }
                         } else {
-                            Log.d(TAG, "Authenticating user failed.");
+                            // Handle the sign in error (e.g., display a message)
                         }
                     }
                 });
     }
 
     private void checkUserInFirestore(FirebaseUser firebaseUser) {
-        DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document != null && document.exists()) {
-                        // User already exists in Firestore, just log in
-                        Log.d(TAG, "User already exists in Firestore.");
+        db.collection("Users").document(firebaseUser.getUid())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            // User exists in Firestore, proceed to main activity
+                            customSignInDialog.setMessage("Authentication successful.");
+                            customSignInDialog.showAuthProgress(false);
+                            customSignInDialog.setProceedButtonVisible(true);
+                            customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    updateUI();
+                                }
+                            });
+                        } else {
+                            // User does not exist in Firestore, prompt to sign up
+                            customSignInDialog.setMessage("No account found with this email. Please sign up.");
+                            //TODO SIGNOUT ON FAILED NO ACCOUNT
+                            FirebaseAuth.getInstance().signOut();
 
-                        // Redirect to main activity or update UI
-                        // Authentication success
-                        customSignInDialog.setMessage("Account already exists. Proceed to log in.");
-                        customSignInDialog.showAuthProgress(false); // Show check icon
-                        customSignInDialog.setProceedButtonVisible(true); // Show proceed button
+                            customSignInDialog.showAuthFailedProgress(false);
+                            customSignInDialog.setProceedButtonVisible(true);
+                            customSignInDialog.setProceedButtonClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    promptSignUp();
+                                }
+                            });
 
-
-                    } else {
-                        // User does not exist, create a new user document
-                        createUserInFirestore(firebaseUser);
+                        }
                     }
-                } else {
-                    Log.d(TAG, "Checking user in firestore failed.");
-                }
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        customSignInDialog.setMessage("Failed to check Firestore: " + e.getMessage());
+                        customSignInDialog.showAuthFailedProgress(false);
+                    }
+                });
     }
 
     private void createUserInFirestore(FirebaseUser firebaseUser) {
@@ -406,7 +402,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                         // Redirect to main activity or update UI
                         // Authentication success
-                        customSignInDialog.setMessage("Account created.");
+                        customSignInDialog.setMessage("Account authenticated.");
                         customSignInDialog.showAuthProgress(false); // Show check icon
                         customSignInDialog.setProceedButtonVisible(true); // Show proceed button
                     }
@@ -420,17 +416,12 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void updateUI() {
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    private void promptLogin() {
-        mGoogleSignInClient.signOut();
-        //mAuth.signOut();
-        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(i);
+    private void promptSignUp() {
+        // Prompt the user to sign up
+        Toast.makeText(LoginActivity.this, "No existing account found. Please sign up first.", Toast.LENGTH_LONG).show();
+        customSignInDialog.dismiss();
+        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+        startActivity(intent);
         finish();
     }
 

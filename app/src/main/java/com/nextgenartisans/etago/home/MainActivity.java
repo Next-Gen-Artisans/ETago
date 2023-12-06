@@ -1,23 +1,19 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.home;
 
 import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,8 +39,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import android.Manifest;
+import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.about_us.AboutAppActivity;
+import com.nextgenartisans.etago.dialogs.ExitAppDialog;
+import com.nextgenartisans.etago.dialogs.LogoutDialog;
+import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
+import com.nextgenartisans.etago.login_signup.LoginActivity;
+import com.nextgenartisans.etago.onboarding.Welcome;
+import com.nextgenartisans.etago.profile.ProfileActivity;
+import com.nextgenartisans.etago.settings.SettingsActivity;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -210,10 +213,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        // Registers a photo picker activity launcher in single-select mode.
+        ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                    // Callback is invoked after the user selects a media item or closes the
+                    // photo picker.
+                    if (uri != null) {
+                        Log.d("PhotoPicker", "Selected URI: " + uri);
+                    } else {
+                        Log.d("PhotoPicker", "No media selected");
+                    }
+                });
+
+
         //TODO IMPLEMENT ANDROID APP
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Launch the photo picker and let the user choose only images.
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
 
             }
         });

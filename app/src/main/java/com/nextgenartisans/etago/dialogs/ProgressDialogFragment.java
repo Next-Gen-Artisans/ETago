@@ -1,4 +1,4 @@
-package com.nextgenartisans.etago;
+package com.nextgenartisans.etago.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.nextgenartisans.etago.R;
 
 public class ProgressDialogFragment extends DialogFragment {
     @NonNull
