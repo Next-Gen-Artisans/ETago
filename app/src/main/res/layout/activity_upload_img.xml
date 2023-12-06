@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.UploadImg"
     android:background="@color/white"
-    >
+    tools:context=".home.UploadImg">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttons_cardview"
@@ -28,7 +27,9 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+
+        >
 
         <LinearLayout
             android:id="@+id/header_container"
@@ -38,8 +39,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
                 android:id="@+id/back_btn"
@@ -67,14 +67,12 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="120dp"
                 android:background="@color/transparent"
                 android:src="@drawable/check_icon"
-                app:tint="@color/alt_black"
-                android:layout_marginStart="120dp"
                 android:visibility="invisible"
-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
-
-                />
+                app:tint="@color/alt_black"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         </LinearLayout>
 
@@ -82,17 +80,19 @@
             android:id="@+id/uploaded_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/image_icon"
             android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_container"
-            />
+            android:layout_marginTop="50dp"
+            android:background="@drawable/outline_drawable"
+            android:backgroundTint="@color/orange"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/image_icon" />
 
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="4dp"

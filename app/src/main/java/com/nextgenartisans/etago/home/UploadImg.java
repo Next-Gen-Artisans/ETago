@@ -65,6 +65,15 @@ public class UploadImg extends AppCompatActivity {
         saveBtn = findViewById(R.id.save_btn);
 
 
+        //Click image to replace
+        uploadedImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchPhotoPicker();
+            }
+        });
+
+
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,4 +137,12 @@ public class UploadImg extends AppCompatActivity {
             }
         });
     }
+
+    private void launchPhotoPicker() {
+        // Launch the photo picker and let the user choose only images
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+    }
+
 }

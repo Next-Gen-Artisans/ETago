@@ -220,17 +220,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent i = new Intent(getApplicationContext(), UploadImg.class);
                 startActivity(i);
-
+                finish();
             }
         });
+
 
         captureImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent i = new Intent(getApplicationContext(), CaptureImg.class);
+                startActivity(i);
+                finish();
             }
         });
 

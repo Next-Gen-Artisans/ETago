@@ -26,6 +26,8 @@ public class CaptureImg extends AppCompatActivity {
     private AppCompatImageView uploadedImg;
     private AppCompatButton scanBtn, cancelBtn;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

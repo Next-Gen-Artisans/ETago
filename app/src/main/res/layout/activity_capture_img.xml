@@ -78,6 +78,8 @@
 
         </LinearLayout>
 
+
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/captured_img"
             android:layout_width="match_parent"
