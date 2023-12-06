@@ -30,6 +30,9 @@
             android:name=".profile.EditPassActivity"
             android:exported="false" />
         <activity
+            android:name=".profile.NewPassActivity"
+            android:exported="false" />
+        <activity
             android:name=".profile.EditEmailActivity"
             android:exported="false" />
         <activity

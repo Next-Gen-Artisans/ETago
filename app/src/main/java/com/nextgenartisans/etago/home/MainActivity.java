@@ -9,11 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,8 +33,10 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,8 +51,14 @@ import com.nextgenartisans.etago.dialogs.LogoutDialog;
 import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.onboarding.Welcome;
+import com.nextgenartisans.etago.profile.NewPassActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -81,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
 
+    private static final int REQUEST_MEDIA_CAMERA_PERMISSION = 101;
+
     //On Back Pressed Variables
     private boolean doubleBackToExitPressedOnce = false;
     private Handler handler = new Handler();
@@ -90,14 +103,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+        //Set New Password
+        setNewPassword();
+
         // Call the method to load user data when the activity starts
         loadUserData();
 
         // Show terms of service dialog
         checkUserAgreement();
 
+        //TODO: ASK MEDIA PERMISSIONS
+        //askMediaPermissions();
+
 
     }
+
+//    private void askMediaPermissions() {
+//        List<String> permissionsNeeded = new ArrayList<>();
+//
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+//        }
+//
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//        }
+//
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            permissionsNeeded.add(Manifest.permission.CAMERA);
+//        }
+//
+//        if (!permissionsNeeded.isEmpty()) {
+//            ActivityCompat.requestPermissions(this, permissionsNeeded.toArray(new String[0]), REQUEST_MEDIA_CAMERA_PERMISSION);
+//        } else {
+//            Toast.makeText(this, "Permissions were granted.", Toast.LENGTH_LONG).show();
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == REQUEST_MEDIA_CAMERA_PERMISSION) {
+//            Map<String, Integer> perms = new HashMap<>();
+//            // Initialize the map with both permissions
+//            perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+//            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+//            perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+//
+//            // Fill in the actual results from the user's choices
+//            if (grantResults.length > 0) {
+//                for (int i = 0; i < permissions.length; i++)
+//                    perms.put(permissions[i], grantResults[i]);
+//
+//                // Check for both permissions
+//                if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+//                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+//                        && perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+//                    // All permissions are granted, proceed with the action that requires permissions
+//                } else {
+//                    // Permission request was denied, handle the feature that depends on this permission.
+//                    Toast.makeText(this, "Some permissions were denied", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        }
+//    }
+
+
+    private void setNewPassword() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(userId)
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document != null && document.exists()) {
+                                    Boolean isPasswordSet = document.getBoolean("userPasswordSet");
+                                    if (isPasswordSet == null || !isPasswordSet) {
+                                        // Redirect to NewPassActivity
+                                        Intent i = new Intent(getApplicationContext(), NewPassActivity.class);
+                                        startActivity(i);
+                                    }
+                                } else {
+                                    Log.d("Firestore", "No such document");
+                                }
+                            } else {
+                                Log.d("Firestore", "get failed with ", task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,8 +313,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
-
 
 
         //TODO IMPLEMENT ANDROID APP

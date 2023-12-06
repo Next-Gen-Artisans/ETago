@@ -5,13 +5,13 @@ import com.google.type.Date;
 public class Users {
 
     // Attributes
-
     private String userID;
     private String username;
     private String email;
     private String profilePic; // URL or path to the image
     private boolean userAgreedMedia;
     private boolean userAgreedTermsAndPrivacyPolicy;
+    private boolean userPasswordSet;
     private int numCensoredImgs;
 
     public Users(){
@@ -64,6 +64,14 @@ public class Users {
 
     public void setUserAgreedTermsAndPrivacyPolicy(boolean userAgreedTermsAndPrivacyPolicy) {
         this.userAgreedTermsAndPrivacyPolicy = userAgreedTermsAndPrivacyPolicy;
+    }
+
+    public boolean isUserPasswordSet() {
+        return userPasswordSet;
+    }
+
+    public void setUserPasswordSet(boolean userPasswordSet) {
+        this.userPasswordSet = userPasswordSet;
     }
 
     public int getNumCensoredImgs() {
