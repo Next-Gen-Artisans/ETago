@@ -270,7 +270,7 @@ public class SignUpActivity extends AppCompatActivity {
         userMap.put("profilePic", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "default_profile_pic_url");
         userMap.put("userAgreedMedia", false);
         userMap.put("userAgreedTermsAndPrivacyPolicy", false);
-        userMap.put("isPasswordSet", false);
+        userMap.put("userPasswordSet", true);
         userMap.put("userID", firebaseUser.getUid());
         userMap.put("username", username);
         // Add other user details as needed

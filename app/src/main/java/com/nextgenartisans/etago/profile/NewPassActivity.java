@@ -39,7 +39,7 @@ public class NewPassActivity extends AppCompatActivity {
     private TextView forgotPass;
     private TextInputLayout editPassInputLayout1, editPassInputLayout2, editPassInputLayout3;
     private TextInputEditText editPassPassInput, editPassNewInput, editPassConfirmInput;
-    private AppCompatButton updatePassBtn;
+    private AppCompatButton updatePassBtn, cancelPassBtn;
     CustomSignInDialog customSignInDialog;
 
     @Override
@@ -63,6 +63,7 @@ public class NewPassActivity extends AppCompatActivity {
         //Buttons
         editPassBackBtn = findViewById(R.id.edit_pass_back_btn);
         updatePassBtn = findViewById(R.id.update_pass_btn);
+        cancelPassBtn = findViewById(R.id.cancel_new_pass_btn);
 
         //Edit Texts Layouts
         editPassInputLayout2 = findViewById(R.id.edit_pass_input_2);
@@ -109,6 +110,13 @@ public class NewPassActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(NewPassActivity.this, ProfileActivity.class);
                 startActivity(i);
+                finish();
+            }
+        });
+
+        cancelPassBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 finish();
             }
         });
