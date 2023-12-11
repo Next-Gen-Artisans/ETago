@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class CaptureImg extends AppCompatActivity {
 
     // Declare member variables for each view
     private CardView buttonsCardView;
-    private LinearLayout captureImageContainer, headerContainer;
+    private LinearLayout headerContainer;
     private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
     private AppCompatImageView capturedImg;
@@ -82,14 +83,22 @@ public class CaptureImg extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
+            // Check if dark mode is active
+            int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                // Dark mode is active, set status bar color accordingly
+                window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
+            } else {
+                // Light mode is active, set status bar color accordingly
+                window.setStatusBarColor(ContextCompat.getColor(this, R.color.alt_black));
+            }
         }
 
         setContentView(R.layout.activity_capture_img);
 
         // Initialize the views
         buttonsCardView = findViewById(R.id.buttons_cardview);
-        captureImageContainer = findViewById(R.id.capture_image_container);
+
         headerContainer = findViewById(R.id.header_container);
         headerTxt = findViewById(R.id.header_txt);
 
