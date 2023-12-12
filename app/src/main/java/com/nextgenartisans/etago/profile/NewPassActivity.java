@@ -140,6 +140,7 @@ public class NewPassActivity extends AppCompatActivity {
 
                 customSignInDialog.setMessage("Updating Password...");
                 customSignInDialog.showAuthProgress(true);
+                customSignInDialog.setProceedButtonVisible(false);
                 customSignInDialog.show();
 
                 // Proceed with Firebase password update

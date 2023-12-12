@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -42,6 +43,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
@@ -263,38 +266,59 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void createUserInFirestoreManual(FirebaseUser firebaseUser, String username) {
-        // Prepare user data
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("email", firebaseUser.getEmail());
-        userMap.put("numCensoredImgs", 0);
-        userMap.put("profilePic", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "default_profile_pic_url");
-        userMap.put("userAgreedMedia", false);
-        userMap.put("userAgreedTermsAndPrivacyPolicy", false);
-        userMap.put("userPasswordSet", true);
-        userMap.put("userID", firebaseUser.getUid());
-        userMap.put("username", username);
-        // Add other user details as needed
+        // Reference to your Firebase Storage file
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_username_icon.png");
 
-        // Store in Firestore
-        db.collection("Users").document(firebaseUser.getUid())
-                .set(userMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        customSignInDialog.setMessage("Account created successfully.");
-                        customSignInDialog.showAuthProgress(false);
-                        customSignInDialog.setProceedButtonVisible(true);
-                        // Redirect to login or main activity as required
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        customSignInDialog.setMessage("Failed to create account.");
-                        customSignInDialog.showAuthFailedProgress(false);
-                    }
-                });
+        // Get the download URL
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for the default profile picture
+                String defaultProfilePicUrl = uri.toString();
+
+                // Prepare user data with the default profile picture URL
+                Map<String, Object> userMap = new HashMap<>();
+                userMap.put("email", firebaseUser.getEmail());
+                userMap.put("numCensoredImgs", 0);
+                userMap.put("profilePic", firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : defaultProfilePicUrl);
+                userMap.put("userAgreedMedia", false);
+                userMap.put("userAgreedTermsAndPrivacyPolicy", false);
+                userMap.put("userPasswordSet", true);
+                userMap.put("userID", firebaseUser.getUid());
+                userMap.put("username", username);
+
+                // Store in Firestore
+                db.collection("Users").document(firebaseUser.getUid())
+                        .set(userMap)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                customSignInDialog.setMessage("Account created successfully.");
+                                customSignInDialog.showAuthProgress(false);
+                                customSignInDialog.setProceedButtonVisible(true);
+                                // Redirect to login or main activity as required
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                customSignInDialog.setMessage("Failed to create account.");
+                                customSignInDialog.showAuthFailedProgress(false);
+                            }
+                        });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
     }
+
+
+
+
+
 
     int RC_SIGN_IN = 40;
 

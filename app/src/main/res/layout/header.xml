@@ -15,6 +15,8 @@
         android:layout_height="75dp"
         android:src="@drawable/round_bg"
         app:shapeAppearanceOverlay="@style/roundedImageView"
+        app:strokeColor="@color/alt_black"
+        app:strokeWidth="2dp"
         />
 
     <TextView

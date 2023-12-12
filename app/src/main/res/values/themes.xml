@@ -24,6 +24,8 @@
     <style name="roundedImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item> <!-- You can adjust this value to control the roundness -->
+        <item name="strokeColor">@color/alt_black</item> <!-- Use your desired stroke color here -->
+        <item name="strokeWidth">2dp</item>
     </style>
 
     <!--CUSTOM MENU ITEM-->
