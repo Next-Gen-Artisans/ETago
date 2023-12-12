@@ -229,7 +229,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        // TODO FB AND GOOGLE LOGIN BACKEND
+        // TODO FB BACKEND
 
         // Initialize the custom progress dialog
         customSignInDialog = new CustomSignInDialog(this);
@@ -361,7 +361,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // User does not exist in Firestore, prompt to sign up
                             customSignInDialog.setMessage("No account found with this email. Please sign up.");
-                            //TODO SIGNOUT ON FAILED NO ACCOUNT
+
+
                             FirebaseAuth.getInstance().signOut();
 
                             customSignInDialog.showAuthFailedProgress(false);

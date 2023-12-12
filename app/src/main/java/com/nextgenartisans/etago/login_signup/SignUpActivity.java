@@ -170,7 +170,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        // TODO SIGN UP BACKEND
+
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -313,9 +313,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-
-                //TODO TERMS AND CONDITIONS
-
 
                 // Show the custom dialog with progress
                 customSignInDialog.setMessage("Creating account...");
