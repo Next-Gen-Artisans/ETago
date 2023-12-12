@@ -22,8 +22,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +39,11 @@ import android.widget.Toast;
 import com.nextgenartisans.etago.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +61,7 @@ public class CaptureImg extends AppCompatActivity {
     private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
     private AppCompatImageView capturedImg;
-    private AppCompatButton scanBtn, cancelBtn;
+    private AppCompatButton captureBtn, cancelBtn;
     private FrameLayout frameLayout;
     private PreviewView previewView;
 
@@ -72,7 +79,6 @@ public class CaptureImg extends AppCompatActivity {
 
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture imageCapture;
-
 
 
     @Override
@@ -108,7 +114,7 @@ public class CaptureImg extends AppCompatActivity {
         previewView = findViewById(R.id.preview_view);
 
         //Buttons
-        scanBtn = findViewById(R.id.capture_scan_btn);
+        captureBtn = findViewById(R.id.capture_scan_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
         backBtn = findViewById(R.id.back_btn);
         saveBtn = findViewById(R.id.save_btn);
@@ -119,10 +125,12 @@ public class CaptureImg extends AppCompatActivity {
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation())
                 .build();
 
-        scanBtn.setOnClickListener(new View.OnClickListener() {
+        captureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 takePicture();
+
+
             }
         });
 
@@ -186,6 +194,44 @@ public class CaptureImg extends AppCompatActivity {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         Toast.makeText(CaptureImg.this, "Image saved", Toast.LENGTH_SHORT).show();
+
+                        // Create a file in the Pictures directory
+                        File photoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+                        File photo = new File(photoDir, "photo_" + System.currentTimeMillis() + ".jpg");
+
+                        try {
+                            // Copy the captured image to the new file
+                            try (InputStream in = new FileInputStream(outputFileResults.getSavedUri().getPath());
+                                 OutputStream out = new FileOutputStream(photo)) {
+                                byte[] buf = new byte[1024];
+                                int len;
+                                while ((len = in.read(buf)) > 0) {
+                                    out.write(buf, 0, len);
+                                }
+                            }
+                            // Notify the gallery
+                            addPicToGallery(photo.getAbsolutePath());
+                            Toast.makeText(CaptureImg.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            Log.e("CaptureImg", "Error saving image to gallery", e);
+                            Toast.makeText(CaptureImg.this, "Error saving image", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // Get the saved image file URI
+                        Uri savedUri = outputFileResults.getSavedUri();
+                        if (savedUri == null) {
+                            savedUri = Uri.fromFile(file);
+                        }
+
+                        // Create an intent to start DetectionActivity
+                        Intent intent = new Intent(CaptureImg.this, DetectionActivity.class);
+                        // Pass the image file path as an extra
+                        intent.putExtra("image_path", savedUri.toString());
+                        startActivity(intent);
+                        finish();
+
+
+
                     }
 
                     @Override
@@ -193,6 +239,14 @@ public class CaptureImg extends AppCompatActivity {
                         Toast.makeText(CaptureImg.this, "Image unsaved" + exception.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void addPicToGallery(String imagePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(imagePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
@@ -206,7 +260,7 @@ public class CaptureImg extends AppCompatActivity {
 
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
-        Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview, imageCapture);
+        Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview, imageCapture);
     }
 
     private boolean hasCameraPermission() {

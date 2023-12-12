@@ -16,7 +16,7 @@
         android:src="@drawable/round_bg"
         app:shapeAppearanceOverlay="@style/roundedImageView"
         app:strokeColor="@color/alt_black"
-        app:strokeWidth="2dp"
+        app:strokeWidth="1dp"
         />
 
     <TextView
