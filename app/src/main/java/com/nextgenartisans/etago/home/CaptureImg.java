@@ -120,7 +120,6 @@ public class CaptureImg extends AppCompatActivity {
         saveBtn = findViewById(R.id.save_btn);
 
         //View
-
         imageCapture = new ImageCapture.Builder()
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation())
                 .build();
@@ -129,8 +128,6 @@ public class CaptureImg extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 takePicture();
-
-
             }
         });
 
@@ -193,29 +190,30 @@ public class CaptureImg extends AppCompatActivity {
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                        Toast.makeText(CaptureImg.this, "Image saved", Toast.LENGTH_SHORT).show();
 
-                        // Create a file in the Pictures directory
-                        File photoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-                        File photo = new File(photoDir, "photo_" + System.currentTimeMillis() + ".jpg");
+//                        // Create a file in the Pictures directory
+//                        File photoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+//                        File photo = new File(photoDir, "photo_" + System.currentTimeMillis() + ".jpg");
+//
+//                        try {
+//                            // Copy the captured image to the new file
+//                            try (InputStream in = new FileInputStream(outputFileResults.getSavedUri().getPath());
+//                                 OutputStream out = new FileOutputStream(photo)) {
+//                                byte[] buf = new byte[1024];
+//                                int len;
+//                                while ((len = in.read(buf)) > 0) {
+//                                    out.write(buf, 0, len);
+//                                }
+//                            }
+//                            // Notify the gallery
+//                            addPicToGallery(photo.getAbsolutePath());
+//                            Toast.makeText(CaptureImg.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
+//                        } catch (IOException e) {
+//                            Log.e("CaptureImg", "Error saving image to gallery", e);
+//                            Toast.makeText(CaptureImg.this, "Error saving image", Toast.LENGTH_SHORT).show();
+//                        }
 
-                        try {
-                            // Copy the captured image to the new file
-                            try (InputStream in = new FileInputStream(outputFileResults.getSavedUri().getPath());
-                                 OutputStream out = new FileOutputStream(photo)) {
-                                byte[] buf = new byte[1024];
-                                int len;
-                                while ((len = in.read(buf)) > 0) {
-                                    out.write(buf, 0, len);
-                                }
-                            }
-                            // Notify the gallery
-                            addPicToGallery(photo.getAbsolutePath());
-                            Toast.makeText(CaptureImg.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
-                            Log.e("CaptureImg", "Error saving image to gallery", e);
-                            Toast.makeText(CaptureImg.this, "Error saving image", Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(CaptureImg.this, "Image sent to Detection Activity", Toast.LENGTH_SHORT).show();
 
                         // Get the saved image file URI
                         Uri savedUri = outputFileResults.getSavedUri();
@@ -229,7 +227,6 @@ public class CaptureImg extends AppCompatActivity {
                         intent.putExtra("image_path", savedUri.toString());
                         startActivity(intent);
                         finish();
-
 
 
                     }

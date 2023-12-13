@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nextgenartisans.etago.R;
 
@@ -36,6 +38,9 @@ public class UploadImg extends AppCompatActivity {
 
     //Photo Picker
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+
+    private Uri selectedImageUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +109,17 @@ public class UploadImg extends AppCompatActivity {
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (selectedImageUri != null) {
+                    // Create an intent to start DetectionActivity
+                    Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
+                    // Pass the selected image URI as a string extra
+                    intent.putExtra("image_path", selectedImageUri.toString());
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -136,14 +151,22 @@ public class UploadImg extends AppCompatActivity {
 
     private void initializePhotoPicker() {
         pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-            // Callback is invoked after the user selects a media item or closes the photo picker
             if (uri != null) {
                 Log.d("PhotoPicker", "Selected URI: " + uri);
-                uploadedImg.setImageURI(uri); // Set the image in the ImageView
+                uploadedImg.setImageURI(uri);
+                selectedImageUri = uri;
+
+                try {
+                    // Persist access permissions.
+                    getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                } catch (SecurityException e) {
+                    Log.e("UploadImg", "Error persisting permission: ", e);
+                }
             } else {
                 Log.d("PhotoPicker", "No media selected");
             }
         });
+
     }
 
     private void launchPhotoPicker() {
