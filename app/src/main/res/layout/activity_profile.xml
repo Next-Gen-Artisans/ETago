@@ -28,12 +28,23 @@
                 android:elevation="10dp"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/profile_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
+                    android:layout_gravity="center"
+                    />
+
             </androidx.appcompat.widget.Toolbar>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/profile_header"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="-20dp"
                 app:cardBackgroundColor="@color/light_blue"
                 app:cardCornerRadius="25dp"
@@ -47,7 +58,7 @@
                 android:id="@+id/profile_info_containers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-75dp"
+                android:layout_marginTop="50dp"
                 android:background="@color/transparent"
                 android:elevation="10dp"
                 android:gravity="center"
@@ -62,6 +73,8 @@
                     android:src="@drawable/profile_username_icon"
                     app:shapeAppearanceOverlay="@style/roundedImageView"
                     android:layout_gravity="center"
+                    app:strokeColor="@color/alt_black"
+                    app:strokeWidth="1dp"
                     />
 
                 <TextView

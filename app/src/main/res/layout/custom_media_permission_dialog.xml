@@ -22,10 +22,11 @@
         android:id="@+id/media_permission_dialog_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Allow E-Tago to access photos, media, and files on your device?"
+        android:text="Allow E-Tago to access camera, photos, media, and files on your device?"
         android:fontFamily="@font/montserrat_medium"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
+        android:gravity="center"
         android:layout_marginTop="20dp" />
 
     <LinearLayout

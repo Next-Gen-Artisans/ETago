@@ -2,14 +2,10 @@ package com.nextgenartisans.etago.home;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -45,20 +41,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.about_us.AboutAppActivity;
+import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.ExitAppDialog;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
+import com.nextgenartisans.etago.dialogs.MediaPermissionDialog;
 import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.onboarding.Welcome;
 import com.nextgenartisans.etago.profile.NewPassActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -88,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LogoutDialog logoutDialog;
     ExitAppDialog exitAppDialog;
     TermsOfServiceDialog termsOfServiceDialog;
+    MediaPermissionDialog mediaPermissionDialog;
+
+
 
     //MEDIA PERMISSIONS
     public static final int STORAGE_PERMISSION_CODE = 1;
@@ -97,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //On Back Pressed Variables
     private boolean doubleBackToExitPressedOnce = false;
     private Handler handler = new Handler();
-
-    //
 
     @Override
     protected void onStart() {
@@ -113,61 +106,84 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkUserAgreement();
 
         //TODO: ASK MEDIA PERMISSIONS
-        //askMediaPermissions();
+        askMediaPermissions();
+
+        
 
 
     }
 
-//    private void askMediaPermissions() {
-//        List<String> permissionsNeeded = new ArrayList<>();
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-//        }
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-//        }
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            permissionsNeeded.add(Manifest.permission.CAMERA);
-//        }
-//
-//        if (!permissionsNeeded.isEmpty()) {
-//            ActivityCompat.requestPermissions(this, permissionsNeeded.toArray(new String[0]), REQUEST_MEDIA_CAMERA_PERMISSION);
-//        } else {
-//            Toast.makeText(this, "Permissions were granted.", Toast.LENGTH_LONG).show();
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//
-//        if (requestCode == REQUEST_MEDIA_CAMERA_PERMISSION) {
-//            Map<String, Integer> perms = new HashMap<>();
-//            // Initialize the map with both permissions
-//            perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-//            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-//            perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
-//
-//            // Fill in the actual results from the user's choices
-//            if (grantResults.length > 0) {
-//                for (int i = 0; i < permissions.length; i++)
-//                    perms.put(permissions[i], grantResults[i]);
-//
-//                // Check for both permissions
-//                if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-//                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-//                        && perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-//                    // All permissions are granted, proceed with the action that requires permissions
-//                } else {
-//                    // Permission request was denied, handle the feature that depends on this permission.
-//                    Toast.makeText(this, "Some permissions were denied", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        }
-//    }
+    private void askMediaPermissions() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
+            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists() && documentSnapshot.contains("userAgreedMedia")) {
+                        boolean hasAgreed = documentSnapshot.getBoolean("userAgreedMedia");
+                        if (!hasAgreed) {
+                            // User has not agreed yet, show the terms of service dialog
+                            showMediaPermissionDialog();
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "User did not agree to terms and privacy policy!");
+                }
+            });
+        }
+
+
+    }
+
+    private boolean hasMediaPermissions() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, update Firestore
+                updateFirestoreUserAgreedMedia(true);
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Permissions denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void updateFirestoreUserAgreedMedia(boolean agreed) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            DocumentReference userDoc = db.collection("Users").document(currentUser.getUid());
+            userDoc.update("userAgreedMedia", agreed)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error updating document", e);
+                        }
+                    });
+        }
+    }
 
 
     private void setNewPassword() {
@@ -221,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         logoutDialog = new LogoutDialog(MainActivity.this);
         exitAppDialog = new ExitAppDialog(MainActivity.this);
         termsOfServiceDialog = new TermsOfServiceDialog(MainActivity.this);
+        mediaPermissionDialog = new MediaPermissionDialog(MainActivity.this);
 
         //Hooks
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -366,12 +383,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showTermsOfServiceDialog() {
         if (!termsOfServiceDialog.isShowing()) {
             termsOfServiceDialog.show();
-            Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Click \"agree\" to proceed.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Click \"agree\" to proceed.", Toast.LENGTH_SHORT).show();
         }
 
     }
+
+    private void showMediaPermissionDialog(){
+        if (!mediaPermissionDialog.isShowing()) {
+            mediaPermissionDialog.show();
+            Toast.makeText(this, "Click \"allow\" to proceed.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Click \"allow\" to proceed.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 
 
     private void loadUserProfilePicture() {
@@ -488,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (id == R.id.nav_about1) {
             //navigationView.setCheckedItem(R.id.nav_about1);
-            Intent intent = new Intent(MainActivity.this, AboutAppActivity.class);
+            Intent intent = new Intent(MainActivity.this, AboutUs.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {

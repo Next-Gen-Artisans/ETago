@@ -31,9 +31,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.about_us.AboutAppActivity;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
@@ -57,7 +57,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     ShapeableImageView profileUserPicHeader;
 
     //Custom Dialogs
-
     LogoutDialog logoutDialog;
 
     //Firebase
@@ -216,8 +215,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 finish();
             }
         });
-
-
     }
 
     private void loadUserProfilePicture() {
@@ -308,7 +305,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         //Set the number of censored images
         numCensoredImgs.setText(String.valueOf(numCensoredImages));
-
     }
 
     @Override
@@ -320,23 +316,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         if (id == R.id.nav_home1) {
             Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             startActivity(intent);
-
         }
         if (id == R.id.nav_settings1) {
             Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
             startActivity(intent);
-
-
         }
         if (id == R.id.nav_about1) {
-            Intent intent = new Intent(ProfileActivity.this, AboutAppActivity.class);
+            Intent intent = new Intent(ProfileActivity.this, AboutUs.class);
             startActivity(intent);
-
         } else if (id == R.id.nav_logout) {
             //Show Dialog
             logoutDialog = new LogoutDialog(this);
             logoutDialog.show();
-
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

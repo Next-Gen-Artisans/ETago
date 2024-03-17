@@ -26,6 +26,9 @@
         android:theme="@style/Theme.ETago"
         tools:targetApi="31">
         <activity
+            android:name=".about_us.AboutUs"
+            android:exported="false" />
+        <activity
             android:name=".home.CensorActivity"
             android:exported="false" />
         <activity

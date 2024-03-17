@@ -85,6 +85,14 @@ dependencies {
     // If you want to additionally use the CameraX Extensions library
     implementation("androidx.camera:camera-extensions:${camerax_version}")
 
+    // Tensorflow Lite dependencies for Google Play services
+    implementation("com.google.android.gms:play-services-tflite-java:16.0.1")
+    // Optional: include Tensorflow Lite Support Library
+    implementation("com.google.android.gms:play-services-tflite-support:16.0.1")
+    //To use the GPU delegate with the Task APIs:
+    implementation("com.google.android.gms:play-services-tflite-gpu:16.1.0")
+
+
 
 
 
