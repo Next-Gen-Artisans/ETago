@@ -108,9 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //TODO: ASK MEDIA PERMISSIONS
         askMediaPermissions();
 
-        
-
-
     }
 
     private void askMediaPermissions() {

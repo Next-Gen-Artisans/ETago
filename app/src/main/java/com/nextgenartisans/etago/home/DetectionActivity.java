@@ -1,21 +1,12 @@
 package com.nextgenartisans.etago.home;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,14 +15,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.camera.core.ImageCapture;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+
 import com.nextgenartisans.etago.R;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import org.tensorflow.lite.support.image.TensorImage;
+import org.tensorflow.lite.task.gms.vision.detector.Detection;
+import org.tensorflow.lite.task.gms.vision.detector.ObjectDetector;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.List;
 
 public class DetectionActivity extends AppCompatActivity {
 
@@ -44,6 +42,9 @@ public class DetectionActivity extends AppCompatActivity {
     private AppCompatButton censorBtn, cancelBtn;
 
     private ImageCapture imageCapture;
+
+    private ObjectDetector objectDetector;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,6 @@ public class DetectionActivity extends AppCompatActivity {
                 window.setStatusBarColor(ContextCompat.getColor(this, R.color.alt_black));
             }
         }
-
 
         setContentView(R.layout.activity_detection);
 
@@ -111,30 +111,55 @@ public class DetectionActivity extends AppCompatActivity {
             }
         });
 
+        // Initialize ObjectDetector
+        try {
+            objectDetector = ObjectDetector.createFromFile(this, "app/src/main/assets/e_tago_32.tflite");
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to load model", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            return; // Stop the activity initialization if the model cannot be loaded
+        }
+
         censorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Get the image path from the intent (captured image path)
-                Intent intentFromCaptureImg = getIntent();
-                String imagePathFromCaptureImg = intentFromCaptureImg.getStringExtra("image_path");
-
-                if (imagePathFromCaptureImg != null && !imagePathFromCaptureImg.isEmpty()) {
-                    // Create an intent to start CensorActivity
-                    Intent intentToCensorActivity = new Intent(DetectionActivity.this, CensorActivity.class);
-                    // Pass the image file path as an extra
-                    intentToCensorActivity.putExtra("censored_image_path", imagePathFromCaptureImg);
-                    intentToCensorActivity.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivity(intentToCensorActivity);
-                    finish();
-                } else {
-                    Toast.makeText(DetectionActivity.this, "No image path available", Toast.LENGTH_SHORT).show();
-                }
+                detectObjects();
             }
         });
 
 
+    }
 
+    private void detectObjects() {
+        // Get the image path from the intent (captured image path)
+        Intent intentFromCaptureImg = getIntent();
+        String imagePathFromCaptureImg = intentFromCaptureImg.getStringExtra("image_path");
+        if (imagePathFromCaptureImg == null || imagePathFromCaptureImg.isEmpty()) {
+            Toast.makeText(this, "No image path available", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        Uri imageUri = Uri.parse(imagePathFromCaptureImg);
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+            TensorImage tensorImage = TensorImage.fromBitmap(bitmap);
+            List<Detection> results = objectDetector.detect(tensorImage);
+
+            // Here, you can process the results, for example, draw bounding boxes on the image.
+            // However, for simplicity, we're just showing a toast with the number of detected objects.
+            Toast.makeText(this, ((List<?>) results).size() + " objects detected.", Toast.LENGTH_LONG).show();
+
+            // You would then proceed to the censoring part with the detected bounding boxes
+            // For now, we are just starting the CensorActivity as before
+            Intent intentToCensorActivity = new Intent(DetectionActivity.this, CensorActivity.class);
+            intentToCensorActivity.putExtra("censored_image_path", imagePathFromCaptureImg);
+            startActivity(intentToCensorActivity);
+            finish();
+
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
 
