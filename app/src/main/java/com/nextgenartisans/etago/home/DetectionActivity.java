@@ -42,11 +42,9 @@ import java.util.Map;
 
 public class DetectionActivity extends AppCompatActivity {
 
-    private static final int BATCH_SIZE = 1;
     private static final int INPUT_IMG_SIZE = 768;
     private static final int PIXEL_SIZE = 3;
-    private static final float DETECTION_THRESHOLD = 0.5f;
-    private static final int NUM_DETECTIONS = 10;
+    private static final int NUM_DETECTIONS = 9;
     private LinearLayout headerContainer;
     private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
@@ -54,38 +52,22 @@ public class DetectionActivity extends AppCompatActivity {
     private AppCompatImageView detectedImg;
     private LinearLayout buttonsLayout;
     private AppCompatButton censorBtn, cancelBtn;
-
     private ImageCapture imageCapture;
-
     private ObjectDetector objectDetector;
     private InterpreterApi interpreter;
 
-    private final ByteBuffer modelBuffer = null;
+    private ByteBuffer modelBuffer = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detection);
+        initializeUI();
+        initializeModel();
+    }
 
-        // Load the model buffer
-        ByteBuffer modelBuffer;
-        try {
-            modelBuffer = loadModelFile();
-            // Proceed with creating the Interpreter
-            Task<Void> initializeTask = TfLite.initialize(getApplicationContext());
-            initializeTask.addOnSuccessListener(aVoid -> {
-                interpreter = InterpreterApi.create(modelBuffer,
-                        new InterpreterApi.Options().setRuntime(InterpreterApi.Options.TfLiteRuntime.FROM_SYSTEM_ONLY));
-                // Use the interpreter for inference
-                setUpClickListeners();
-            }).addOnFailureListener(e -> {
-                Log.e("Interpreter", "Cannot initialize interpreter: " + e.getMessage());
-            });
-        } catch (IOException e) {
-            Log.e("DetectObjects", "Failed to load model", e);
-            return; // Return or handle the error appropriately
-        }
-
+    private void initializeUI() {
         //Change status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -100,8 +82,6 @@ public class DetectionActivity extends AppCompatActivity {
                 window.setStatusBarColor(ContextCompat.getColor(this, R.color.alt_black));
             }
         }
-
-        setContentView(R.layout.activity_detection);
 
         // Initialize your views here
         headerContainer = findViewById(R.id.header_container);
@@ -147,87 +127,99 @@ public class DetectionActivity extends AppCompatActivity {
             }
         });
 
-
-    }
-
-    private void setUpClickListeners() {
         censorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                detectObjects();
+                Toast.makeText(DetectionActivity.this, "Censoring image...", Toast.LENGTH_SHORT).show();
+                detectObjectsFromURI();
             }
         });
     }
 
+    private void initializeModel() {
+        try {
+            modelBuffer = loadModelFile();
+            // Initialize the TFLite interpreter
+            Task<Void> initializeTask = TfLite.initialize(getApplicationContext());
+            initializeTask.addOnSuccessListener(aVoid -> {
+                interpreter = InterpreterApi.create(modelBuffer,
+                        new InterpreterApi.Options().setRuntime(InterpreterApi.Options.TfLiteRuntime.FROM_SYSTEM_ONLY));
+                Log.i("Interpreter", "Model initialized successfully.");
+            }).addOnFailureListener(e -> {
+                Log.e("Interpreter", "Failed to initialize model: " + e.getMessage());
+            });
+        } catch (IOException e) {
+            Log.e("Model Initialization", "Failed to load model", e);
+        }
+    }
+
     private ByteBuffer loadModelFile() throws IOException {
         AssetManager assetManager = getAssets();
-        AssetFileDescriptor fileDescriptor = assetManager.openFd("e_tago_32.tflite");
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        AssetFileDescriptor fileDescriptor = assetManager.openFd("final_model.tflite");
+
+        try (FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+             FileChannel fileChannel = inputStream.getChannel()) {
+
+            long startOffset = fileDescriptor.getStartOffset();
+            long declaredLength = fileDescriptor.getDeclaredLength();
+            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        }
     }
+
 
     // Helper method to convert Bitmap to ByteBuffer (adjust parameters as needed)
     private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
-        // Adjust the buffer size for 'uint8' type (1 byte per pixel channel).
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(INPUT_IMG_SIZE * INPUT_IMG_SIZE * PIXEL_SIZE);
+        // Ensure the bitmap is of the expected size or resize it
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 768, 768, true);
+
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(768 * 768 * 3 * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
 
-        // Dynamically allocate the intValues array based on the bitmap's dimensions
-        int[] intValues = new int[bitmap.getWidth() * bitmap.getHeight()];
-
-        // Ensure the bitmap is of the expected size or resized before this step
-        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        int[] intValues = new int[768 * 768]; // This now matches the resized bitmap
+        // Use the resized bitmap dimensions
+        resizedBitmap.getPixels(intValues, 0, resizedBitmap.getWidth(), 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight());
 
         for (int value : intValues) {
-            byteBuffer.put((byte) ((value >> 16) & 0xFF)); // Red channel
-            byteBuffer.put((byte) ((value >> 8) & 0xFF));  // Green channel
-            byteBuffer.put((byte) (value & 0xFF));         // Blue channel
+            byteBuffer.putFloat(((value >> 16) & 0xFF) / 255.0f); // Red channel normalized
+            byteBuffer.putFloat(((value >> 8) & 0xFF) / 255.0f);  // Green channel normalized
+            byteBuffer.putFloat((value & 0xFF) / 255.0f);         // Blue channel normalized
         }
         return byteBuffer;
     }
 
-    private void detectObjects() {
-        // Get the image path from the intent (captured image path)
-        Intent intentFromCaptureImg = getIntent();
-        String imagePathFromCaptureImg = intentFromCaptureImg.getStringExtra("image_path");
-        if (imagePathFromCaptureImg == null || imagePathFromCaptureImg.isEmpty()) {
+
+
+
+    private void detectObjectsFromURI() {
+        Intent intent = getIntent();
+        String imagePath = intent.getStringExtra("image_path");
+        if (imagePath == null || imagePath.isEmpty()) {
             Toast.makeText(this, "No image path available", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Uri imageUri = Uri.parse(imagePathFromCaptureImg);
+        Uri imageUri = Uri.parse(imagePath);
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-
-            // Assuming your model takes a 300x300 pixel image as input
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 768, 1024, true);
-            ByteBuffer inputBuffer = convertBitmapToByteBuffer(resizedBitmap);
-
-            // Adjust the size of this array based on your model's output
-            float[][][] outputLocations = new float[1][NUM_DETECTIONS][4]; // Example for bounding box output
-            float[][] outputClasses = new float[1][NUM_DETECTIONS]; // Class labels
-            float[][] outputScores = new float[1][NUM_DETECTIONS]; // Confidence scores
-            float[] numDetections = new float[1]; // Number of detections
-
-            Object[] inputArray = {inputBuffer};
-            Map<Integer, Object> outputMap = new HashMap<>();
-            outputMap.put(0, outputLocations);
-            outputMap.put(1, outputClasses);
-            outputMap.put(2, outputScores);
-            outputMap.put(3, numDetections);
-
-            interpreter.runForMultipleInputsOutputs(inputArray, outputMap);
-
-            // Process the output here. For example, drawing bounding boxes based on `outputLocations`.
-            // The processing part will depend on how you want to use the detection results.
+            detectObjects(bitmap);
         } catch (IOException e) {
-            Log.e("DetectObjects", "Failed to load image", e);
+            Log.e("DetectionActivityLog", "Failed to load image from URI", e);
         }
     }
 
+    private void detectObjects(Bitmap bitmap) {
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_IMG_SIZE, INPUT_IMG_SIZE, true);
+        ByteBuffer inputBuffer = convertBitmapToByteBuffer(resizedBitmap);
 
+        float[][][] detectionOutput = new float[1][9][12096];
+
+        Map<Integer, Object> outputMap = new HashMap<>();
+        outputMap.put(0, detectionOutput);
+
+        interpreter.runForMultipleInputsOutputs(new Object[]{inputBuffer}, outputMap);
+        Log.i("DetectionActivityLog", "Model Inference was a success!");
+        //Process the detection output outputMap
+
+    }
 
 }
