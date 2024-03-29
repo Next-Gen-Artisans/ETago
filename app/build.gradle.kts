@@ -53,6 +53,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-tflite-gpu:16.1.0")
     implementation("org.tensorflow:tensorflow-lite-task-vision-play-services:0.4.4")
     implementation("org.tensorflow:tensorflow-lite:2.15.0")
+    implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")

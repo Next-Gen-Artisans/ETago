@@ -1,12 +1,15 @@
 package com.nextgenartisans.etago.home;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,17 +25,28 @@ import androidx.camera.core.ImageCapture;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tflite.java.TfLite;
 import com.nextgenartisans.etago.R;
 
-import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.task.gms.vision.detector.Detection;
+import org.tensorflow.lite.InterpreterApi;
 import org.tensorflow.lite.task.gms.vision.detector.ObjectDetector;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetectionActivity extends AppCompatActivity {
 
+    private static final int BATCH_SIZE = 1;
+    private static final int INPUT_IMG_SIZE = 768;
+    private static final int PIXEL_SIZE = 3;
+    private static final float DETECTION_THRESHOLD = 0.5f;
+    private static final int NUM_DETECTIONS = 10;
     private LinearLayout headerContainer;
     private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
@@ -44,11 +58,33 @@ public class DetectionActivity extends AppCompatActivity {
     private ImageCapture imageCapture;
 
     private ObjectDetector objectDetector;
+    private InterpreterApi interpreter;
+
+    private final ByteBuffer modelBuffer = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load the model buffer
+        ByteBuffer modelBuffer;
+        try {
+            modelBuffer = loadModelFile();
+            // Proceed with creating the Interpreter
+            Task<Void> initializeTask = TfLite.initialize(getApplicationContext());
+            initializeTask.addOnSuccessListener(aVoid -> {
+                interpreter = InterpreterApi.create(modelBuffer,
+                        new InterpreterApi.Options().setRuntime(InterpreterApi.Options.TfLiteRuntime.FROM_SYSTEM_ONLY));
+                // Use the interpreter for inference
+                setUpClickListeners();
+            }).addOnFailureListener(e -> {
+                Log.e("Interpreter", "Cannot initialize interpreter: " + e.getMessage());
+            });
+        } catch (IOException e) {
+            Log.e("DetectObjects", "Failed to load model", e);
+            return; // Return or handle the error appropriately
+        }
 
         //Change status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -96,7 +132,7 @@ public class DetectionActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(DetectionActivity.this, CaptureImg.class);
+                Intent i = new Intent(DetectionActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
             }
@@ -105,29 +141,52 @@ public class DetectionActivity extends AppCompatActivity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(DetectionActivity.this, CaptureImg.class);
+                Intent i = new Intent(DetectionActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
             }
         });
 
-        // Initialize ObjectDetector
-        try {
-            objectDetector = ObjectDetector.createFromFile(this, "app/src/main/assets/e_tago_32.tflite");
-        } catch (IOException e) {
-            Toast.makeText(this, "Failed to load model", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-            return; // Stop the activity initialization if the model cannot be loaded
-        }
 
+    }
+
+    private void setUpClickListeners() {
         censorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 detectObjects();
             }
         });
+    }
 
+    private ByteBuffer loadModelFile() throws IOException {
+        AssetManager assetManager = getAssets();
+        AssetFileDescriptor fileDescriptor = assetManager.openFd("e_tago_32.tflite");
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
 
+    // Helper method to convert Bitmap to ByteBuffer (adjust parameters as needed)
+    private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
+        // Adjust the buffer size for 'uint8' type (1 byte per pixel channel).
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(INPUT_IMG_SIZE * INPUT_IMG_SIZE * PIXEL_SIZE);
+        byteBuffer.order(ByteOrder.nativeOrder());
+
+        // Dynamically allocate the intValues array based on the bitmap's dimensions
+        int[] intValues = new int[bitmap.getWidth() * bitmap.getHeight()];
+
+        // Ensure the bitmap is of the expected size or resized before this step
+        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        for (int value : intValues) {
+            byteBuffer.put((byte) ((value >> 16) & 0xFF)); // Red channel
+            byteBuffer.put((byte) ((value >> 8) & 0xFF));  // Green channel
+            byteBuffer.put((byte) (value & 0xFF));         // Blue channel
+        }
+        return byteBuffer;
     }
 
     private void detectObjects() {
@@ -142,23 +201,30 @@ public class DetectionActivity extends AppCompatActivity {
         Uri imageUri = Uri.parse(imagePathFromCaptureImg);
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            TensorImage tensorImage = TensorImage.fromBitmap(bitmap);
-            List<Detection> results = objectDetector.detect(tensorImage);
 
-            // Here, you can process the results, for example, draw bounding boxes on the image.
-            // However, for simplicity, we're just showing a toast with the number of detected objects.
-            Toast.makeText(this, ((List<?>) results).size() + " objects detected.", Toast.LENGTH_LONG).show();
+            // Assuming your model takes a 300x300 pixel image as input
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 768, 1024, true);
+            ByteBuffer inputBuffer = convertBitmapToByteBuffer(resizedBitmap);
 
-            // You would then proceed to the censoring part with the detected bounding boxes
-            // For now, we are just starting the CensorActivity as before
-            Intent intentToCensorActivity = new Intent(DetectionActivity.this, CensorActivity.class);
-            intentToCensorActivity.putExtra("censored_image_path", imagePathFromCaptureImg);
-            startActivity(intentToCensorActivity);
-            finish();
+            // Adjust the size of this array based on your model's output
+            float[][][] outputLocations = new float[1][NUM_DETECTIONS][4]; // Example for bounding box output
+            float[][] outputClasses = new float[1][NUM_DETECTIONS]; // Class labels
+            float[][] outputScores = new float[1][NUM_DETECTIONS]; // Confidence scores
+            float[] numDetections = new float[1]; // Number of detections
 
+            Object[] inputArray = {inputBuffer};
+            Map<Integer, Object> outputMap = new HashMap<>();
+            outputMap.put(0, outputLocations);
+            outputMap.put(1, outputClasses);
+            outputMap.put(2, outputScores);
+            outputMap.put(3, numDetections);
+
+            interpreter.runForMultipleInputsOutputs(inputArray, outputMap);
+
+            // Process the output here. For example, drawing bounding boxes based on `outputLocations`.
+            // The processing part will depend on how you want to use the detection results.
         } catch (IOException e) {
-            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            Log.e("DetectObjects", "Failed to load image", e);
         }
     }
 

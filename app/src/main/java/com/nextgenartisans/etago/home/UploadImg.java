@@ -1,14 +1,5 @@
 package com.nextgenartisans.etago.home;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -22,6 +13,15 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.nextgenartisans.etago.R;
 
@@ -120,14 +120,6 @@ public class UploadImg extends AppCompatActivity {
                 } else {
                     Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        //TODO OUTPUT RESULT
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
             }
         });
 
