@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,23 +29,35 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tflite.java.TfLite;
 import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.api.ETagoAPI;
 
 import org.tensorflow.lite.InterpreterApi;
 import org.tensorflow.lite.task.gms.vision.detector.ObjectDetector;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class DetectionActivity extends AppCompatActivity {
 
     private static final int INPUT_IMG_SIZE = 768;
-    private static final int PIXEL_SIZE = 3;
-    private static final int NUM_DETECTIONS = 9;
+    private static final float CONFIDENCE_THRESHOLD = 0.5f;
     private LinearLayout headerContainer;
     private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
@@ -131,9 +144,66 @@ public class DetectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(DetectionActivity.this, "Censoring image...", Toast.LENGTH_SHORT).show();
-                detectObjectsFromURI();
+                Uri imageUri = Uri.parse(imagePath);
+                byte[] imageData = getImageData(imageUri);
+
+                if (imageData != null) {
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
+
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl("http://192.168.1.22:8000/") // Ensure the port is included if necessary
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+                    ETagoAPI api = retrofit.create(ETagoAPI.class);
+                    Call<ResponseBody> call = api.uploadImage(MultipartBody.Part.createFormData("file", "image.jpg", requestFile).body());
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                                detectedImg.setImageBitmap(bitmap);
+                                Toast.makeText(DetectionActivity.this, "Image censored successfully", Toast.LENGTH_SHORT).show();
+                                //Log the response
+                                Log.i("DetectionActivityLog", "Image censored successfully");
+
+                            } else {
+                                // Handling non-successful response
+                                String responseBody = "N/A";
+                                try {
+                                    responseBody = response.errorBody().string();
+                                } catch (Exception e) {
+                                    Log.e("DetectionActivityLog", "Error reading response body", e);
+                                }
+                                Log.e("DetectionActivityLog", "Failed to censor image: " + responseBody);
+                                Toast.makeText(DetectionActivity.this, "Failed to censor image", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(DetectionActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e("DetectionActivityLog", "Error uploading image: " + t.getMessage());
+                        }
+                    });
+                } else {
+                    Toast.makeText(DetectionActivity.this, "Error preparing image for upload", Toast.LENGTH_SHORT).show();
+                    Log.e("DetectionActivityLog", "Error preparing image for upload");
+                }
             }
         });
+    }
+
+    private byte[] getImageData(Uri imageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void initializeModel() {
@@ -166,7 +236,6 @@ public class DetectionActivity extends AppCompatActivity {
         }
     }
 
-
     // Helper method to convert Bitmap to ByteBuffer (adjust parameters as needed)
     private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
         // Ensure the bitmap is of the expected size or resize it
@@ -186,9 +255,6 @@ public class DetectionActivity extends AppCompatActivity {
         }
         return byteBuffer;
     }
-
-
-
 
     private void detectObjectsFromURI() {
         Intent intent = getIntent();
@@ -211,15 +277,63 @@ public class DetectionActivity extends AppCompatActivity {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_IMG_SIZE, INPUT_IMG_SIZE, true);
         ByteBuffer inputBuffer = convertBitmapToByteBuffer(resizedBitmap);
 
-        float[][][] detectionOutput = new float[1][9][12096];
+        // Calculate the total number of floats in the output tensor
+        int totalNumOfFloats = 1 * 9 * 12096; // This matches your model's output structure
 
+        // Allocate a FloatBuffer with the correct size
+        FloatBuffer outputBuffer = FloatBuffer.allocate(totalNumOfFloats);
+
+        // Prepare the output map
         Map<Integer, Object> outputMap = new HashMap<>();
-        outputMap.put(0, detectionOutput);
+        outputMap.put(0, outputBuffer);
 
+        // Run model inference
         interpreter.runForMultipleInputsOutputs(new Object[]{inputBuffer}, outputMap);
+
+        // Process the model output
+        processModelOutput2(outputBuffer);
+
         Log.i("DetectionActivityLog", "Model Inference was a success!");
-        //Process the detection output outputMap
 
     }
+
+    private void processModelOutput(FloatBuffer locations, FloatBuffer classes, FloatBuffer scores, FloatBuffer numDetections) {
+        // Assuming numDetections contains the actual number of detected objects
+        int numberOfDetections = (int) numDetections.get(0);
+
+        for (int i = 0; i < numberOfDetections; i++) {
+            // Read each detection
+            float top = locations.get(i * 4 + 0);
+            float left = locations.get(i * 4 + 1);
+            float right = locations.get(i * 4 + 2);
+            float bottom = locations.get(i * 4 + 3);
+
+            int detectedClass = (int) classes.get(i);
+            float score = scores.get(i);
+
+            // Log or use the detected information
+            Log.i("DetectionResult", "Detection " + i + ": Class = " + detectedClass + ", Score = " + score +
+                    ", Box = [" + top + ", " + left + ", " + right + ", " + bottom + "]");
+        }
+    }
+
+    // Example processing method, adjust according to your model's output structure
+    private void processModelOutput2(FloatBuffer outputBuffer) {
+        // Reset the buffer's position if necessary
+        outputBuffer.rewind();
+
+        // Assuming a hypothetical structure for demonstration
+        for (int i = 0; i < 12096; i++) {
+            float value = outputBuffer.get();
+            Log.i("ModelOutput", "First value in output: " + outputBuffer.get(i));
+            // Process each value as needed based on your understanding of the output structure
+        }
+
+
+    }
+
+
+
+
 
 }
