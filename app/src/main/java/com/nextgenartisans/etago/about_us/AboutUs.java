@@ -1,14 +1,5 @@
 package com.nextgenartisans.etago.about_us;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +8,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -76,7 +76,6 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
 
-
         setContentView(R.layout.activity_about_us);
 
         //Firebase
@@ -90,6 +89,7 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
 
         //Navigation View
         profileNavView = findViewById(R.id.about_nav_view);
+
         //TextViews
         headerView = profileNavView.getHeaderView(0);
         profileUserPicHeader = (ShapeableImageView) headerView.findViewById(R.id.drawer_user_profile_pic);
