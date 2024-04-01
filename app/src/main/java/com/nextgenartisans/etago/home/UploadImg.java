@@ -2,9 +2,12 @@ package com.nextgenartisans.etago.home;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +27,22 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.api.ETagoAPI;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UploadImg extends AppCompatActivity {
 
@@ -32,15 +51,28 @@ public class UploadImg extends AppCompatActivity {
     private LinearLayout uploadImageContainer, headerContainer;
     private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
-    private AppCompatImageView uploadedImg;
+
     private AppCompatButton scanBtn, cancelBtn;
 
 
     //Photo Picker
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
+    private AppCompatImageView uploadedImg;
     private Uri selectedImageUri;
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Launch the photo picker and let the user choose only images.
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+
+        setImage(selectedImageUri);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +95,8 @@ public class UploadImg extends AppCompatActivity {
 
         setContentView(R.layout.activity_upload_img);
 
+        initializePhotoPicker(); // Initialize the photo picker here
+
         // Initialize the views
         buttonsCardView = findViewById(R.id.buttons_cardview);
         headerContainer = findViewById(R.id.header_container);
@@ -82,6 +116,7 @@ public class UploadImg extends AppCompatActivity {
         uploadedImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Initialize the photo picker launcher
                 launchPhotoPicker();
             }
         });
@@ -109,37 +144,84 @@ public class UploadImg extends AppCompatActivity {
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
+
                 if (selectedImageUri != null) {
-                    // Create an intent to start DetectionActivity
-                    Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
-                    // Pass the selected image URI as a string extra
-                    intent.putExtra("image_path", selectedImageUri.toString());
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivity(intent);
-                    finish();
+                    Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
+                    byte[] imageData = getImageData(selectedImageUri);
+
+                    if (imageData != null) {
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
+
+                        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl("http://192.168.1.22:8001/") // Replace with your base URL
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+
+                        ETagoAPI api = retrofit.create(ETagoAPI.class); // Replace with your API interface
+                        Call<ResponseBody> call = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    // Decode the received bitmap from the response
+                                    Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+
+                                    // Save the bitmap to a temporary file
+                                    File outputFile = saveBitmapToFile(bitmap, "annotated_image.jpg");
+
+                                    if (outputFile != null) {
+                                        Uri annotatedImageUri = Uri.fromFile(outputFile);
+
+                                        // Pass the URI of the temporary file to DetectionActivity
+                                        Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
+                                        intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
+                                        startActivity(intent);
+                                    } else {
+                                        Log.e("UploadImgLog", "Scanning failed: " + response.errorBody().charStream().toString());
+                                        Toast.makeText(UploadImg.this, "Failed to scan the image.", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    // Handle non-successful response...
+                                    Log.e("UploadImgLog", "Scanning failed: " + response.errorBody().charStream().toString());
+                                }
+                            }
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Log.e("UploadImgLog", "Error uploading image: " + t.getMessage());
+                                Toast.makeText(UploadImg.this, "Error uploading image.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(UploadImg.this, "Error preparing image for upload", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
 
-        // Initialize the photo picker launcher
-        initializePhotoPicker();
-
-
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Launch the photo picker and let the user choose only images.
-        pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build());
-
+    private File saveBitmapToFile(Bitmap bitmap, String fileName) {
+        File outputFile = new File(getExternalFilesDir(null), fileName);
+        try (FileOutputStream out = new FileOutputStream(outputFile)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            return outputFile;
+        } catch (IOException e) {
+            Log.e("UploadImg", "Error saving bitmap to file", e);
+            return null;
+        }
     }
+
+    private void setImage(Uri uri) {
+        selectedImageUri = uri; // Save Uri reference
+        uploadedImg.setImageURI(uri);
+    }
+
 
     private void initializePhotoPicker() {
         pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -166,6 +248,18 @@ public class UploadImg extends AppCompatActivity {
         pickMedia.launch(new PickVisualMediaRequest.Builder()
                 .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                 .build());
+    }
+
+    private byte[] getImageData(Uri imageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

@@ -226,14 +226,14 @@
                 android:layout_marginTop="20dp"
                 >
 
-                <ImageButton
-                    android:id="@+id/facebook_signup_btn"
-                    android:layout_width="142dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/custom_fbbtn_bg"
-                    android:src="@drawable/facebook_logo"
-                    tools:ignore="SpeakableTextPresentCheck"
-                    />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/facebook_signup_btn"-->
+<!--                    android:layout_width="142dp"-->
+<!--                    android:layout_height="50dp"-->
+<!--                    android:background="@drawable/custom_fbbtn_bg"-->
+<!--                    android:src="@drawable/facebook_logo"-->
+<!--                    tools:ignore="SpeakableTextPresentCheck"-->
+<!--                    />-->
 
                 <ImageButton
                     android:id="@+id/google_signup_btn"

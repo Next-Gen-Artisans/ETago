@@ -1,6 +1,6 @@
 package com.nextgenartisans.etago.api;
 
-import okhttp3.RequestBody;
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;
@@ -9,8 +9,16 @@ import retrofit2.http.Part;
 
 public interface ETagoAPI {
 
+    // Endpoint for uploading an image and getting back an image with object detection annotations
     @Multipart
     @POST("/detection/img_object_detection_to_img")
-    Call<ResponseBody> uploadImage(@Part("file\"; filename=\"image.jpg\" ") RequestBody file);
+    Call<ResponseBody> uploadImageForAnnotation(@Part MultipartBody.Part file);
+
+    // Endpoint for uploading an annotated image and getting back a censored image
+    @Multipart
+    @POST("/detection/img_object_detection_to_censored_img")
+    Call<ResponseBody> uploadImageForCensoring(@Part MultipartBody.Part file);
+
+
 
 }

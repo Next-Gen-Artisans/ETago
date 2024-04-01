@@ -2,13 +2,6 @@ package com.nextgenartisans.etago.login_signup;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +14,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -40,11 +40,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
+import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.model.Users;
 import com.nextgenartisans.etago.onboarding.Welcome;
-import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
         //Set id for clickable text and buttons
         loginBtn = findViewById(R.id.login_btn);
         loginBackBtn = findViewById(R.id.login_back_btn);
-        facebookLoginBtn = findViewById(R.id.facebook_login_btn);
+//        facebookLoginBtn = findViewById(R.id.facebook_login_btn);
         googleLoginBtn = findViewById(R.id.google_login_btn);
         forgotPass = findViewById(R.id.forgot_pass);
         textSignUp = findViewById(R.id.text_sign_up);
@@ -254,12 +254,12 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-        facebookLoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        facebookLoginBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         googleLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override

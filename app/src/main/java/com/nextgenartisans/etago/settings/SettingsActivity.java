@@ -55,6 +55,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     FirebaseAuth auth;
     FirebaseUser user;
 
+    //Buttons for Terms of Service and Privacy Policy
+    private TextView termsOfService, privacyPolicy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +68,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
-
-        //Make app full screen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_settings);
 
@@ -88,6 +88,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         profileUserPicHeader = (ShapeableImageView) headerView.findViewById(R.id.drawer_user_profile_pic);
         profileUsernameHeader = (TextView) headerView.findViewById(R.id.drawer_username);
         profileEmailHeader = (TextView) headerView.findViewById(R.id.drawer_user_email);
+
+        //Buttons for Terms of Service and Privacy Policy
+        termsOfService = findViewById(R.id.terms_of_service_btn);
+        privacyPolicy = findViewById(R.id.privacy_policy_btn);
+
 
         if (user == null) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
@@ -146,8 +151,30 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
+        //Add on OnCLick Listener to the Terms of Service and Privacy Policy Buttons to open the WebView
+        termsOfService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWebView("https://drive.google.com/file/d/1gsOzWWpFXeKpeeb5aZ5OsB1QfXCZDI6D/view?usp=drive_link", "Terms of Service");
+            }
+        });
+
+        privacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWebView("https://drive.google.com/file/d/1ecGdBb3ygro_43CvgehtJ6DNcljnC03O/view?usp=drive_link", "Privacy Policy");
+            }
+        });
 
 
+
+    }
+
+    private void openWebView(String url, String webViewText) {
+        Intent intent = new Intent(this, TermsAndConditionsWebView.class);
+        intent.putExtra("url", url);
+        intent.putExtra("webViewText", webViewText);
+        this.startActivity(intent);
     }
 
     private void loadUserData() {

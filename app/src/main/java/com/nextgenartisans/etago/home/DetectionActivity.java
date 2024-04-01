@@ -1,8 +1,6 @@
 package com.nextgenartisans.etago.home;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,8 +24,6 @@ import androidx.camera.core.ImageCapture;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tflite.java.TfLite;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 
@@ -35,12 +31,12 @@ import org.tensorflow.lite.InterpreterApi;
 import org.tensorflow.lite.task.gms.vision.detector.ObjectDetector;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +73,7 @@ public class DetectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detection);
         initializeUI();
-        initializeModel();
+
     }
 
     private void initializeUI() {
@@ -113,13 +109,13 @@ public class DetectionActivity extends AppCompatActivity {
                 .build();
 
 
-        // Get the image path from the intent
-        Intent intent = getIntent();
-        String imagePath = intent.getStringExtra("image_path");
+        // Get the path of the annotated image
+        String imagePath = getIntent().getStringExtra("annotated_image_uri");
         if (imagePath != null && !imagePath.isEmpty()) {
-            // Load the image from the path
-            Uri imageUri = Uri.parse(imagePath);
-            detectedImg.setImageURI(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            detectedImg.setImageBitmap(bitmap); // Ensure detectedImg is initialized
+        } else {
+            Toast.makeText(this, "No annotated image received", Toast.LENGTH_SHORT).show();
         }
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +152,7 @@ public class DetectionActivity extends AppCompatActivity {
                             .build();
 
                     ETagoAPI api = retrofit.create(ETagoAPI.class);
-                    Call<ResponseBody> call = api.uploadImage(MultipartBody.Part.createFormData("file", "image.jpg", requestFile).body());
+                    Call<ResponseBody> call = api.uploadImageForCensoring(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -166,6 +162,25 @@ public class DetectionActivity extends AppCompatActivity {
                                 Toast.makeText(DetectionActivity.this, "Image censored successfully", Toast.LENGTH_SHORT).show();
                                 //Log the response
                                 Log.i("DetectionActivityLog", "Image censored successfully");
+
+                                // Save the bitmap to a temporary file
+                                String fileName = "temp_censored_image.jpg"; // Temporary file name
+                                File outputFile = new File(getExternalCacheDir(), fileName);
+                                try {
+                                    FileOutputStream out = new FileOutputStream(outputFile);
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                    out.flush();
+                                    out.close();
+
+                                    // Pass the path of the temporary file to CensorActivity
+                                    Intent intent = new Intent(DetectionActivity.this, CensorActivity.class);
+                                    intent.putExtra("censored_image_path", outputFile.getAbsolutePath());
+                                    startActivity(intent);
+
+                                } catch (IOException e) {
+                                    Log.e("DetectionActivityLog", "Error saving censored image", e);
+                                    Toast.makeText(DetectionActivity.this, "Error saving censored image", Toast.LENGTH_SHORT).show();
+                                }
 
                             } else {
                                 // Handling non-successful response
@@ -206,35 +221,9 @@ public class DetectionActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeModel() {
-        try {
-            modelBuffer = loadModelFile();
-            // Initialize the TFLite interpreter
-            Task<Void> initializeTask = TfLite.initialize(getApplicationContext());
-            initializeTask.addOnSuccessListener(aVoid -> {
-                interpreter = InterpreterApi.create(modelBuffer,
-                        new InterpreterApi.Options().setRuntime(InterpreterApi.Options.TfLiteRuntime.FROM_SYSTEM_ONLY));
-                Log.i("Interpreter", "Model initialized successfully.");
-            }).addOnFailureListener(e -> {
-                Log.e("Interpreter", "Failed to initialize model: " + e.getMessage());
-            });
-        } catch (IOException e) {
-            Log.e("Model Initialization", "Failed to load model", e);
-        }
-    }
 
-    private ByteBuffer loadModelFile() throws IOException {
-        AssetManager assetManager = getAssets();
-        AssetFileDescriptor fileDescriptor = assetManager.openFd("final_model.tflite");
 
-        try (FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-             FileChannel fileChannel = inputStream.getChannel()) {
 
-            long startOffset = fileDescriptor.getStartOffset();
-            long declaredLength = fileDescriptor.getDeclaredLength();
-            return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-        }
-    }
 
     // Helper method to convert Bitmap to ByteBuffer (adjust parameters as needed)
     private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {

@@ -108,7 +108,6 @@ public class TermsOfServiceDialog extends Dialog {
         intent.putExtra("url", url);
         intent.putExtra("webViewText", webViewText);
         getContext().startActivity(intent);
-
     }
 
 
