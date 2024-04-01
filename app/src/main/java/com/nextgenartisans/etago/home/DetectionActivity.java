@@ -27,18 +27,12 @@ import androidx.core.content.ContextCompat;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 
-import org.tensorflow.lite.InterpreterApi;
-import org.tensorflow.lite.task.gms.vision.detector.ObjectDetector;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -62,10 +56,10 @@ public class DetectionActivity extends AppCompatActivity {
     private LinearLayout buttonsLayout;
     private AppCompatButton censorBtn, cancelBtn;
     private ImageCapture imageCapture;
-    private ObjectDetector objectDetector;
-    private InterpreterApi interpreter;
 
-    private ByteBuffer modelBuffer = null;
+    private Uri annotatedimageUri;
+    private Uri selectedImageUri;
+
 
 
     @Override
@@ -110,13 +104,23 @@ public class DetectionActivity extends AppCompatActivity {
 
 
         // Get the path of the annotated image
-        String imagePath = getIntent().getStringExtra("annotated_image_uri");
-        if (imagePath != null && !imagePath.isEmpty()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            detectedImg.setImageBitmap(bitmap); // Ensure detectedImg is initialized
+        String uriString = getIntent().getStringExtra("annotated_image_uri");
+        String selectedImageUriString = getIntent().getStringExtra("selected_image_uri");
+        if (uriString != null && !uriString.isEmpty()) {
+            annotatedimageUri = Uri.parse(uriString);
+            selectedImageUri = Uri.parse(selectedImageUriString);
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(annotatedimageUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                detectedImg.setImageBitmap(bitmap); // Ensure detectedImg is initialized
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Unable to load image", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "No annotated image received", Toast.LENGTH_SHORT).show();
         }
+
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,8 +144,8 @@ public class DetectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(DetectionActivity.this, "Censoring image...", Toast.LENGTH_SHORT).show();
-                Uri imageUri = Uri.parse(imagePath);
-                byte[] imageData = getImageData(imageUri);
+
+                byte[] imageData = getImageData(selectedImageUri);
 
                 if (imageData != null) {
                     RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
@@ -158,7 +162,7 @@ public class DetectionActivity extends AppCompatActivity {
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
                                 Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
-                                detectedImg.setImageBitmap(bitmap);
+
                                 Toast.makeText(DetectionActivity.this, "Image censored successfully", Toast.LENGTH_SHORT).show();
                                 //Log the response
                                 Log.i("DetectionActivityLog", "Image censored successfully");
@@ -225,101 +229,8 @@ public class DetectionActivity extends AppCompatActivity {
 
 
 
-    // Helper method to convert Bitmap to ByteBuffer (adjust parameters as needed)
-    private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
-        // Ensure the bitmap is of the expected size or resize it
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 768, 768, true);
-
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(768 * 768 * 3 * 4);
-        byteBuffer.order(ByteOrder.nativeOrder());
-
-        int[] intValues = new int[768 * 768]; // This now matches the resized bitmap
-        // Use the resized bitmap dimensions
-        resizedBitmap.getPixels(intValues, 0, resizedBitmap.getWidth(), 0, 0, resizedBitmap.getWidth(), resizedBitmap.getHeight());
-
-        for (int value : intValues) {
-            byteBuffer.putFloat(((value >> 16) & 0xFF) / 255.0f); // Red channel normalized
-            byteBuffer.putFloat(((value >> 8) & 0xFF) / 255.0f);  // Green channel normalized
-            byteBuffer.putFloat((value & 0xFF) / 255.0f);         // Blue channel normalized
-        }
-        return byteBuffer;
-    }
-
-    private void detectObjectsFromURI() {
-        Intent intent = getIntent();
-        String imagePath = intent.getStringExtra("image_path");
-        if (imagePath == null || imagePath.isEmpty()) {
-            Toast.makeText(this, "No image path available", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Uri imageUri = Uri.parse(imagePath);
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            detectObjects(bitmap);
-        } catch (IOException e) {
-            Log.e("DetectionActivityLog", "Failed to load image from URI", e);
-        }
-    }
-
-    private void detectObjects(Bitmap bitmap) {
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_IMG_SIZE, INPUT_IMG_SIZE, true);
-        ByteBuffer inputBuffer = convertBitmapToByteBuffer(resizedBitmap);
-
-        // Calculate the total number of floats in the output tensor
-        int totalNumOfFloats = 1 * 9 * 12096; // This matches your model's output structure
-
-        // Allocate a FloatBuffer with the correct size
-        FloatBuffer outputBuffer = FloatBuffer.allocate(totalNumOfFloats);
-
-        // Prepare the output map
-        Map<Integer, Object> outputMap = new HashMap<>();
-        outputMap.put(0, outputBuffer);
-
-        // Run model inference
-        interpreter.runForMultipleInputsOutputs(new Object[]{inputBuffer}, outputMap);
-
-        // Process the model output
-        processModelOutput2(outputBuffer);
-
-        Log.i("DetectionActivityLog", "Model Inference was a success!");
-
-    }
-
-    private void processModelOutput(FloatBuffer locations, FloatBuffer classes, FloatBuffer scores, FloatBuffer numDetections) {
-        // Assuming numDetections contains the actual number of detected objects
-        int numberOfDetections = (int) numDetections.get(0);
-
-        for (int i = 0; i < numberOfDetections; i++) {
-            // Read each detection
-            float top = locations.get(i * 4 + 0);
-            float left = locations.get(i * 4 + 1);
-            float right = locations.get(i * 4 + 2);
-            float bottom = locations.get(i * 4 + 3);
-
-            int detectedClass = (int) classes.get(i);
-            float score = scores.get(i);
-
-            // Log or use the detected information
-            Log.i("DetectionResult", "Detection " + i + ": Class = " + detectedClass + ", Score = " + score +
-                    ", Box = [" + top + ", " + left + ", " + right + ", " + bottom + "]");
-        }
-    }
-
-    // Example processing method, adjust according to your model's output structure
-    private void processModelOutput2(FloatBuffer outputBuffer) {
-        // Reset the buffer's position if necessary
-        outputBuffer.rewind();
-
-        // Assuming a hypothetical structure for demonstration
-        for (int i = 0; i < 12096; i++) {
-            float value = outputBuffer.get();
-            Log.i("ModelOutput", "First value in output: " + outputBuffer.get(i));
-            // Process each value as needed based on your understanding of the output structure
-        }
 
 
-    }
 
 
 

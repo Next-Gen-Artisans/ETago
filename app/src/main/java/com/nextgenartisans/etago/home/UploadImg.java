@@ -57,7 +57,6 @@ public class UploadImg extends AppCompatActivity {
 
     //Photo Picker
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
-
     private AppCompatImageView uploadedImg;
     private Uri selectedImageUri;
 
@@ -147,7 +146,6 @@ public class UploadImg extends AppCompatActivity {
                 Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
 
                 if (selectedImageUri != null) {
-                    Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
                     byte[] imageData = getImageData(selectedImageUri);
 
                     if (imageData != null) {
@@ -169,13 +167,14 @@ public class UploadImg extends AppCompatActivity {
                                     Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
 
                                     // Save the bitmap to a temporary file
-                                    File outputFile = saveBitmapToFile(bitmap, "annotated_image.jpg");
+                                    File outputFile = saveBitmapToFile(bitmap);
 
                                     if (outputFile != null) {
                                         Uri annotatedImageUri = Uri.fromFile(outputFile);
 
                                         // Pass the URI of the temporary file to DetectionActivity
                                         Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
+                                        intent.putExtra("selected_image_uri", selectedImageUri.toString());
                                         intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
                                         startActivity(intent);
                                     } else {
@@ -206,10 +205,13 @@ public class UploadImg extends AppCompatActivity {
 
     }
 
-    private File saveBitmapToFile(Bitmap bitmap, String fileName) {
-        File outputFile = new File(getExternalFilesDir(null), fileName);
+    private File saveBitmapToFile(Bitmap bitmap) {
+        // Create a file in the external cache directory
+        File outputFile = new File(getExternalCacheDir(), "annotated_image.jpg");
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
+            // Compress the bitmap and write to the output file
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            // Return the file
             return outputFile;
         } catch (IOException e) {
             Log.e("UploadImg", "Error saving bitmap to file", e);

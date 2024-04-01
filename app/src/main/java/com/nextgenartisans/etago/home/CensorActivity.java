@@ -1,14 +1,5 @@
 package com.nextgenartisans.etago.home;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -23,6 +14,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.camera.core.ImageCapture;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.nextgenartisans.etago.R;
 
@@ -128,15 +126,24 @@ public class CensorActivity extends AppCompatActivity {
             return;
         }
 
-        Uri imageUri = Uri.parse(imagePath);
-        File sourceFile = new File(imageUri.getPath());
 
-        // Create a file in the Pictures directory
-        File photoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        File sourceFile = new File(imagePath);
+        if (!sourceFile.exists()) {
+            Toast.makeText(this, "Image file not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        File photoDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "YourAppName");
+        if (!photoDir.exists() && !photoDir.mkdirs()) {
+            Log.e("CensorActivity", "Failed to create directory");
+            Toast.makeText(this, "Failed to create directory in gallery", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         File photo = new File(photoDir, "censored_photo_" + System.currentTimeMillis() + ".jpg");
 
         try {
-            InputStream in = getContentResolver().openInputStream(imageUri);
+            InputStream in = new FileInputStream(sourceFile);
             OutputStream out = new FileOutputStream(photo);
 
             byte[] buf = new byte[1024];
