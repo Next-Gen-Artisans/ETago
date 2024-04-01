@@ -1,9 +1,9 @@
 package com.nextgenartisans.etago.settings;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.nextgenartisans.etago.R;
 
