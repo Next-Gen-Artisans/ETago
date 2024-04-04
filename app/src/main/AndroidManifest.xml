@@ -55,6 +55,9 @@
             android:name=".settings.TermsAndConditionsWebView"
             android:exported="false" />
         <activity
+            android:name=".settings.HelpSupport"
+            android:exported="false" />
+        <activity
             android:name=".about_us.AboutUs"
             android:exported="false" />
         <activity

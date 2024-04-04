@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     FirebaseUser user;
 
     //Buttons for Terms of Service and Privacy Policy
-    private TextView termsOfService, privacyPolicy;
+    private TextView termsOfService, privacyPolicy, helpSupport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         // Initialize Views
         drawerLayout = findViewById(R.id.drawer_layout);
         toolbarProfile = findViewById(R.id.custom_toolbar_profile);
-        profileHeader = findViewById(R.id.about_us_header);
+        profileHeader = findViewById(R.id.settings_header);
+
 
         //Navigation View
         profileNavView = findViewById(R.id.about_nav_view);
@@ -92,6 +93,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         //Buttons for Terms of Service and Privacy Policy
         termsOfService = findViewById(R.id.terms_of_service_btn);
         privacyPolicy = findViewById(R.id.privacy_policy_btn);
+        helpSupport = findViewById(R.id.help_support_btn);
 
 
         if (user == null) {
@@ -166,9 +168,24 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
+//        helpSupport.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent cel = new Intent(SettingsActivity.this, HelpSupport.class);
+//                startActivity(cel);
+//            }
+//        });
+        helpSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWebView("https://drive.google.com/file/d/16zQ9hGLzlN2TzXKq8nG1H5n0s7MVCE--/view?usp=drive_link", "Help and Support");
 
+            }
+        });
 
     }
+
+
 
     private void openWebView(String url, String webViewText) {
         Intent intent = new Intent(this, TermsAndConditionsWebView.class);
