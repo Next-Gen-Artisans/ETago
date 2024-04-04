@@ -44,6 +44,8 @@ configurations.all {
 
 
 dependencies {
+    // about us feedback form
+    implementation ("me.zhanghai.android.materialratingbar:library:1.4.0")
 
     // Tensorflow Lite dependencies for Google Play services
     implementation("com.google.android.gms:play-services-tflite-java:16.0.1")

@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -96,6 +97,10 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
         profileUsernameHeader = (TextView) headerView.findViewById(R.id.drawer_username);
         profileEmailHeader = (TextView) headerView.findViewById(R.id.drawer_user_email);
 
+        // Button Click Listeners
+        ImageButton nextButton = findViewById(R.id.nga_next);
+        ImageButton backButton = findViewById(R.id.back_mission);
+
         if (user == null) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
@@ -106,26 +111,10 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
             String username = user.getDisplayName(); // Replace with your user data
             String email = user.getEmail(); // Replace with your user data
 
-//            if (username != null) {
-//                profileUsername.setText(username);
-//            } else {
-//                // Set a default value if username is null
-//                profileUsername.setText("Username");
-//            }
-//
-//            if (email != null) {
-//                profileEmail.setText(email);
-//            } else {
-//                // Set a default value if email is null
-//                profileEmail.setText("User Email");
-//            }
-
         }
-
         //Toolbar
         setSupportActionBar(toolbarProfile);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
 
         //Navigation Drawer Menu
         profileNavView.bringToFront();
@@ -154,6 +143,25 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
             }
         });
 
+        // Set onClickListener for the next button
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle the "next" button click here
+                findViewById(R.id.NGA_first_layout).setVisibility(View.GONE); // Hide the first layout
+                findViewById(R.id.feedback_hidden_layout).setVisibility(View.VISIBLE); // Show the next layout
+            }
+        });
+
+        // Set onClickListener for the back button
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle the "back" button click here
+                findViewById(R.id.NGA_first_layout).setVisibility(View.GONE); // Hide the feedback layout
+                findViewById(R.id.about_us_Mission).setVisibility(View.VISIBLE); // Show the first layout again
+            }
+        });
     }
 
 
