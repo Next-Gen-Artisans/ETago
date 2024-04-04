@@ -1,14 +1,21 @@
 package com.nextgenartisans.etago.about_us;
 
 import android.content.Intent;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -35,6 +42,8 @@ import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
+
 
 public class AboutUs extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -44,6 +53,8 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
     private NavigationView profileNavView;
     private Toolbar toolbarProfile;
     private CardView profileHeader;
+
+    private static final int REQUEST_CODE_EMAIL = 101;
 
     // Get the navigation header view items
     View headerView;
@@ -98,8 +109,6 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
         profileEmailHeader = (TextView) headerView.findViewById(R.id.drawer_user_email);
 
         // Button Click Listeners
-        ImageButton nextButton = findViewById(R.id.nga_next);
-        ImageButton backButton = findViewById(R.id.back_mission);
 
         if (user == null) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
@@ -143,28 +152,167 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
             }
         });
 
-        // Set onClickListener for the next button
-        nextButton.setOnClickListener(new View.OnClickListener() {
+
+        ImageView nextButtonNGA = findViewById(R.id.nga_next);
+        ImageView nextButtonMission = findViewById(R.id.next_mission);
+        ImageView nextButtonVision = findViewById(R.id.next_vision);
+        ImageView nextButtonEtago = findViewById(R.id.next_etago);
+        ImageView nextButtonTeam = findViewById(R.id.next_team);
+        ImageView nextButtonFeedback = findViewById(R.id.next_feedback);
+
+        ImageView backButtonMission = findViewById(R.id.back_mission);
+        ImageView backButtonVision = findViewById(R.id.back_vision);
+        ImageView backButtonEtago = findViewById(R.id.back_etago);
+        ImageView backButtonTeam = findViewById(R.id.back_team);
+        ImageView backButtonFeedback = findViewById(R.id.back_feedback);
+
+        LinearLayout NGAlayout = findViewById(R.id.NGA_first_layout);
+        LinearLayout hiddenMission = findViewById(R.id.about_us_Mission);
+        LinearLayout hiddenVision = findViewById(R.id.vision_layout);
+        LinearLayout hiddenEtago = findViewById(R.id.about_us_ETago);
+        LinearLayout hiddenTeam = findViewById(R.id.team);
+        LinearLayout hiddenFeedback = findViewById(R.id.feedback_layout);
+
+        nextButtonNGA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the "next" button click here
-                findViewById(R.id.NGA_first_layout).setVisibility(View.GONE); // Hide the first layout
-                findViewById(R.id.feedback_hidden_layout).setVisibility(View.VISIBLE); // Show the next layout
+                hiddenMission.setVisibility(View.VISIBLE);
+                NGAlayout.setVisibility(View.GONE);
+                nextButtonMission.setVisibility(View.VISIBLE);
             }
         });
 
-        // Set onClickListener for the back button
-        backButton.setOnClickListener(new View.OnClickListener() {
+        nextButtonMission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the "back" button click here
-                findViewById(R.id.NGA_first_layout).setVisibility(View.GONE); // Hide the feedback layout
-                findViewById(R.id.about_us_Mission).setVisibility(View.VISIBLE); // Show the first layout again
+                hiddenVision.setVisibility(View.VISIBLE);
+                hiddenMission.setVisibility(View.GONE);
+                nextButtonVision.setVisibility(View.VISIBLE);
             }
         });
+
+        backButtonMission.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenMission.setVisibility(View.GONE);
+                NGAlayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        nextButtonVision.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenEtago.setVisibility(View.VISIBLE);
+                hiddenVision.setVisibility(View.GONE);
+                nextButtonVision.setVisibility(View.GONE);
+                nextButtonEtago.setVisibility(View.VISIBLE);
+            }
+        });
+
+        backButtonVision.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenVision.setVisibility(View.GONE);
+                hiddenMission.setVisibility(View.VISIBLE);
+                nextButtonVision.setVisibility(View.GONE);
+                nextButtonMission.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        nextButtonEtago.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenTeam.setVisibility(View.VISIBLE);
+                hiddenEtago.setVisibility(View.GONE);
+                nextButtonEtago.setVisibility(View.GONE);
+                nextButtonTeam.setVisibility(View.VISIBLE);
+            }
+        });
+
+        backButtonEtago.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenEtago.setVisibility(View.GONE);
+                hiddenVision.setVisibility(View.VISIBLE);
+                nextButtonEtago.setVisibility(View.GONE);
+                nextButtonVision.setVisibility(View.VISIBLE);
+            }
+        });
+
+        nextButtonTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenTeam.setVisibility(View.GONE);
+                hiddenFeedback.setVisibility(View.VISIBLE);
+                nextButtonFeedback.setVisibility(View.VISIBLE);
+            }
+        });
+
+        backButtonTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenTeam.setVisibility(View.GONE);
+                hiddenEtago.setVisibility(View.VISIBLE);
+                nextButtonEtago.setVisibility(View.VISIBLE);
+            }
+        });
+        nextButtonFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenFeedback.setVisibility(View.GONE);
+                NGAlayout.setVisibility(View.VISIBLE);
+                nextButtonFeedback.setVisibility(View.GONE);
+            }
+        });
+
+        backButtonFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenFeedback.setVisibility(View.GONE);
+                hiddenTeam.setVisibility(View.VISIBLE);
+                nextButtonTeam.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        Button submitButton = findViewById(R.id.submit_button);
+        MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);
+        EditText inputText = findViewById(R.id.input_text);
+
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float rating = ratingBar.getRating();
+                String feedbackText = inputText.getText().toString().trim();
+                String emailContent = "Rating: " + rating + "\nFeedback: " + feedbackText;
+
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"nextgen.artisans18@gmail.com"});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, emailContent);
+
+                startActivity(emailIntent);
+            }
+        });
+
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_EMAIL) {
+            if (resultCode == RESULT_OK) {
+                // Email sent successfully
+                Toast.makeText(getApplicationContext(), "Email sent successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                // Email sending failed or user canceled
+                Toast.makeText(getApplicationContext(), "Email sending failed or canceled", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 
     private void loadUserData() {
