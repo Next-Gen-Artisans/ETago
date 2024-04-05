@@ -146,13 +146,13 @@ public class UploadImg extends AppCompatActivity {
                 Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
 
                 if (selectedImageUri != null) {
-                    byte[] imageData = getImageData(selectedImageUri);
+                    byte[] imageData = getImageData(selectedImageUri, 768, 80);
 
                     if (imageData != null) {
                         RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
 
                         Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl("http://192.168.1.22:8001/") // Replace with your base URL
+                                .baseUrl(ETagoAPI.BASE_URL) // Replace with your base URL
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build();
 
@@ -252,16 +252,27 @@ public class UploadImg extends AppCompatActivity {
                 .build());
     }
 
-    private byte[] getImageData(Uri imageUri) {
+    private byte[] getImageData(Uri imageUri, int targetWidth, int quality) {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+
+            // Optional: Resize the image to maintain aspect ratio but fit within a certain width if desired
+            if (targetWidth > 0) {
+                int originalWidth = bitmap.getWidth();
+                int originalHeight = bitmap.getHeight();
+                float aspectRatio = (float) originalWidth / (float) originalHeight;
+                int targetHeight = Math.round(targetWidth / aspectRatio);
+                bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
+            }
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos); // Compress to JPEG and adjust quality
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
+
 
 }

@@ -9,6 +9,8 @@ import retrofit2.http.Part;
 
 public interface ETagoAPI {
 
+    String BASE_URL = "https://magical-together-orca.ngrok-free.app/";
+
     // Endpoint for uploading an image and getting back an image with object detection annotations
     @Multipart
     @POST("/detection/img_object_detection_to_img")
@@ -18,7 +20,6 @@ public interface ETagoAPI {
     @Multipart
     @POST("/detection/img_object_detection_to_censored_img")
     Call<ResponseBody> uploadImageForCensoring(@Part MultipartBody.Part file);
-
 
 
 }

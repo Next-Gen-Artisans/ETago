@@ -151,7 +151,7 @@ public class DetectionActivity extends AppCompatActivity {
                     RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
 
                     Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://192.168.1.22:8001/") // Ensure the port is included if necessary
+                            .baseUrl(ETagoAPI.BASE_URL) // Ensure the port is included if necessary
                             .addConverterFactory(GsonConverterFactory.create())
                             .build();
 
@@ -224,16 +224,5 @@ public class DetectionActivity extends AppCompatActivity {
             return null;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

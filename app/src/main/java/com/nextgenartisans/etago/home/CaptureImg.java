@@ -1,6 +1,24 @@
 package com.nextgenartisans.etago.home;
 
-import static android.content.ContentValues.TAG;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -13,45 +31,34 @@ import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.api.ETagoAPI;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.lifecycle.LifecycleOwner;
-
-import com.google.common.util.concurrent.ListenableFuture;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CaptureImg extends AppCompatActivity {
 
@@ -190,46 +197,60 @@ public class CaptureImg extends AppCompatActivity {
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                        Toast.makeText(CaptureImg.this, "Image captured, starting upload...", Toast.LENGTH_SHORT).show();
+                        Uri capturedImageUri = Uri.fromFile(file); // 'file' is the File object used in takePicture()
 
-//                        // Create a file in the Pictures directory
-//                        File photoDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-//                        File photo = new File(photoDir, "photo_" + System.currentTimeMillis() + ".jpg");
-//
-//                        try {
-//                            // Copy the captured image to the new file
-//                            try (InputStream in = new FileInputStream(outputFileResults.getSavedUri().getPath());
-//                                 OutputStream out = new FileOutputStream(photo)) {
-//                                byte[] buf = new byte[1024];
-//                                int len;
-//                                while ((len = in.read(buf)) > 0) {
-//                                    out.write(buf, 0, len);
-//                                }
-//                            }
-//                            // Notify the gallery
-//                            addPicToGallery(photo.getAbsolutePath());
-//                            Toast.makeText(CaptureImg.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
-//                        } catch (IOException e) {
-//                            Log.e("CaptureImg", "Error saving image to gallery", e);
-//                            Toast.makeText(CaptureImg.this, "Error saving image", Toast.LENGTH_SHORT).show();
-//                        }
+                        byte[] imageData = getImageData(capturedImageUri, 768, 80);
+                        if (imageData != null) {
+                            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
 
-                        Toast.makeText(CaptureImg.this, "Image sent to Detection Activity", Toast.LENGTH_SHORT).show();
+                            Retrofit retrofit = new Retrofit.Builder()
+                                    .baseUrl(ETagoAPI.BASE_URL)
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
 
-                        // Get the saved image file URI
-                        Uri savedUri = outputFileResults.getSavedUri();
-                        if (savedUri == null) {
-                            savedUri = Uri.fromFile(file);
+                            ETagoAPI api = retrofit.create(ETagoAPI.class);
+                            Call<ResponseBody> call = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+
+                            call.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()) {
+                                        Toast.makeText(CaptureImg.this, "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+
+                                        // Decode the received bitmap from the response
+                                        Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+
+                                        // Save the bitmap to a temporary file
+                                        File outputFile = saveBitmapToFile(bitmap); // This method is already defined
+
+                                        if (outputFile != null) {
+                                            Uri annotatedImageUri = Uri.fromFile(outputFile);
+
+                                            // Pass the URI of the temporary file to DetectionActivity
+                                            Intent intent = new Intent(CaptureImg.this, DetectionActivity.class);
+                                            intent.putExtra("selected_image_uri", capturedImageUri.toString());
+                                            intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
+                                            startActivity(intent);
+                                        } else {
+                                            Log.e("CaptureImgLog", "Failed to save the annotated image");
+                                            Toast.makeText(CaptureImg.this, "Failed to process the image.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(CaptureImg.this, "Upload failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(CaptureImg.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(CaptureImg.this, "Error preparing image for upload", Toast.LENGTH_SHORT).show();
                         }
-
-                        // Create an intent to start DetectionActivity
-                        Intent intent = new Intent(CaptureImg.this, DetectionActivity.class);
-                        // Pass the image file path as an extra
-                        intent.putExtra("image_path", savedUri.toString());
-                        startActivity(intent);
-                        finish();
-
-
                     }
+
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
@@ -238,13 +259,42 @@ public class CaptureImg extends AppCompatActivity {
                 });
     }
 
-    private void addPicToGallery(String imagePath) {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(imagePath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+    private File saveBitmapToFile(Bitmap bitmap) {
+        // Create a file in the external cache directory
+        File outputFile = new File(getExternalCacheDir(), "annotated_image.jpg");
+        try (FileOutputStream out = new FileOutputStream(outputFile)) {
+            // Compress the bitmap and write to the output file
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            // Return the file
+            return outputFile;
+        } catch (IOException e) {
+            Log.e("UploadImg", "Error saving bitmap to file", e);
+            return null;
+        }
     }
+
+    private byte[] getImageData(Uri imageUri, int targetWidth, int quality) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+
+            // Optional: Resize the image to maintain aspect ratio but fit within a certain width if desired
+            if (targetWidth > 0) {
+                int originalWidth = bitmap.getWidth();
+                int originalHeight = bitmap.getHeight();
+                float aspectRatio = (float) originalWidth / (float) originalHeight;
+                int targetHeight = Math.round(targetWidth / aspectRatio);
+                bitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false);
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos); // Compress to JPEG and adjust quality
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
 
