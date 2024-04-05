@@ -117,22 +117,23 @@
                     android:textColor="@color/alt_black"
                     android:textSize="16sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginBottom="40dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
+                android:gravity="end"
+                android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/nga_next"
-                        android:layout_width="60dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="220dp"
-                        android:src="@drawable/next" />
-                </LinearLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/nga_next"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/next" />
+
             </LinearLayout>
+            </LinearLayout>
+
 
 
             <LinearLayout
@@ -189,27 +190,28 @@
                     android:textColor="@color/alt_black"
                     android:textSize="16sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="50dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="40dp"
+                android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/back_mission"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/back" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/back_mission"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="250dp"
+                    android:src="@drawable/back" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/next_mission"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="180dp"
-                        android:src="@drawable/next" />
-                </LinearLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/next_mission"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/next" />
+            </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -268,15 +270,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="50dp">
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="40dp"
+                    android:gravity="end"
+                    android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/back_vision"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_marginEnd="40dp"
                         android:src="@drawable/back" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -352,6 +355,7 @@
                         android:id="@+id/back_etago"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_marginEnd="52dp"
                         android:src="@drawable/back" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -723,6 +727,7 @@
                         android:id="@+id/back_team"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_marginEnd="52dp"
                         android:src="@drawable/back" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -848,6 +853,7 @@
                         android:id="@+id/back_feedback"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_marginEnd="52dp"
                         android:src="@drawable/back" />
 
                     <androidx.appcompat.widget.AppCompatImageView
