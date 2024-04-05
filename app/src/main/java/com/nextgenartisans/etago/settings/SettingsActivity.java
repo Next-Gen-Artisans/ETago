@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -56,7 +57,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     FirebaseUser user;
 
     //Buttons for Terms of Service and Privacy Policy
-    private TextView termsOfService, privacyPolicy, helpSupport;
+    private ImageView termsOfService, privacyPolicy, helpSupport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +92,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         profileEmailHeader = (TextView) headerView.findViewById(R.id.drawer_user_email);
 
         //Buttons for Terms of Service and Privacy Policy
-        termsOfService = findViewById(R.id.terms_of_service_btn);
-        privacyPolicy = findViewById(R.id.privacy_policy_btn);
-        helpSupport = findViewById(R.id.help_support_btn);
+        termsOfService = findViewById(R.id.square_terms);
+        privacyPolicy = findViewById(R.id.square_priv);
+        helpSupport = findViewById(R.id.square_help);
 
 
         if (user == null) {
