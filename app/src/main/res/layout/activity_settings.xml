@@ -98,7 +98,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="17dp"
                         android:src="@drawable/terms" />
 
                     <TextView
@@ -116,6 +116,7 @@
                     <ImageView
                         android:id="@+id/next_terms"
                         android:layout_width="wrap_content"
+                        android:layout_marginStart="1dp"
                         android:layout_height="15dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/terms_text"
@@ -191,7 +192,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="14dp"
                         android:src="@drawable/help" />
 
                     <TextView
@@ -201,7 +202,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/help_pic"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="8dp"
                         android:text="Help / Suport"
                         android:textColor="#000"
                         android:textSize="16sp" />
