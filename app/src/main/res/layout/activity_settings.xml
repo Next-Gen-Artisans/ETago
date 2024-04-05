@@ -115,8 +115,9 @@
 
                     <ImageView
                         android:id="@+id/next_terms"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_marginStart="1dp"
+                        android:layout_marginEnd="-45dp"
                         android:layout_height="15dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/terms_text"
@@ -165,6 +166,8 @@
                         android:layout_width="wrap_content"
                         android:gravity="end"
                         android:layout_marginStart="23dp"
+                        android:layout_marginEnd="-45dp"
+
                         android:layout_height="15dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/name_priv"
@@ -212,6 +215,8 @@
                         android:layout_width="wrap_content"
                         android:gravity="end"
                         android:layout_marginStart="23dp"
+                        android:layout_marginEnd="-45dp"
+
                         android:layout_height="15dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/help_text"
