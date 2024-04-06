@@ -105,9 +105,10 @@
                     android:background="@color/orange" />
 
                 <TextView
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="40dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="25dp"
                     android:fontFamily="@font/montserrat_semibold"
                     android:text="Account Information"
                     android:textColor="@color/alt_black"
@@ -115,9 +116,10 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_username_cardview"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="20dp"
                     app:cardBackgroundColor="@color/light_gray"
                     app:cardCornerRadius="15dp">
 
@@ -162,7 +164,8 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_email_cardview"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:cardBackgroundColor="@color/light_gray"
@@ -178,12 +181,12 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:src="@drawable/profile_email_icon"
+                            android:src="@drawable/email"
                             />
 
                         <TextView
                             android:id="@+id/profile_email"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
                             android:fontFamily="@font/montserrat_medium"
@@ -207,7 +210,8 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_pass_cardview"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:cardBackgroundColor="@color/light_gray"
@@ -253,16 +257,17 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/profile_info_logout_btn"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_height="50dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="40dp"
                     android:background="@drawable/custom_btn_bg"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Logout"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="80dp"/>
 
 
             </LinearLayout>

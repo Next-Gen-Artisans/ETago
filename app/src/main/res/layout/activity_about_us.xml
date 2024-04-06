@@ -190,28 +190,37 @@
                     android:textColor="@color/alt_black"
                     android:textSize="16sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="40dp"
-                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/back_mission"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="250dp"
-                    android:src="@drawable/back" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/back_mission"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/back"
+                        android:layout_gravity="start" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/next_mission"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/next" />
-            </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"/>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/next_mission"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:src="@drawable/next"
+                        android:layout_gravity="end" />
+                </LinearLayout>
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -269,25 +278,32 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="40dp"
                     android:layout_marginBottom="40dp"
-                    android:gravity="end"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/back_vision"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginEnd="40dp"
-                        android:src="@drawable/back" />
+                        android:layout_weight="1"
+                        android:src="@drawable/back"
+                        android:layout_gravity="start" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_vision"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginLeft="180dp"
-                        android:src="@drawable/next" />
+                        android:layout_weight="1"
+                        android:src="@drawable/next"
+                        android:layout_gravity="end" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -345,25 +361,32 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="40dp"
                     android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="50dp">
+                    android:gravity="center">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/back_etago"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginEnd="52dp"
-                        android:src="@drawable/back" />
+                        android:layout_weight="1"
+                        android:src="@drawable/back"
+                        android:layout_gravity="start" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_etago"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginLeft="180dp"
-                        android:src="@drawable/next" />
+                        android:layout_weight="1"
+                        android:src="@drawable/next"
+                        android:layout_gravity="end" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -419,7 +442,7 @@
 
                     <ImageView
                         android:id="@+id/square_alex"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
@@ -429,6 +452,7 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginLeft="80dp"
                         android:src="@drawable/alex_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
@@ -476,7 +500,7 @@
 
                     <ImageView
                         android:id="@+id/square_bel"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
@@ -485,6 +509,7 @@
                         android:id="@+id/ronabel_pic"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="80dp"
                         android:src="@drawable/bel_pic"
@@ -523,7 +548,7 @@
 
                     <ImageView
                         android:id="@+id/square_joricel"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
@@ -532,6 +557,7 @@
                         android:id="@+id/joricel_pic"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="80dp"
                         android:src="@drawable/cel_pic"
@@ -570,7 +596,7 @@
 
                     <ImageView
                         android:id="@+id/square_carl"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
@@ -578,6 +604,7 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/carl_pic"
                         android:layout_width="100dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginStart="80dp"
@@ -628,7 +655,7 @@
 
                     <ImageView
                         android:id="@+id/square_lyko"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
@@ -636,6 +663,7 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/lyko_pic"
                         android:layout_width="100dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginLeft="80dp"
@@ -676,13 +704,14 @@
 
                     <ImageView
                         android:id="@+id/square_alleah"
-                        android:layout_width="300dp"
+                        android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/alleah_pic"
+                        android:layout_centerHorizontal="true"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
@@ -717,25 +746,32 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="40dp"
                     android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="40dp">
+                    android:gravity="center">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/back_team"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginEnd="52dp"
-                        android:src="@drawable/back" />
+                        android:layout_weight="1"
+                        android:src="@drawable/back"
+                        android:layout_gravity="start" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_team"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginLeft="180dp"
-                        android:src="@drawable/next" />
+                        android:layout_weight="1"
+                        android:src="@drawable/next"
+                        android:layout_gravity="end" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -805,7 +841,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/feedback_text2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:layout_marginTop="30dp"
                     android:fontFamily="@font/montserrat_medium"
@@ -843,25 +879,32 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="40dp"
                     android:orientation="horizontal"
-                    android:gravity="center_horizontal"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginBottom="40dp">
+                    android:gravity="center">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/back_feedback"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginEnd="52dp"
-                        android:src="@drawable/back" />
+                        android:layout_weight="1"
+                        android:src="@drawable/back"
+                        android:layout_gravity="start" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="15"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_feedback"
-                        android:layout_width="40dp"
+                        android:layout_width="0dp"
                         android:layout_height="40dp"
-                        android:layout_marginLeft="180dp"
-                        android:src="@drawable/next" />
+                        android:layout_weight="1"
+                        android:src="@drawable/next"
+                        android:layout_gravity="end" />
                 </LinearLayout>
             </LinearLayout>
 

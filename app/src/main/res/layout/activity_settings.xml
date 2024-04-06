@@ -113,16 +113,17 @@
                         android:textColor="#000"
                         android:textSize="16sp" />
 
+
                     <ImageView
                         android:id="@+id/next_terms"
-                        android:layout_width="match_parent"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginEnd="-45dp"
-                        android:layout_height="15dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/terms_text"
-                        android:gravity="end"
-                        android:src="@drawable/next" />
+                        android:layout_width="20dp"
+                        android:layout_marginEnd="15dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/next" />
+
+
 
                 </RelativeLayout>
 
@@ -150,7 +151,7 @@
                         android:src="@drawable/privacy" />
 
                     <TextView
-                        android:id="@+id/name_priv"
+                        android:id="@+id/priv_text"
                         android:fontFamily="@font/montserrat_medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -163,14 +164,11 @@
 
                     <ImageView
                         android:id="@+id/next_priv"
-                        android:layout_width="wrap_content"
-                        android:gravity="end"
-                        android:layout_marginStart="23dp"
-                        android:layout_marginEnd="-45dp"
-
-                        android:layout_height="15dp"
+                        android:layout_width="20dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/name_priv"
                         android:src="@drawable/next" />
 
                 </RelativeLayout>
@@ -212,14 +210,11 @@
 
                     <ImageView
                         android:id="@+id/next_help"
-                        android:layout_width="wrap_content"
-                        android:gravity="end"
-                        android:layout_marginStart="23dp"
-                        android:layout_marginEnd="-45dp"
-
-                        android:layout_height="15dp"
+                        android:layout_width="20dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/help_text"
                         android:src="@drawable/next" />
 
                 </RelativeLayout>
