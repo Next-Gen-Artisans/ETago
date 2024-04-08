@@ -179,7 +179,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         helpSupport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openWebView("https://drive.google.com/file/d/16zQ9hGLzlN2TzXKq8nG1H5n0s7MVCE--/view?usp=drive_link", "Help and Support");
+                openWebView("https://drive.google.com/file/d/16zQ9hGLzlN2TzXKq8nG1H5n0s7MVCE--/view?usp=sharing", "Help and Support");
 
             }
         });
