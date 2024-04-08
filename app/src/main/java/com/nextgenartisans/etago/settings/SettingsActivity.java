@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
+import com.nextgenartisans.etago.feedback.Feedback;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
@@ -135,7 +136,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        MenuItem homeItem = profileNavView.getMenu().findItem(R.id.nav_about1);
+        MenuItem homeItem = profileNavView.getMenu().findItem(R.id.nav_settings1);
         homeItem.setChecked(true);
 
         profileNavView.setNavigationItemSelectedListener(this);
@@ -261,7 +262,12 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             Intent intent = new Intent(SettingsActivity.this, ProfileActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.nav_logout) {
+        }if (id == R.id.nav_feedback) {
+            //navigationView.setCheckedItem(R.id.nav_about1);
+            Intent intent = new Intent(SettingsActivity.this, Feedback.class);
+            startActivity(intent);
+        }
+        else if (id == R.id.nav_logout) {
             //Show Dialog
             logoutDialog = new LogoutDialog(this);
             logoutDialog.show();

@@ -31,6 +31,12 @@
 
             />
         <item
+            android:id="@+id/nav_feedback"
+            android:icon="@drawable/menu_feedback_icon"
+            android:title="Feedback"
+
+            />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout_icon"
             android:title="Logout"

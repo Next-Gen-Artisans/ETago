@@ -807,7 +807,7 @@
                     android:layout_marginLeft="85dp"
                     android:layout_marginRight="80dp"
                     android:layout_marginTop="30dp"
-                    android:src="@drawable/feedback" />
+                    android:src="@drawable/menu_feedback_icon" />
 
                 <TextView
                     android:id="@+id/feedback_header"

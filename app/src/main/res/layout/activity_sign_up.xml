@@ -62,7 +62,7 @@
             >
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Username"
                 android:textColor="@color/white"
@@ -95,7 +95,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Email"
                 android:textColor="@color/white"
@@ -130,7 +130,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Password"
                 android:textColor="@color/white"
@@ -242,6 +242,7 @@
                     android:background="@drawable/custom_ggbtn_bg"
                     android:src="@drawable/google_logo"
                     tools:ignore="SpeakableTextPresentCheck"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginLeft="15dp"
                     />
             </LinearLayout>
