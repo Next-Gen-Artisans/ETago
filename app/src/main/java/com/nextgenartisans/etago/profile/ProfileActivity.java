@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.about_us.AboutUs;
+import com.nextgenartisans.etago.feedback.Feedback;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
@@ -324,7 +325,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         if (id == R.id.nav_about1) {
             Intent intent = new Intent(ProfileActivity.this, AboutUs.class);
             startActivity(intent);
-        } else if (id == R.id.nav_logout) {
+        }
+        if (id == R.id.nav_feedback) {
+            Intent intent = new Intent(ProfileActivity.this, Feedback.class);
+            startActivity(intent);
+        }
+        else if (id == R.id.nav_logout) {
             //Show Dialog
             logoutDialog = new LogoutDialog(this);
             logoutDialog.show();

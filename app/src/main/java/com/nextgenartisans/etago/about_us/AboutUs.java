@@ -55,7 +55,6 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
     private Toolbar toolbarProfile;
     private CardView profileHeader;
 
-    private static final int REQUEST_CODE_EMAIL = 101;
 
     // Get the navigation header view items
     View headerView;
@@ -159,20 +158,19 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
         ImageView nextButtonVision = findViewById(R.id.next_vision);
         ImageView nextButtonEtago = findViewById(R.id.next_etago);
         ImageView nextButtonTeam = findViewById(R.id.next_team);
-        ImageView nextButtonFeedback = findViewById(R.id.next_feedback);
 
         ImageView backButtonMission = findViewById(R.id.back_mission);
         ImageView backButtonVision = findViewById(R.id.back_vision);
         ImageView backButtonEtago = findViewById(R.id.back_etago);
         ImageView backButtonTeam = findViewById(R.id.back_team);
-        ImageView backButtonFeedback = findViewById(R.id.back_feedback);
+
 
         LinearLayout NGAlayout = findViewById(R.id.NGA_first_layout);
         LinearLayout hiddenMission = findViewById(R.id.about_us_Mission);
         LinearLayout hiddenVision = findViewById(R.id.vision_layout);
         LinearLayout hiddenEtago = findViewById(R.id.about_us_ETago);
         LinearLayout hiddenTeam = findViewById(R.id.team);
-        LinearLayout hiddenFeedback = findViewById(R.id.feedback_layout);
+
 
         nextButtonNGA.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,8 +243,8 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 hiddenTeam.setVisibility(View.GONE);
-                hiddenFeedback.setVisibility(View.VISIBLE);
-                nextButtonFeedback.setVisibility(View.VISIBLE);
+                NGAlayout.setVisibility(View.VISIBLE);
+                nextButtonNGA.setVisibility(View.VISIBLE);
             }
         });
 
@@ -258,63 +256,7 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
                 nextButtonEtago.setVisibility(View.VISIBLE);
             }
         });
-        nextButtonFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hiddenFeedback.setVisibility(View.GONE);
-                NGAlayout.setVisibility(View.VISIBLE);
-                nextButtonFeedback.setVisibility(View.GONE);
-            }
-        });
-
-        backButtonFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hiddenFeedback.setVisibility(View.GONE);
-                hiddenTeam.setVisibility(View.VISIBLE);
-                nextButtonTeam.setVisibility(View.VISIBLE);
-            }
-        });
-
-
-        Button submitButton = findViewById(R.id.submit_button);
-        MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);
-        EditText inputText = findViewById(R.id.input_text);
-
-
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float rating = ratingBar.getRating();
-                String feedbackText = inputText.getText().toString().trim();
-                String emailContent = "Rating: " + rating + "\nFeedback: " + feedbackText;
-
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                emailIntent.setData(Uri.parse("mailto:"));
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"nextgen.artisans18@gmail.com"});
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, emailContent);
-
-                startActivity(emailIntent);
-            }
-        });
-
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_EMAIL) {
-            if (resultCode == RESULT_OK) {
-                // Email sent successfully
-                Toast.makeText(getApplicationContext(), "Email sent successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                // Email sending failed or user canceled
-                Toast.makeText(getApplicationContext(), "Email sending failed or canceled", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 
     private void loadUserData() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

@@ -1,13 +1,17 @@
 package com.nextgenartisans.etago.feedback;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -37,10 +41,15 @@ import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
 
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
+
 public class Feedback extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     // Navigation Drawer
     private DrawerLayout drawerLayout;
+
+    private static final int REQUEST_CODE_EMAIL = 101;
+
     private NavigationView profileNavView;
     private Toolbar toolbarProfile;
     private CardView profileHeader;
@@ -223,6 +232,41 @@ public class Feedback extends AppCompatActivity implements NavigationView.OnNavi
                 }
             }
         });
+
+        Button submitButton = findViewById(R.id.submit_button);
+        MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);
+        EditText inputText = findViewById(R.id.input_text);
+
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float rating = ratingBar.getRating();
+                String feedbackText = inputText.getText().toString().trim();
+                String emailContent = "Rating: " + rating + "\nFeedback: " + feedbackText;
+
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"nextgen.artisans18@gmail.com"});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, emailContent);
+
+                startActivity(emailIntent);
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_EMAIL) {
+            if (resultCode == RESULT_OK) {
+                // Email sent successfully
+                Toast.makeText(getApplicationContext(), "Email sent successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                // Email sending failed or user canceled
+                Toast.makeText(getApplicationContext(), "Email sending failed or canceled", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
