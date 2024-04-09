@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
     android:padding="25dp"
     android:background="@drawable/forgot_pass_round_bg"
     android:orientation="vertical"
@@ -10,7 +11,7 @@
 
     <TextView
         android:id="@+id/logout_dialog_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Log out"
         android:fontFamily="@font/montserrat_bold"
@@ -20,45 +21,49 @@
 
     <TextView
         android:id="@+id/logout_dialog_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="Are you sure want to logout?"
         android:fontFamily="@font/montserrat_medium"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="25dp" />
 
     <LinearLayout
         android:id="@+id/logout_dialog_buttons"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        >
+        android:gravity="center"
+        android:layout_marginTop="30dp">
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancel_logout_dialog_btn"
-            android:layout_width="145dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Cancel"
-            android:fontFamily="@font/montserrat_semibold"
             android:textColor="@color/white"
             android:textAllCaps="false"
             android:background="@color/transparent"
-            />
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_semibold" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/logout_dialog_btn"
-            android:layout_width="145dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Logout"
-            android:fontFamily="@font/montserrat_semibold"
             android:textColor="@color/white"
             android:textAllCaps="false"
             android:background="@drawable/return_btn_bg"
-            />
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_semibold" />
 
     </LinearLayout>
+
 
 
 
