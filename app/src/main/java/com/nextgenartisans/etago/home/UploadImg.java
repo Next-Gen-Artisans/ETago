@@ -30,6 +30,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -148,52 +151,85 @@ public class UploadImg extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
 
-
                 if (selectedImageUri != null) {
                     byte[] imageData = getImageData(selectedImageUri, 768, 80);
 
                     if (imageData != null) {
                         RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
-
                         Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl(ETagoAPI.BASE_URL) // Replace with your base URL
+                                .baseUrl(ETagoAPI.BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build();
 
-                        ETagoAPI api = retrofit.create(ETagoAPI.class); // Replace with your API interface
-                        Call<ResponseBody> call = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                        ETagoAPI api = retrofit.create(ETagoAPI.class);
+                        StringBuilder objectsDetected = new StringBuilder();
 
-                        call.enqueue(new Callback<ResponseBody>() {
+                        // First API Call - Object Detection JSON
+                        Call<ResponseBody> call1 = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                        call1.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 if (response.isSuccessful()) {
-                                    // Decode the received bitmap from the response
-                                    Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                                    try {
+                                        String jsonResponse = response.body().string();
+                                        JSONObject jsonObject = new JSONObject(jsonResponse);
 
-                                    // Save the bitmap to a temporary file
+                                        if (jsonObject.has("detect_objects") && jsonObject.getJSONArray("detect_objects").length() > 0) {
+                                            JSONArray detectedObjects = jsonObject.getJSONArray("detect_objects");
+                                            for (int i = 0; i < detectedObjects.length(); i++) {
+                                                JSONObject object = detectedObjects.getJSONObject(i);
+                                                objectsDetected.append(object.getString("name"))
+                                                        .append(" (")
+                                                        .append(String.format("%.2f", object.getDouble("confidence") * 100))
+                                                        .append("% confidence), ");
+                                            }
+                                            objectsDetected.setLength(objectsDetected.length() - 2); // Remove the last comma
+                                        } else {
+                                            objectsDetected.append(jsonObject.optString("message", "No objects detected."));
+                                        }
+                                    } catch (Exception e) {
+                                        Log.e("UploadImgLog", "Error parsing detection results: " + e.getMessage());
+                                        Toast.makeText(UploadImg.this, "Failed to parse detection results.", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Log.e("UploadImgLog", "API Call1 Failed: " + response.errorBody().charStream().toString());
+                                    Toast.makeText(UploadImg.this, "API Call1 Failed to scan the image.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Log.e("UploadImgLog", "API Call1 Error uploading image: " + t.getMessage());
+                                Toast.makeText(UploadImg.this, "API Call1 Error uploading image.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        // Second API Call - Annotated Image
+                        Call<ResponseBody> call2 = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                        call2.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if (response.isSuccessful()) {
+                                    Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
                                     File outputFile = saveBitmapToFile(bitmap);
 
                                     if (outputFile != null) {
                                         Uri annotatedImageUri = Uri.fromFile(outputFile);
-
-                                        // Pass the URI of the temporary file to DetectionActivity
-                                        Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
-                                        intent.putExtra("selected_image_uri", selectedImageUri.toString());
-                                        intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
-//                                        startActivity(intent);
+                                        showBottomSheetDialog(objectsDetected.toString(), selectedImageUri, annotatedImageUri);
                                     } else {
-                                        Log.e("UploadImgLog", "Scanning failed: " + response.errorBody().charStream().toString());
-                                        Toast.makeText(UploadImg.this, "Failed to scan the image.", Toast.LENGTH_SHORT).show();
+                                        Log.e("UploadImgLog", "API Call2 Failed to save annotated image.");
+                                        Toast.makeText(UploadImg.this, "API Call2 Failed to scan the image.", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    // Handle non-successful response...
-                                    Log.e("UploadImgLog", "Scanning failed: " + response.errorBody().charStream().toString());
+                                    Log.e("UploadImgLog", "API Call2 Scanning failed: " + response.errorBody().charStream().toString());
+                                    Toast.makeText(UploadImg.this, "API Call2 Failed to scan the image.", Toast.LENGTH_SHORT).show();
                                 }
                             }
+
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Log.e("UploadImgLog", "Error uploading image: " + t.getMessage());
-                                Toast.makeText(UploadImg.this, "Error uploading image.", Toast.LENGTH_SHORT).show();
+                                Log.e("UploadImgLog", "API Call2 Error uploading image: " + t.getMessage());
+                                Toast.makeText(UploadImg.this, "API Call2 Error uploading image.", Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -202,35 +238,31 @@ public class UploadImg extends AppCompatActivity {
                 } else {
                     Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
                 }
-
-                //Show bottom sheet dialog
-                showBottomSheetDialog();
             }
         });
+
     }
 
-    private void showBottomSheetDialog() {
+    private void showBottomSheetDialog(String detectedText, Uri selectedImageUri, Uri annotatedImageUri) {
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UploadImg.this);
         bottomSheetDialog.setContentView(bottomSheetView);
+
+        // Update text views for detected objects
+        TextView textView = bottomSheetView.findViewById(R.id.btm_dialog_text);
+        textView.setText(detectedText);
+
         bottomSheetDialog.show();
 
-        // Set up button listeners or other interactions inside the bottom sheet
         AppCompatButton cancelButton = bottomSheetView.findViewById(R.id.btm_cancel_dialog_btn);
         AppCompatButton proceedButton = bottomSheetView.findViewById(R.id.btm_proceed_dialog_btn);
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetDialog.dismiss();
-            }
-        });
-
-        proceedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Add actions for proceed button, e.g., moving to another activity
-            }
+        cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+        proceedButton.setOnClickListener(v -> {
+            Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
+            intent.putExtra("selected_image_uri", selectedImageUri.toString());
+            intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
+            startActivity(intent);
         });
     }
 
