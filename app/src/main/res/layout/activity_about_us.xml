@@ -170,6 +170,7 @@
                     android:layout_height="41dp"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/black"
                     android:text="Mission"
                     android:textSize="24sp" />
 
