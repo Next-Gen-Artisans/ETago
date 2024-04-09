@@ -125,8 +125,6 @@ public class DetectionActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(DetectionActivity.this, MainActivity.class);
-                startActivity(i);
                 finish();
             }
         });
@@ -148,7 +146,7 @@ public class DetectionActivity extends AppCompatActivity {
                 byte[] imageData = getImageData(selectedImageUri);
 
                 if (imageData != null) {
-                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
 
                     Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl(ETagoAPI.BASE_URL) // Ensure the port is included if necessary
@@ -172,7 +170,7 @@ public class DetectionActivity extends AppCompatActivity {
                                 File outputFile = new File(getExternalCacheDir(), fileName);
                                 try {
                                     FileOutputStream out = new FileOutputStream(outputFile);
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                                     out.flush();
                                     out.close();
 
@@ -217,7 +215,7 @@ public class DetectionActivity extends AppCompatActivity {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();

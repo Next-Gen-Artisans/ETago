@@ -93,8 +93,6 @@ public class CensorActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(CensorActivity.this, DetectionActivity.class);
-                startActivity(i);
                 finish();
             }
         });
@@ -102,7 +100,7 @@ public class CensorActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(CensorActivity.this, DetectionActivity.class);
+                Intent i = new Intent(CensorActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
             }

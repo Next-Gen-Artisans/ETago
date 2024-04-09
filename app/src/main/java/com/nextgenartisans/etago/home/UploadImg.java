@@ -139,8 +139,6 @@ public class UploadImg extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
                 finish();
             }
         });
@@ -152,10 +150,10 @@ public class UploadImg extends AppCompatActivity {
                 Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
 
                 if (selectedImageUri != null) {
-                    byte[] imageData = getImageData(selectedImageUri, 768, 80);
+                    byte[] imageData = getImageData(selectedImageUri, 768, 100);
 
                     if (imageData != null) {
-                        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
                         Retrofit retrofit = new Retrofit.Builder()
                                 .baseUrl(ETagoAPI.BASE_URL)
                                 .addConverterFactory(GsonConverterFactory.create())
@@ -272,7 +270,7 @@ public class UploadImg extends AppCompatActivity {
         File outputFile = new File(getExternalCacheDir(), "annotated_image.jpg");
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
             // Compress the bitmap and write to the output file
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, out);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             // Return the file
             return outputFile;
         } catch (IOException e) {
@@ -328,13 +326,14 @@ public class UploadImg extends AppCompatActivity {
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos); // Compress to JPEG and adjust quality
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos); // Compress to JPEG and adjust quality
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
+
 
 
 }

@@ -38,9 +38,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -141,8 +145,6 @@ public class CaptureImg extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
                 finish();
             }
         });
@@ -200,9 +202,9 @@ public class CaptureImg extends AppCompatActivity {
                         Toast.makeText(CaptureImg.this, "Image captured, starting upload...", Toast.LENGTH_SHORT).show();
                         Uri capturedImageUri = Uri.fromFile(file); // 'file' is the File object used in takePicture()
 
-                        byte[] imageData = getImageData(capturedImageUri, 768, 80);
+                        byte[] imageData = getImageData(capturedImageUri, 768, 100);
                         if (imageData != null) {
-                            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageData);
+                            RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
 
                             Retrofit retrofit = new Retrofit.Builder()
                                     .baseUrl(ETagoAPI.BASE_URL)
@@ -210,9 +212,50 @@ public class CaptureImg extends AppCompatActivity {
                                     .build();
 
                             ETagoAPI api = retrofit.create(ETagoAPI.class);
-                            Call<ResponseBody> call = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                            StringBuilder objectsDetected = new StringBuilder();
 
-                            call.enqueue(new Callback<ResponseBody>() {
+                            Call<ResponseBody> call1 = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                            Call<ResponseBody> call2 = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+
+                            call1.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()) {
+                                        try {
+                                            String jsonResponse = response.body().string();
+                                            JSONObject jsonObject = new JSONObject(jsonResponse);
+
+                                            if (jsonObject.has("detect_objects") && jsonObject.getJSONArray("detect_objects").length() > 0) {
+                                                JSONArray detectedObjects = jsonObject.getJSONArray("detect_objects");
+                                                for (int i = 0; i < detectedObjects.length(); i++) {
+                                                    JSONObject object = detectedObjects.getJSONObject(i);
+                                                    objectsDetected.append(object.getString("name"))
+                                                            .append(" (")
+                                                            .append(String.format("%.2f", object.getDouble("confidence") * 100))
+                                                            .append("% confidence), ");
+                                                }
+                                                objectsDetected.setLength(objectsDetected.length() - 2); // Remove the last comma
+                                            } else {
+                                                objectsDetected.append(jsonObject.optString("message", "No objects detected."));
+                                            }
+                                        } catch (Exception e) {
+                                            Log.e("CaptureImgLog", "Error parsing detection results: " + e.getMessage());
+                                            Toast.makeText(CaptureImg.this, "Failed to parse detection results.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Log.e("CaptureImgLog", "API Call1 Failed: " + response.errorBody().charStream().toString());
+                                        Toast.makeText(CaptureImg.this, "API Call1 Failed to scan the image.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Log.e("CaptureImgLog", "API Call1 Error capturing image: " + t.getMessage());
+                                    Toast.makeText(CaptureImg.this, "API Call1 Error capturing image.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            call2.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     if (response.isSuccessful()) {
@@ -227,11 +270,8 @@ public class CaptureImg extends AppCompatActivity {
                                         if (outputFile != null) {
                                             Uri annotatedImageUri = Uri.fromFile(outputFile);
 
-                                            // Pass the URI of the temporary file to DetectionActivity
-                                            Intent intent = new Intent(CaptureImg.this, DetectionActivity.class);
-                                            intent.putExtra("selected_image_uri", capturedImageUri.toString());
-                                            intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
-                                            startActivity(intent);
+                                            showBottomSheetDialog(objectsDetected.toString(), capturedImageUri, annotatedImageUri);
+
                                         } else {
                                             Log.e("CaptureImgLog", "Failed to save the annotated image");
                                             Toast.makeText(CaptureImg.this, "Failed to process the image.", Toast.LENGTH_SHORT).show();
@@ -259,14 +299,35 @@ public class CaptureImg extends AppCompatActivity {
                 });
     }
 
+    private void showBottomSheetDialog(String detectedText, Uri capturedImageUri, Uri annotatedImageUri) {
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(CaptureImg.this);
+        bottomSheetDialog.setContentView(bottomSheetView);
 
+        // Update text views for detected objects
+        TextView textView = bottomSheetView.findViewById(R.id.btm_dialog_text);
+        textView.setText(detectedText);
+
+        bottomSheetDialog.show();
+
+        AppCompatButton cancelButton = bottomSheetView.findViewById(R.id.btm_cancel_dialog_btn);
+        AppCompatButton proceedButton = bottomSheetView.findViewById(R.id.btm_proceed_dialog_btn);
+
+        cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+        proceedButton.setOnClickListener(v -> {
+            Intent intent = new Intent(CaptureImg.this, DetectionActivity.class);
+            intent.putExtra("selected_image_uri", capturedImageUri.toString());
+            intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
+            startActivity(intent);
+        });
+    }
 
     private File saveBitmapToFile(Bitmap bitmap) {
         // Create a file in the external cache directory
         File outputFile = new File(getExternalCacheDir(), "annotated_image.jpg");
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
             // Compress the bitmap and write to the output file
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, out);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             // Return the file
             return outputFile;
         } catch (IOException e) {
@@ -289,7 +350,7 @@ public class CaptureImg extends AppCompatActivity {
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos); // Compress to JPEG and adjust quality
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos); // Compress to JPEG and adjust quality
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
