@@ -93,29 +93,21 @@
                     android:layout_height="41dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Next-Gen Artisan's"
+                    android:textColor="@color/black"
                     android:textSize="24sp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/nga_desc_NGA"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="25dp"
                     android:fontFamily="@font/montserrat_medium"
-                    android:text="Next-Gen Artisans (NGA) is an innovative startup, formed by a group of Computer Science students, with a focus on Computational and Data Sciences. Our mission is the development of groundbreaking digital products through state-of-the-art technologies and research. "
+                    android:text="@string/nga_desc"
                     android:textAlignment="viewStart"
-                    android:textColor="@color/alt_black"
+                    android:textColor="@color/black"
                     android:textSize="16sp" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/nga_desc_NGA2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"
-                    android:fontFamily="@font/montserrat_medium"
-                    android:text="Our expertise spans machine learning, artificial intelligence, web and mobile development allowing us to craft bespoke solutions that drive transformation in our clients’ businesses. As we navigate the tech industry, we aim to deliver exceptional software solutions, set new standards in the digital domain, and support our clients in achieving their business goals."
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/alt_black"
-                    android:textSize="16sp" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -127,7 +119,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/nga_next"
-                    android:layout_width="40dp"
+                    android:layout_width="35dp"
                     android:layout_height="40dp"
                     android:src="@drawable/next" />
 
@@ -168,6 +160,8 @@
                     android:layout_marginLeft="85dp"
                     android:layout_marginRight="80dp"
                 android:layout_marginTop="30dp"
+                android:textColor="@color/black"
+
                 android:src="@drawable/mission" />
 
                 <TextView
@@ -180,14 +174,14 @@
                     android:textSize="24sp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/nga_desc"
+                    android:id="@+id/mission_desc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="30dp"
                     android:fontFamily="@font/montserrat_medium"
-                    android:text="Next-Gen Artisan's mission is to pioneer transformative digital solutions using advanced technologies and research. Next-Gen Artisan’s focus is on delivering bespoke software that exceeds client expectations and drives business growth, leveraging our expertise in machine learning, artificial intelligence, and web and mobile development."
+                    android:text="@string/mission_txt"
                     android:textAlignment="viewStart"
-                    android:textColor="@color/alt_black"
+                    android:textColor="@color/black"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -209,7 +203,7 @@
                     <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="15"/>
+                        android:layout_weight="10"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_mission"
@@ -259,6 +253,7 @@
                 <TextView
                     android:id="@+id/vision_header"
                     android:layout_width="wrap_content"
+                    android:textColor="@color/black"
                     android:layout_height="41dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:gravity="center_horizontal"
@@ -271,9 +266,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="30dp"
                     android:fontFamily="@font/montserrat_medium"
-                    android:text="Next-Gen Artisan's vision is to be at the forefront of digital innovation, setting new standards in technology. We aim to redefine business operations through our contributions, fostering a future where our technological advancements empower clients and society with endless possibilities for progress."
+                    android:text="@string/vision_txt"
                     android:textAlignment="viewStart"
-                    android:textColor="@color/alt_black"
+                    android:textColor="@color/black"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -295,7 +290,7 @@
                     <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="15"/>
+                        android:layout_weight="10"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_vision"
@@ -338,15 +333,9 @@
                     android:layout_marginLeft="85dp"
                     android:layout_marginRight="80dp"
                     android:layout_marginTop="30dp"
-                    android:src="@drawable/e_tago_splash_logo_dark" />
+                    android:src="@drawable/app_logo_dark_ver" />
 
-                <TextView
-                    android:id="@+id/etago_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="41dp"
-                    android:fontFamily="@font/montserrat_bold"
-                    android:text="E-Tago App"
-                    android:textSize="24sp" />
+
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/etago_who"
@@ -354,9 +343,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="30dp"
                     android:fontFamily="@font/montserrat_medium"
-                    android:text="E-Tago is an Android-based mobile application for privacy preservation and image censorship of personal information in e-commerce product review images. This application will serve as a tool to safeguard personal information that might be shared on e-commerce platforms, in particular, product review images."
+                    android:text="@string/pioneer_txt"
                     android:textAlignment="viewStart"
-                    android:textColor="@color/alt_black"
+                    android:textColor="@color/black"
                     android:textSize="16sp" />
 
                 <LinearLayout
@@ -378,7 +367,7 @@
                     <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="15"/>
+                        android:layout_weight="10"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_etago"
@@ -430,12 +419,15 @@
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Meet the Team"
+                    android:textColor="@color/black"
                     android:textSize="24sp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
                     android:layout_centerInParent="true">
@@ -443,7 +435,8 @@
                     <ImageView
                         android:id="@+id/square_alex"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
@@ -453,55 +446,52 @@
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="80dp"
                         android:src="@drawable/alex_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
 
                     <TextView
                         android:id="@+id/name_alex"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/alex_pic"
+                        android:gravity="center_horizontal"
                         android:text="John Alex Robles"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textSize="18sp"
+                        android:layout_marginTop="8dp"/>
 
                     <TextView
                         android:id="@+id/des_alex"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_alex"
-                        android:layout_centerHorizontal="true"
-                        android:text="Project Manager/Team Leader"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/des_alex2"
+                        android:gravity="center_horizontal"
+                        android:text="@string/alex_desc"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/des_alex"
-                        android:layout_centerHorizontal="true"
-                        android:text="/Lead Developer"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
+
                 </RelativeLayout>
+
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
                     android:layout_centerInParent="true">
 
                     <ImageView
-                        android:id="@+id/square_bel"
+                        android:id="@+id/square_ronabel"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
@@ -509,39 +499,42 @@
                         android:id="@+id/ronabel_pic"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
-                        android:layout_marginLeft="80dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/bel_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
 
                     <TextView
                         android:id="@+id/name_ronabel"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/ronabel_pic"
-                        android:text="Ronabel R. Abrugar"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/bel"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textSize="18sp"
+                        android:layout_marginTop="8dp"/>
 
                     <TextView
                         android:id="@+id/des_ronabel"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_ronabel"
-                        android:layout_centerHorizontal="true"
+                        android:gravity="center_horizontal"
                         android:text="@string/bel_desc"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-                </RelativeLayout>
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
 
+                </RelativeLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
                     android:layout_centerInParent="true">
@@ -549,7 +542,8 @@
                     <ImageView
                         android:id="@+id/square_joricel"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
@@ -557,39 +551,43 @@
                         android:id="@+id/joricel_pic"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
-                        android:layout_marginLeft="80dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/cel_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
 
                     <TextView
                         android:id="@+id/name_joricel"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/joricel_pic"
-                        android:text="Joricel B. Roldan"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/cel"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textSize="18sp"
+                        android:layout_marginTop="8dp"/>
 
                     <TextView
                         android:id="@+id/des_joricel"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_joricel"
-                        android:layout_centerHorizontal="true"
-                        android:text="UI/UX Designer"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/cel_desc"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
                     android:layout_centerInParent="true">
@@ -597,58 +595,52 @@
                     <ImageView
                         android:id="@+id/square_carl"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/carl_pic"
                         android:layout_width="100dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginStart="80dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/carl_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
 
                     <TextView
                         android:id="@+id/name_carl"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/carl_pic"
-                        android:text="Carl Dominic Ochoa"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/carl"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textSize="18sp"
+                        android:layout_marginTop="8dp"/>
 
                     <TextView
                         android:id="@+id/des_carl"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_carl"
-                        android:layout_centerHorizontal="true"
-                        android:text="Research &amp;"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/des_carl2"
+                        android:gravity="center_horizontal"
+                        android:text="@string/carl_desc"
+                        android:textColor="@color/black"
                         android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/des_carl"
-                        android:layout_centerHorizontal="true"
-                        android:text="Development Specialist"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-                </RelativeLayout>
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
 
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
                     android:layout_centerInParent="true">
@@ -656,48 +648,52 @@
                     <ImageView
                         android:id="@+id/square_lyko"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/lyko_pic"
                         android:layout_width="100dp"
-                        android:layout_centerHorizontal="true"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginLeft="80dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/lyko_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
 
                     <TextView
                         android:id="@+id/name_lyko"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/lyko_pic"
-                        android:text="Lyko Miguel Santiago"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/lyko"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textSize="18sp"
+                        android:layout_marginTop="8dp"/>
 
                     <TextView
                         android:id="@+id/des_lyko"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_lyko"
-                        android:layout_centerHorizontal="true"
+                        android:gravity="center_horizontal"
                         android:text="@string/lyko_desc"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-                </RelativeLayout>
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
 
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
                     android:layout_centerInParent="true">
@@ -705,44 +701,45 @@
                     <ImageView
                         android:id="@+id/square_alleah"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="120dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="85dp"
                         android:src="@drawable/round_bg_light_blue" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/alleah_pic"
-                        android:layout_centerHorizontal="true"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginLeft="80dp"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/alleah_pic"
                         app:shapeAppearanceOverlay="@style/roundedImageView" />
 
                     <TextView
                         android:id="@+id/name_alleah"
-                        android:fontFamily="@font/montserrat_medium"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/alleah_pic"
-                        android:text="Alleah Gadores"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/alleah"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:textSize="18sp"
+                        android:layout_marginTop="8dp"/>
 
                     <TextView
                         android:id="@+id/des_alleah"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/name_alleah"
-                        android:layout_centerHorizontal="true"
-                        android:text="UI/UX Designer"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/alleah_desc"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:textSize="14sp"
+                        android:layout_marginTop="4dp" />
+
                 </RelativeLayout>
-
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -763,7 +760,7 @@
                     <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="15"/>
+                        android:layout_weight="10"/>
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/next_team"

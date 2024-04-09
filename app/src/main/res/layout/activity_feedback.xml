@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_container_profile"
+            android:id="@+id/constraint_container_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -95,6 +95,7 @@
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Give Feedback"
+                    android:textColor="@color/black"
                     android:textSize="24sp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -115,6 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="0dp"
+                    android:textColor="@color/black"
                     android:color="@color/orange"
                     android:secondaryProgressTint="@color/orange" />
 
@@ -123,10 +125,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:layout_marginTop="30dp"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/montserrat_medium"
                     android:text="Do you have any thoughts you'd like to share?"
                     android:textAlignment="viewStart"
-                    android:textColor="@color/alt_black"
                     android:textSize="16sp" />
 
                 <EditText
@@ -149,6 +151,7 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="30dp"
+                    android:layout_marginBottom="60dp"
                     android:background="@drawable/button_background"
                     android:text="Submit"
                     android:fontFamily="@font/montserrat_medium"
@@ -156,35 +159,7 @@
                     android:textSize="16sp"
                     app:iconTint="#FE7F00" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginBottom="40dp"
-                    android:orientation="horizontal"
-                    android:gravity="center">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/back_feedback"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:src="@drawable/back"
-                        android:layout_gravity="start" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="15"/>
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/next_feedback"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:src="@drawable/next"
-                        android:layout_gravity="end" />
-                </LinearLayout>
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

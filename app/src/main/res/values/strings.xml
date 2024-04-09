@@ -36,27 +36,27 @@
     <string name="privacy_policy"><u>Privacy Policy</u>.</string>
 
     <!-- ABOUT US TEXTS    -->
-    <string name="nga_desc">Next-Gen Artisans (NGA) is an innovative startup, formed by a group of Computer Science students, with a focus on Computational and Data Sciences. Our mission is the development of groundbreaking digital products through state-of-the-art technologies and research. Our expertise spans machine learning, artificial intelligence, web and mobile development allowing us to craft bespoke solutions that drive transformation in our clients’ businesses. As we navigate the tech industry, we aim to deliver exceptional software solutions, set new standards in the digital domain, and support our clients in achieving their business goals.
+    <string name="nga_desc">Next-Gen Artisans (NGA) is an innovative startup, formed by a group of Computer Science students, with a focus on Computational and Data Sciences. \n\nOur mission is the development of groundbreaking digital products through state-of-the-art technologies and research. \n\nOur expertise spans machine learning, artificial intelligence, web and mobile development allowing us to craft bespoke solutions that drive transformation in our clients’ businesses. \n\nAs we navigate the tech industry, we aim to deliver exceptional software solutions, set new standards in the digital domain, and support our clients in achieving their business goals.
 </string>
     <string name="mission_lbl">Our Mission</string>
-    <string name="mission_txt">To pioneer transformative digital solutions using advanced technologies and research. Our focus is on delivering bespoke software that exceeds client expectations and drives business growth, leveraging our expertise in machine learning, artificial intelligence, and web and mobile development.</string>
+    <string name="mission_txt">Next-Gen Artisan\'s mission is to pioneer transformative digital solutions using advanced technologies and research. \n\nOur focus is on delivering bespoke software that exceeds client expectations and drives business growth, leveraging our expertise in machine learning, artificial intelligence, and web and mobile development.</string>
     <string name="vision_lbl">Our Vision</string>
-    <string name="vision_txt">To be at the forefront of digital innovation, setting new standards in technology. We aim to redefine business operations through our contributions, fostering a future where our technological advancements empower clients and society with endless possibilities for progress.</string>
+    <string name="vision_txt">Next-Gen Artisan\'s vision is to be at the forefront of digital innovation, setting new standards in technology. \n\nWe aim to redefine business operations through our contributions, fostering a future where our technological advancements empower clients and society with endless possibilities for progress.</string>
     <string name="pioneer_lbl">Our Pioneer Product</string>
-    <string name="pioneer_txt">E-Tago is an Android-based mobile application for privacy preservation and image censorship of personal information in e-commerce product review images. This application will serve as a tool to safeguard personal information that might be shared on e-commerce platforms, in particular, product review images.</string>
+    <string name="pioneer_txt">E-Tago is an Android-based mobile application for privacy preservation and image censorship of personal information in e-commerce product review images. \n\nThis application will serve as a tool to safeguard personal information that might be shared on e-commerce platforms, in particular, product review images.</string>
     <string name="team_lbl">Meet the Team</string>
     <string name="alex">John Alex Robles</string>
-    <string name="alex_desc">Project Manager/Team Leader/Lead Developer</string>
+    <string name="alex_desc">Project Manager / \nTeam Leader / Lead Developer</string>
     <string name="bel">Ronabel Abrugar</string>
-    <string name="bel_desc">AI &amp; Machine Learning Specialist</string>
+    <string name="bel_desc">AI &amp; Machine Learning \n Specialist</string>
     <string name="cel">Joricel Roldan</string>
-    <string name="cel_desc">UI/UX Designer</string>
+    <string name="cel_desc">UI / UX Designer</string>
     <string name="alleah">Alleah Gadores</string>
-    <string name="alleah_desc">UI/UX Designer</string>
+    <string name="alleah_desc">UI / UX Designer</string>
     <string name="carl">Carl Dominic Ochoa</string>
-    <string name="carl_desc">Research &amp; Development Specialist</string>
+    <string name="carl_desc">Research &amp; Development \nSpecialist</string>
     <string name="lyko">Lyko Miguel Santiago</string>
-    <string name="lyko_desc">Quality Assurance Engineer</string>
+    <string name="lyko_desc">Quality Assurance \nEngineer</string>
     <string name="contact_lbl">Contact Us</string>
     <string name="contact_txt">Feel free to reach us!</string>
     <string name="contact_email">nextgen.artisans18@gmail.com</string>
