@@ -77,23 +77,23 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/nga_logo"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="30dp"
-                    android:layout_marginLeft="85dp"
-                    android:layout_marginRight="80dp"
                     android:src="@drawable/nga_logo_no_text"
                     />
 
                 <TextView
                     android:id="@+id/NGA_header"
                     android:layout_width="wrap_content"
-                    android:layout_height="41dp"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Next-Gen Artisan's"
                     android:textColor="@color/black"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    android:layout_gravity="center"
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/nga_desc_NGA"
@@ -153,15 +153,15 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/mission_logo"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="85dp"
-                    android:layout_marginRight="80dp"
-                android:layout_marginTop="30dp"
-                android:textColor="@color/black"
 
-                android:src="@drawable/mission" />
+                    android:layout_marginTop="30dp"
+                    android:textColor="@color/black"
+
+                    android:src="@drawable/mission"
+                />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -242,11 +242,9 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/nga_logo_vision"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="85dp"
-                    android:layout_marginRight="80dp"
                     android:layout_marginTop="30dp"
                     android:src="@drawable/vision" />
 
@@ -327,11 +325,9 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/etago_logo"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="85dp"
-                    android:layout_marginRight="80dp"
                     android:layout_marginTop="30dp"
                     android:src="@drawable/app_logo_dark_ver" />
 
@@ -404,33 +400,30 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/team_logo"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="40dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="85dp"
-                    android:layout_marginRight="80dp"
                     android:src="@drawable/team" />
 
                 <TextView
                     android:id="@+id/team_header"
                     android:layout_width="wrap_content"
-                    android:layout_height="41dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Meet the Team"
                     android:textColor="@color/black"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_centerInParent="true">
+                    android:layout_marginBottom="20dp">
 
                     <ImageView
                         android:id="@+id/square_alex"
@@ -455,8 +448,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/alex_pic"
                         android:gravity="center_horizontal"
-                        android:text="John Alex Robles"
-                        android:textColor="@color/black"
+                        android:text="@string/alex"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_medium"
                         android:textSize="18sp"
                         android:layout_marginTop="8dp"/>
@@ -468,7 +461,7 @@
                         android:layout_below="@id/name_alex"
                         android:gravity="center_horizontal"
                         android:text="@string/alex_desc"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -481,11 +474,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
-                    android:layout_centerInParent="true">
+                    >
 
                     <ImageView
                         android:id="@+id/square_ronabel"
@@ -511,7 +503,7 @@
                         android:layout_below="@id/ronabel_pic"
                         android:gravity="center_horizontal"
                         android:text="@string/bel"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_medium"
                         android:textSize="18sp"
                         android:layout_marginTop="8dp"/>
@@ -523,7 +515,7 @@
                         android:layout_below="@id/name_ronabel"
                         android:gravity="center_horizontal"
                         android:text="@string/bel_desc"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -533,11 +525,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
-                    android:layout_centerInParent="true">
+                    >
 
                     <ImageView
                         android:id="@+id/square_joricel"
@@ -563,7 +554,7 @@
                         android:layout_below="@id/joricel_pic"
                         android:gravity="center_horizontal"
                         android:text="@string/cel"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_medium"
                         android:textSize="18sp"
                         android:layout_marginTop="8dp"/>
@@ -575,7 +566,7 @@
                         android:layout_below="@id/name_joricel"
                         android:gravity="center_horizontal"
                         android:text="@string/cel_desc"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -586,11 +577,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
-                    android:layout_marginBottom="20dp"
-                    android:layout_centerInParent="true">
+                    android:layout_marginBottom="20dp">
 
                     <ImageView
                         android:id="@+id/square_carl"
@@ -616,7 +605,7 @@
                         android:layout_below="@id/carl_pic"
                         android:gravity="center_horizontal"
                         android:text="@string/carl"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_medium"
                         android:textSize="18sp"
                         android:layout_marginTop="8dp"/>
@@ -628,7 +617,7 @@
                         android:layout_below="@id/name_carl"
                         android:gravity="center_horizontal"
                         android:text="@string/carl_desc"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -639,11 +628,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
-                    android:layout_centerInParent="true">
+                    >
 
                     <ImageView
                         android:id="@+id/square_lyko"
@@ -669,7 +657,7 @@
                         android:layout_below="@id/lyko_pic"
                         android:gravity="center_horizontal"
                         android:text="@string/lyko"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_medium"
                         android:textSize="18sp"
                         android:layout_marginTop="8dp"/>
@@ -681,7 +669,7 @@
                         android:layout_below="@id/name_lyko"
                         android:gravity="center_horizontal"
                         android:text="@string/lyko_desc"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
@@ -692,11 +680,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
-                    android:layout_centerHorizontal="true"
                     android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="20dp"
-                    android:layout_centerInParent="true">
+                    >
 
                     <ImageView
                         android:id="@+id/square_alleah"
@@ -722,7 +709,7 @@
                         android:layout_below="@id/alleah_pic"
                         android:gravity="center_horizontal"
                         android:text="@string/alleah"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_medium"
                         android:textSize="18sp"
                         android:layout_marginTop="8dp"/>
@@ -734,7 +721,7 @@
                         android:layout_below="@id/name_alleah"
                         android:gravity="center_horizontal"
                         android:text="@string/alleah_desc"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="14sp"
                         android:layout_marginTop="4dp" />
