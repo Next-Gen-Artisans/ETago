@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -64,7 +63,6 @@ public class CustomSignInDialog extends Dialog {
             // This line is required to apply the dimming
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         }
-
 
     }
 

@@ -1,14 +1,5 @@
 package com.nextgenartisans.etago.profile;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,11 +30,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
+import com.nextgenartisans.etago.dialogs.CustomDeleteAccDialog;
+import com.nextgenartisans.etago.dialogs.LogoutDialog;
 import com.nextgenartisans.etago.feedback.Feedback;
 import com.nextgenartisans.etago.home.MainActivity;
-import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.dialogs.LogoutDialog;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
 
@@ -49,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private ShapeableImageView profileUserPic, profileEditUsername, profileEditEmail, profileEditPass;
     private TextView numCensoredImgs, profileUsername, profileEmail, profilePass;
     private View divider;
-    private androidx.appcompat.widget.AppCompatButton profileInfoLogoutBtn;
+    private androidx.appcompat.widget.AppCompatButton profileInfoLogoutBtn, deleteAccountBtn;
     private NavigationView profileNavView;
 
     // Get the navigation header view items
@@ -108,6 +108,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
 
         //Buttons
+        deleteAccountBtn = findViewById(R.id.delete_account_btn);
         profileInfoLogoutBtn = findViewById(R.id.profile_info_logout_btn);
         profileEditUsername = findViewById(R.id.profile_edit_username);
         profileEditEmail = findViewById(R.id.profile_edit_email);
@@ -182,6 +183,15 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             }
         });
 
+        //TODO DELETE ACCOUNT FUNCTIONALITY
+        deleteAccountBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Show a dialog to confirm the deletion of the account
+                showDeleteAccountDialog();
+            }
+        });
+
         profileInfoLogoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,7 +205,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, EditUsernameActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -204,7 +213,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, EditEmailActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -213,9 +221,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, EditPassActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
+    }
+
+    private void showDeleteAccountDialog() {
+        // Create an instance of the CustomDeleteAccDialog
+        CustomDeleteAccDialog deleteDialog = new CustomDeleteAccDialog(ProfileActivity.this);
+        deleteDialog.show(); // Display the dialog
     }
 
     private void loadUserProfilePicture() {

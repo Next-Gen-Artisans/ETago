@@ -21,6 +21,12 @@
     <!--GOOGLE/FB SIGN IN-->
     <string name="account_signin_txt">Creating account...</string>
 
+    <!--DELETING ACCOUNT CONFIRMATION    -->
+    <string name="delete_acc_dialog_title">Account Deletion</string>
+    <string name="delete_acc_sub_title">Are you sure you want to delete your E-Tago account? \n Enter your password to confirm.</string>
+    <string name="deleted_account_message">Your account has been successfully deleted. We hope to see you again soon!</string>
+
+
     <!--FB SIGN UP-->
     <string name="facebook_app_id">1066984481151589</string>
     <string name="fb_login_protocol_scheme">fb1066984481151589</string>

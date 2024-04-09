@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="25dp"
+    android:background="@drawable/signing_in_round_bg"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/delete_acc_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_acc_dialog_title"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/delete_acc_dialog_subtitle"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_acc_sub_title"
+        android:fontFamily="@font/montserrat_italic"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"/>
+
+    <ProgressBar
+        android:id="@+id/signingin_progbar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:indeterminateTint="@color/orange"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        />
+
+    <ImageView
+        android:id="@+id/check_icon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:visibility="gone"
+        android:src="@drawable/check_icon"
+        />
+
+    <ImageView
+        android:id="@+id/x_icon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:visibility="gone"
+        android:src="@drawable/x_icon"
+        />
+
+    <LinearLayout
+        android:id="@+id/form_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/delete_acc_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:textColorHint="@color/white"
+            app:cursorColor="@color/white"
+            app:passwordToggleEnabled="true"
+            android:visibility="visible"
+            app:passwordToggleTint="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/delete_acc_pass_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/outline_drawable"
+                android:backgroundTint="@color/orange"
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:textCursorDrawable="@drawable/cursor_drawable"
+                android:textSize="12sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/delete_acc_confirm_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:textColorHint="@color/white"
+            app:cursorColor="@color/white"
+            app:passwordToggleEnabled="true"
+            android:visibility="visible"
+            app:passwordToggleTint="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/delete_acc_confirm_pass_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/outline_drawable"
+                android:backgroundTint="@color/orange"
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:textColor="@color/white"
+                android:textCursorDrawable="@drawable/cursor_drawable"
+                android:textSize="12sp"
+
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:id="@+id/delete_acc_dialog_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:visibility="visible"
+        >
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/delete_acc_cancel_dialog_btn"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:fontFamily="@font/montserrat_semibold"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/forgot_pass_dialog_text"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@color/transparent"
+            android:visibility="visible"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/delete_acc_proceed_dialog_btn"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="Proceed"
+            android:fontFamily="@font/montserrat_semibold"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/forgot_pass_dialog_text"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/return_btn_bg"
+            android:visibility="visible"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/delete_acc_success"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/delete_acc_success_btn"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/return_btn_bg"
+            android:visibility="visible"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
