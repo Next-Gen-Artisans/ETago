@@ -25,6 +25,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.onboarding.Welcome;
 
@@ -136,10 +138,20 @@ public class CustomDeleteAccDialog extends Dialog {
         if (user != null) {
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
             user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
-                user.delete().addOnSuccessListener(aVoid1 -> {
-                    updateDialogForSuccess();
+                // Get a Firestore instance
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                // Get a reference to the user's document in Firestore
+                DocumentReference userRef = db.collection("Users").document(user.getUid());
+                // Delete the user's document
+                userRef.delete().addOnSuccessListener(aVoid1 -> {
+                    // Now, delete the user's account from Firebase Authentication
+                    user.delete().addOnSuccessListener(aVoid2 -> {
+                        updateDialogForSuccess();
+                    }).addOnFailureListener(e -> {
+                        updateDialogForFailure("Failed to delete account: " + e.getMessage());
+                    });
                 }).addOnFailureListener(e -> {
-                    updateDialogForFailure("Failed to delete account: " + e.getMessage());
+                    updateDialogForFailure("Failed to delete user data from Firestore: " + e.getMessage());
                 });
             }).addOnFailureListener(e -> {
                 updateDialogForFailure("Reauthentication failed: " + e.getMessage());
@@ -148,6 +160,7 @@ public class CustomDeleteAccDialog extends Dialog {
             Toast.makeText(context, "No user is signed in.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void showProgress(boolean show) {
         //Set margin below progressBar
