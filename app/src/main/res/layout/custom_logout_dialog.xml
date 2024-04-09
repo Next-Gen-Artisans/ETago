@@ -36,7 +36,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="25dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancel_logout_dialog_btn"
