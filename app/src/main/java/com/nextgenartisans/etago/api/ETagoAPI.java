@@ -9,7 +9,11 @@ import retrofit2.http.Part;
 
 public interface ETagoAPI {
 
-    String BASE_URL = "https://magical-together-orca.ngrok-free.app/";
+    String BASE_URL = "http://192.168.1.22:8080/"; //Change this to your server's IP address
+
+    @Multipart
+    @POST("/detection/img_object_detection_to_json")
+    Call<ResponseBody> uploadImageForJson(@Part MultipartBody.Part file);
 
     // Endpoint for uploading an image and getting back an image with object detection annotations
     @Multipart
@@ -20,6 +24,5 @@ public interface ETagoAPI {
     @Multipart
     @POST("/detection/img_object_detection_to_censored_img")
     Call<ResponseBody> uploadImageForCensoring(@Part MultipartBody.Part file);
-
 
 }

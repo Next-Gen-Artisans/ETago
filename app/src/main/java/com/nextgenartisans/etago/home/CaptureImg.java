@@ -259,12 +259,14 @@ public class CaptureImg extends AppCompatActivity {
                 });
     }
 
+
+
     private File saveBitmapToFile(Bitmap bitmap) {
         // Create a file in the external cache directory
         File outputFile = new File(getExternalCacheDir(), "annotated_image.jpg");
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
             // Compress the bitmap and write to the output file
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, out);
             // Return the file
             return outputFile;
         } catch (IOException e) {

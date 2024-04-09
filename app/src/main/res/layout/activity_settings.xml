@@ -202,7 +202,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/help_pic"
                         android:layout_marginStart="13dp"
-                        android:text="Help / Suport"
+                        android:text="Help / Support"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 

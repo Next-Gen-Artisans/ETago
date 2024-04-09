@@ -26,6 +26,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 
@@ -59,6 +60,9 @@ public class UploadImg extends AppCompatActivity {
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     private AppCompatImageView uploadedImg;
     private Uri selectedImageUri;
+
+    //BottomSheetDialog
+    private BottomSheetDialog bottomSheetDialog;
 
 
     @Override
@@ -110,7 +114,6 @@ public class UploadImg extends AppCompatActivity {
         backBtn = findViewById(R.id.back_btn);
         saveBtn = findViewById(R.id.save_btn);
 
-
         //Click image to replace
         uploadedImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +148,7 @@ public class UploadImg extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
 
+
                 if (selectedImageUri != null) {
                     byte[] imageData = getImageData(selectedImageUri, 768, 80);
 
@@ -157,7 +161,7 @@ public class UploadImg extends AppCompatActivity {
                                 .build();
 
                         ETagoAPI api = retrofit.create(ETagoAPI.class); // Replace with your API interface
-                        Call<ResponseBody> call = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                        Call<ResponseBody> call = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
 
                         call.enqueue(new Callback<ResponseBody>() {
                             @Override
@@ -176,7 +180,7 @@ public class UploadImg extends AppCompatActivity {
                                         Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
                                         intent.putExtra("selected_image_uri", selectedImageUri.toString());
                                         intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
-                                        startActivity(intent);
+//                                        startActivity(intent);
                                     } else {
                                         Log.e("UploadImgLog", "Scanning failed: " + response.errorBody().charStream().toString());
                                         Toast.makeText(UploadImg.this, "Failed to scan the image.", Toast.LENGTH_SHORT).show();
@@ -199,18 +203,44 @@ public class UploadImg extends AppCompatActivity {
                     Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
                 }
 
+                //Show bottom sheet dialog
+                showBottomSheetDialog();
+            }
+        });
+    }
+
+    private void showBottomSheetDialog() {
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UploadImg.this);
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+
+        // Set up button listeners or other interactions inside the bottom sheet
+        AppCompatButton cancelButton = bottomSheetView.findViewById(R.id.btm_cancel_dialog_btn);
+        AppCompatButton proceedButton = bottomSheetView.findViewById(R.id.btm_proceed_dialog_btn);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
             }
         });
 
-
+        proceedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Add actions for proceed button, e.g., moving to another activity
+            }
+        });
     }
+
 
     private File saveBitmapToFile(Bitmap bitmap) {
         // Create a file in the external cache directory
         File outputFile = new File(getExternalCacheDir(), "annotated_image.jpg");
         try (FileOutputStream out = new FileOutputStream(outputFile)) {
             // Compress the bitmap and write to the output file
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, out);
             // Return the file
             return outputFile;
         } catch (IOException e) {
