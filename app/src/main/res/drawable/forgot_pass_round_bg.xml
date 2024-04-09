@@ -1,5 +1,5 @@
 <!-- forgot_pass_round_bg.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/light_blue" /> <!-- Set the background color -->
-    <corners android:radius="15dp" /> <!-- Adjust the radius as needed to control the roundness -->
+    <corners android:radius="25dp" /> <!-- Adjust the radius as needed to control the roundness -->
 </shape>
