@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_marginHorizontal="25dp"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="25dp"
@@ -22,8 +23,9 @@
 
     <TextView
         android:id="@+id/delete_acc_dialog_subtitle"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/delete_acc_sub_title"
         android:fontFamily="@font/montserrat_italic"
         android:textSize="14sp"
@@ -60,6 +62,7 @@
         android:id="@+id/form_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
         >
 
@@ -127,41 +130,39 @@
 
     <LinearLayout
         android:id="@+id/delete_acc_dialog_buttons"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:visibility="visible"
-        >
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="visible">
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/delete_acc_cancel_dialog_btn"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Cancel"
             android:fontFamily="@font/montserrat_semibold"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/forgot_pass_dialog_text"
             android:textColor="@color/white"
             android:textAllCaps="false"
             android:background="@color/transparent"
-            android:visibility="visible"
-            />
+            android:visibility="visible" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/delete_acc_proceed_dialog_btn"
-            android:layout_width="120dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Proceed"
             android:fontFamily="@font/montserrat_semibold"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/forgot_pass_dialog_text"
             android:textColor="@color/white"
             android:textAllCaps="false"
             android:background="@drawable/return_btn_bg"
-            android:visibility="visible"
-            />
-
+            android:visibility="visible" />
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/delete_acc_success"

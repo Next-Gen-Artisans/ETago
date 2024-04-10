@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.camera.core.Camera;
+import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
@@ -90,7 +91,8 @@ public class CaptureImg extends AppCompatActivity {
 
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture imageCapture;
-
+    private boolean usingFrontCamera = false;
+    private CameraControl cameraControl;
 
     //Declare Uri variables
     private Uri capturedImgUri, annotatedImageUri, censoredImageUri;
@@ -99,6 +101,8 @@ public class CaptureImg extends AppCompatActivity {
     private Intent detectionActivityIntent;
 
     private StringBuilder objectsDetected;
+    private ImageButton flashButton;
+    private boolean isFrontCamera = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +211,42 @@ public class CaptureImg extends AppCompatActivity {
             }
         }, ContextCompat.getMainExecutor(this));
 
+        ImageButton rotateCameraButton = findViewById(R.id.rotate_cam);
+        rotateCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                usingFrontCamera = !usingFrontCamera; // Toggle camera facing
+                cameraProviderFuture.addListener(() -> {
+                    try {
+                        ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                        bindPreview(cameraProvider); // Rebind camera with new facing
+                    } catch (ExecutionException | InterruptedException e) {
+                        Toast.makeText(CaptureImg.this, "Error switching camera.", Toast.LENGTH_SHORT).show();
+                    }
+                }, ContextCompat.getMainExecutor(CaptureImg.this));
+            }
+        });
+
+        flashButton = findViewById(R.id.flashlight_btn);
+
+        // Set OnClickListener for rotate_cam button
+        flashButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cameraControl != null) {
+                    // Check if multiple cameras are available
+                    if (isFrontCamera) {
+                        // Switch to the back camera
+                        cameraControl.enableTorch(false);
+                        isFrontCamera = false;
+                    } else {
+                        // Switch to the front camera
+                        cameraControl.enableTorch(true);
+                        isFrontCamera = true;
+                    }
+                }
+            }
+        });
 
     }
 
@@ -457,18 +497,39 @@ public class CaptureImg extends AppCompatActivity {
 
 
     private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-
-        Preview preview = new Preview.Builder()
-                .build();
-
-        CameraSelector cameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build();
-
+        Preview preview = new Preview.Builder().build();
+        CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(isFrontCamera ? CameraSelector.LENS_FACING_FRONT : CameraSelector.LENS_FACING_BACK).build();
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
         Camera camera = cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview, imageCapture);
+        cameraControl = camera.getCameraControl();
+
+        // Set OnClickListener for flashButton
+        flashButton.setOnClickListener(v -> {
+            if (cameraControl != null) {
+                // Check if multiple cameras are available
+                if (isFrontCamera) {
+                    // Switch to the back camera
+                    cameraControl.enableTorch(false);
+                    isFrontCamera = false;
+                } else {
+                    // Switch to the front camera
+                    cameraControl.enableTorch(true);
+                    isFrontCamera = true;
+                }
+            }
+        });
+
+        // Set OnClickListener for rotateCameraButton
+        ImageButton rotateCameraButton = findViewById(R.id.rotate_cam);
+        rotateCameraButton.setOnClickListener(v -> {
+            isFrontCamera = !isFrontCamera; // Toggle camera facing
+            cameraProvider.unbindAll(); // Unbind all use cases before rebinding
+            bindPreview(cameraProvider); // Rebind camera with new facing
+        });
     }
+
+
 
     private boolean hasCameraPermission() {
         return ContextCompat.checkSelfPermission(
