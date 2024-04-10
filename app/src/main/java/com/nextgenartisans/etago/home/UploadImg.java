@@ -62,6 +62,8 @@ public class UploadImg extends AppCompatActivity {
     //Photo Picker
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     private AppCompatImageView uploadedImg;
+
+    //Declare Uri variables
     private Uri selectedImageUri, annotatedImageUri, censoredImageUri;
 
     // Declare the global Intent
