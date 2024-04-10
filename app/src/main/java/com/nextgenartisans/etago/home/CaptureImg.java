@@ -70,7 +70,6 @@ public class CaptureImg extends AppCompatActivity {
     // Declare member variables for each view
     private CardView buttonsCardView;
     private LinearLayout headerContainer;
-    private ImageButton backBtn, saveBtn;
     private TextView headerTxt;
     private AppCompatImageView capturedImg;
     private AppCompatButton captureBtn, cancelBtn, resetPreviewBtn;
@@ -140,8 +139,6 @@ public class CaptureImg extends AppCompatActivity {
         captureBtn = findViewById(R.id.capture_scan_btn);
         resetPreviewBtn = findViewById(R.id.reset_preview_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
-        backBtn = findViewById(R.id.back_btn);
-        saveBtn = findViewById(R.id.save_btn);
 
         // Initialize the Intent
         detectionActivityIntent = new Intent(CaptureImg.this, DetectionActivity.class);
@@ -163,13 +160,6 @@ public class CaptureImg extends AppCompatActivity {
             public void onClick(View view) {
                 previewView.setVisibility(View.VISIBLE);
                 capturedImg.setVisibility(View.GONE);
-            }
-        });
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
             }
         });
 
@@ -436,7 +426,7 @@ public class CaptureImg extends AppCompatActivity {
     }
 
     private void showBottomSheetDialog(String detectedText, Uri annotatedImageUri, Uri censoredImageUri) {
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_detected_layout, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(CaptureImg.this);
         bottomSheetDialog.setContentView(bottomSheetView);
 

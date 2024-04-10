@@ -53,7 +53,7 @@ public class UploadImg extends AppCompatActivity {
     // Declare member variables for each view
     private CardView buttonsCardView;
     private LinearLayout uploadImageContainer, headerContainer;
-    private ImageButton backBtn, saveBtn;
+    private ImageButton multiInputBtn;
     private TextView headerTxt;
 
     private AppCompatButton scanBtn, cancelBtn;
@@ -116,8 +116,8 @@ public class UploadImg extends AppCompatActivity {
         //Buttons
         scanBtn = findViewById(R.id.scan_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
-        backBtn = findViewById(R.id.back_btn);
-        saveBtn = findViewById(R.id.save_btn);
+
+        multiInputBtn = findViewById(R.id.multi_input_btn);
 
         // Initialize the Intent
         detectionActivityIntent = new Intent(UploadImg.this, DetectionActivity.class);
@@ -141,12 +141,7 @@ public class UploadImg extends AppCompatActivity {
             }
         });
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+
 
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,7 +303,7 @@ public class UploadImg extends AppCompatActivity {
     }
 
     private void showBottomSheetDialog(String detectedText, Uri annotatedImageUri, Uri censoredImageUri) {
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_detected_layout, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UploadImg.this);
         bottomSheetDialog.setContentView(bottomSheetView);
 

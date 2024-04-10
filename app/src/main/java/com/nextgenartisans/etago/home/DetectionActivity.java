@@ -34,8 +34,7 @@ import java.io.OutputStream;
 
 public class DetectionActivity extends AppCompatActivity {
 
-    private static final int INPUT_IMG_SIZE = 768;
-    private static final float CONFIDENCE_THRESHOLD = 0.5f;
+
     private LinearLayout headerContainer;
     private ImageButton backBtn;
     private TextView headerTxt;

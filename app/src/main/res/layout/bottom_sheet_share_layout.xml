@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:id="@+id/bottomsheet_share"
+    android:background="@drawable/bottom_sheet_share_bg"
+    >
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:src="@drawable/share_icon" />
+
+    <TextView
+        android:id="@+id/btm_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload to your Shopping App:"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="@color/alt_black"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/btm_dialog_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="None detected."
+        android:fontFamily="@font/montserrat_italic"
+        android:textSize="16sp"
+        android:textColor="@color/alt_black"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bottom_sheet_share_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <LinearLayout
+        android:id="@+id/btm_dialog_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        >
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btm_cancel_dialog_btn"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/alt_black"
+            android:textAllCaps="false"
+            android:background="@color/transparent"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btm_proceed_dialog_btn"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:text="Review"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/return_btn_bg"
+            />
+
+    </LinearLayout>
+</LinearLayout>
