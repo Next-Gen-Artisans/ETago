@@ -321,13 +321,12 @@ public class CaptureImg extends AppCompatActivity {
                                 objectsDetected.append(object.getString("name"))
                                         .append(" (")
                                         .append(String.format("%.2f", object.getDouble("confidence") * 100))
-                                        .append("% confidence), ");
+                                        .append("% confidence)\n"); // Use \n for new line
                             }
                             objectsDetected.setLength(objectsDetected.length() - 2); // Remove the last comma
                         } else {
                             objectsDetected.append(jsonObject.optString("message", "No objects detected."));
                         }
-
                         // Now that JSON processing is done, proceed to annotated image processing
                         processAnnotatedImage(api, requestFile, objectsDetected);
 

@@ -183,9 +183,9 @@ public class UploadImg extends AppCompatActivity {
                                                 objectsDetected.append(object.getString("name"))
                                                         .append(" (")
                                                         .append(String.format("%.2f", object.getDouble("confidence") * 100))
-                                                        .append("% confidence), ");
+                                                        .append("%)\n"); // Use \n for new line
                                             }
-                                            objectsDetected.setLength(objectsDetected.length() - 2); // Remove the last comma
+                                            objectsDetected.setLength(objectsDetected.length() - 1); // Remove the last comma
                                         } else {
                                             objectsDetected.append(jsonObject.optString("message", "No objects detected."));
                                         }
