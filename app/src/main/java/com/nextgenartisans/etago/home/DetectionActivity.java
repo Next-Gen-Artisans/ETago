@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -22,8 +23,13 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.camera.core.ImageCapture;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.nextgenartisans.etago.R;
+import com.nextgenartisans.etago.adapter.ECommerceAdapter;
+import com.nextgenartisans.etago.model.ECommercePlatform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DetectionActivity extends AppCompatActivity {
 
@@ -136,6 +144,8 @@ public class DetectionActivity extends AppCompatActivity {
                 // Notify the gallery
                 addPicToGallery(photo.getAbsolutePath());
                 Toast.makeText(DetectionActivity.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
+                showECommercePlatformsBottomSheet();
+
             }
         } catch (FileNotFoundException e) {
             Log.e("DetectionActivity", "File not found", e);
@@ -145,6 +155,37 @@ public class DetectionActivity extends AppCompatActivity {
             Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void showECommercePlatformsBottomSheet() {
+        // Inflate the layout for the bottom sheet
+        View bottomSheetShareView = getLayoutInflater().inflate(R.layout.bottom_sheet_share_layout, null);
+        BottomSheetDialog bottomSheetShareDialog = new BottomSheetDialog(DetectionActivity.this);
+        bottomSheetShareDialog.setContentView(bottomSheetShareView);
+
+        // Initialize the list of e-commerce platforms
+        List<ECommercePlatform> platforms = new ArrayList<>();
+        platforms.add(new ECommercePlatform("Shopee", R.drawable.shopee, "com.shopee.ph"));
+        platforms.add(new ECommercePlatform("Lazada", R.drawable.lazada, "com.lazada.android"));
+        // Add more platforms with their package names as needed
+
+        // Correctly find the RecyclerView within the bottom sheet view
+        RecyclerView recyclerView = bottomSheetShareView.findViewById(R.id.bottom_sheet_share_rv);
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            ECommerceAdapter adapter = new ECommerceAdapter(DetectionActivity.this, platforms);
+            recyclerView.setAdapter(adapter);
+        } else {
+            Log.e("RecyclerViewInit", "RecyclerView not found!");
+        }
+
+        // Show the bottom sheet dialog
+        bottomSheetShareDialog.show();
+
+        AppCompatButton cancelButton = bottomSheetShareView.findViewById(R.id.btm_cancel_dialog_btn);
+        cancelButton.setOnClickListener(v -> bottomSheetShareDialog.dismiss());
+
+    }
+
 
     private void addPicToGallery(String imagePath) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);

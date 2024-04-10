@@ -50,7 +50,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         >
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btm_cancel_dialog_btn"
@@ -58,20 +59,9 @@
             android:layout_height="wrap_content"
             android:text="Cancel"
             android:fontFamily="@font/montserrat_semibold"
-            android:textColor="@color/alt_black"
-            android:textAllCaps="false"
-            android:background="@color/transparent"
-            />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btm_proceed_dialog_btn"
-            android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            android:text="Review"
-            android:fontFamily="@font/montserrat_semibold"
             android:textColor="@color/white"
             android:textAllCaps="false"
-            android:background="@drawable/return_btn_bg"
+            android:background="@drawable/custom_btn_bg"
             />
 
     </LinearLayout>
