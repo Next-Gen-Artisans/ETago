@@ -182,7 +182,13 @@ public class DetectionActivity extends AppCompatActivity {
         bottomSheetShareDialog.show();
 
         AppCompatButton cancelButton = bottomSheetShareView.findViewById(R.id.btm_cancel_dialog_btn);
-        cancelButton.setOnClickListener(v -> bottomSheetShareDialog.dismiss());
+        cancelButton.setOnClickListener(v -> {
+            bottomSheetShareDialog.dismiss();
+            Intent intent = new Intent(DetectionActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // This flag will cause any existing task that would be associated with the activity to be cleared before the activity is started.
+            startActivity(intent);
+            finish(); // Finish the current activity
+        });
 
     }
 

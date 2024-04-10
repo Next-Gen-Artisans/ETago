@@ -20,7 +20,7 @@
         android:textSize="18sp"
         android:text="Platform Name"
         android:fontFamily="@font/montserrat_medium"
-        android:textColor="@color/alt_black"
+        android:textColor="@color/white"
         android:layout_gravity="center"
         />
 </LinearLayout>
