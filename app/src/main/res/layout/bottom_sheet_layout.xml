@@ -12,7 +12,7 @@
         android:id="@+id/btm_dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Detected Objects"
+        android:text="Personal Information Detected:"
         android:fontFamily="@font/montserrat_bold"
         android:textSize="24sp"
         android:gravity="center"
@@ -24,12 +24,22 @@
         android:id="@+id/btm_dialog_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="{OBJECTS}"
-        android:fontFamily="@font/montserrat_medium"
+        android:text="None detected."
+        android:fontFamily="@font/montserrat_italic"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/btm_dialog_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_medium"
+        android:textSize="16sp"
+        android:layout_gravity=""
+        android:visibility="gone"
         />
 
 

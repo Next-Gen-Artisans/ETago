@@ -62,10 +62,10 @@ public class UploadImg extends AppCompatActivity {
     //Photo Picker
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     private AppCompatImageView uploadedImg;
-    private Uri selectedImageUri;
+    private Uri selectedImageUri, annotatedImageUri, censoredImageUri;
 
-    //BottomSheetDialog
-    private BottomSheetDialog bottomSheetDialog;
+    // Declare the global Intent
+    private Intent detectionActivityIntent;
 
 
     @Override
@@ -117,6 +117,9 @@ public class UploadImg extends AppCompatActivity {
         backBtn = findViewById(R.id.back_btn);
         saveBtn = findViewById(R.id.save_btn);
 
+        // Initialize the Intent
+        detectionActivityIntent = new Intent(UploadImg.this, DetectionActivity.class);
+
         //Click image to replace
         uploadedImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +146,6 @@ public class UploadImg extends AppCompatActivity {
             }
         });
 
-        //TODO ML DETECTION AND CENSORSHIP
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,49 +187,22 @@ public class UploadImg extends AppCompatActivity {
                                         } else {
                                             objectsDetected.append(jsonObject.optString("message", "No objects detected."));
                                         }
+
+                                        // Now that JSON processing is done, proceed to annotated image processing
+                                        processAnnotatedImage(api, requestFile, objectsDetected);
+
                                     } catch (Exception e) {
                                         Log.e("UploadImgLog", "Error parsing detection results: " + e.getMessage());
                                         Toast.makeText(UploadImg.this, "Failed to parse detection results.", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    Log.e("UploadImgLog", "API Call1 Failed: " + response.errorBody().charStream().toString());
-                                    Toast.makeText(UploadImg.this, "API Call1 Failed to scan the image.", Toast.LENGTH_SHORT).show();
+                                    logError("API Call1", response);
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Log.e("UploadImgLog", "API Call1 Error uploading image: " + t.getMessage());
-                                Toast.makeText(UploadImg.this, "API Call1 Error uploading image.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        // Second API Call - Annotated Image
-                        Call<ResponseBody> call2 = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
-                        call2.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.isSuccessful()) {
-                                    Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
-                                    File outputFile = saveBitmapToFile(bitmap);
-
-                                    if (outputFile != null) {
-                                        Uri annotatedImageUri = Uri.fromFile(outputFile);
-                                        showBottomSheetDialog(objectsDetected.toString(), selectedImageUri, annotatedImageUri);
-                                    } else {
-                                        Log.e("UploadImgLog", "API Call2 Failed to save annotated image.");
-                                        Toast.makeText(UploadImg.this, "API Call2 Failed to scan the image.", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-                                    Log.e("UploadImgLog", "API Call2 Scanning failed: " + response.errorBody().charStream().toString());
-                                    Toast.makeText(UploadImg.this, "API Call2 Failed to scan the image.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Log.e("UploadImgLog", "API Call2 Error uploading image: " + t.getMessage());
-                                Toast.makeText(UploadImg.this, "API Call2 Error uploading image.", Toast.LENGTH_SHORT).show();
+                                logFailure("API Call1", t);
                             }
                         });
                     } else {
@@ -237,11 +212,100 @@ public class UploadImg extends AppCompatActivity {
                     Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
                 }
             }
+
+            private void processAnnotatedImage(ETagoAPI api, RequestBody requestFile, StringBuilder objectsDetected) {
+                Call<ResponseBody> call2 = api.uploadImageForAnnotation(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                call2.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                            File annotatedFile = saveBitmapToFile(bitmap);
+
+                            if (annotatedFile != null) {
+                                annotatedImageUri = Uri.fromFile(annotatedFile);
+
+                                uploadedImg.setImageURI(annotatedImageUri);
+                                // Update the global Intent with the annotated image URI
+                                //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
+
+                                // Proceed to process the censored image
+                                processCensoredImage(api, requestFile, objectsDetected);
+                            } else {
+                                Log.e("UploadImgLog", "Failed to save annotated image.");
+                                Toast.makeText(UploadImg.this, "Failed to process annotated image.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            logError("API Call2", response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        logFailure("API Call2", t);
+                    }
+                });
+            }
+
+            private void processCensoredImage(ETagoAPI api, RequestBody requestFile, StringBuilder objectsDetected) {
+                Call<ResponseBody> call3 = api.uploadImageForCensoring(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                call3.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                            File censoredFile = saveBitmapToFile(bitmap);
+
+
+                            if (censoredFile != null) {
+                                censoredImageUri = Uri.fromFile(censoredFile);
+                                // Update the global Intent with the censored image URI
+                                //detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri);
+                                //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
+                                // Now that both URIs are added to the Intent, show the bottom sheet dialog
+                                showBottomSheetDialog(objectsDetected.toString(), annotatedImageUri, censoredImageUri);
+                            } else {
+                                Log.e("UploadImgLog", "Failed to save censored image.");
+                                Toast.makeText(UploadImg.this, "Failed to process censored image.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            logError("API Call3", response);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        logFailure("API Call3", t);
+                    }
+                });
+            }
+
+            private void logError(String tag, Response<ResponseBody> response) {
+                Log.e("UploadImgLog", tag + " Failed: " + response.errorBody().charStream().toString());
+                Toast.makeText(UploadImg.this, tag + " Failed to scan the image.", Toast.LENGTH_SHORT).show();
+            }
+
+            private void logFailure(String tag, Throwable t) {
+                Log.e("UploadImgLog", tag + " Error uploading image: " + t.getMessage());
+                Toast.makeText(UploadImg.this, tag + " Error uploading image.", Toast.LENGTH_SHORT).show();
+            }
         });
+
 
     }
 
-    private void showBottomSheetDialog(String detectedText, Uri selectedImageUri, Uri annotatedImageUri) {
+    private File saveBitmapToFile(Bitmap bitmap, String filename) {
+        File outputFile = new File(getExternalCacheDir(), filename);
+        try (FileOutputStream out = new FileOutputStream(outputFile)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return outputFile;
+        } catch (IOException e) {
+            Log.e("UploadImg", "Error saving bitmap to file", e);
+            return null;
+        }
+    }
+
+    private void showBottomSheetDialog(String detectedText, Uri annotatedImageUri, Uri censoredImageUri) {
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UploadImg.this);
         bottomSheetDialog.setContentView(bottomSheetView);
@@ -257,12 +321,13 @@ public class UploadImg extends AppCompatActivity {
 
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         proceedButton.setOnClickListener(v -> {
-            Intent intent = new Intent(UploadImg.this, DetectionActivity.class);
-            intent.putExtra("selected_image_uri", selectedImageUri.toString());
-            intent.putExtra("annotated_image_uri", annotatedImageUri.toString());
-            startActivity(intent);
+            detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri.toString());
+            detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri.toString());
+            bottomSheetDialog.cancel();
+            startActivity(detectionActivityIntent);
         });
     }
+
 
 
     private File saveBitmapToFile(Bitmap bitmap) {

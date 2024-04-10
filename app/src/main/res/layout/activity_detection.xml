@@ -43,17 +43,6 @@
             android:textColor="@color/alt_black"
             android:textSize="20sp" />
 
-        <ImageButton
-            android:id="@+id/save_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="120dp"
-            android:background="@color/transparent"
-            android:src="@drawable/check_icon"
-            android:visibility="gone"
-            app:tint="@color/alt_black"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     </LinearLayout>
 
@@ -94,14 +83,14 @@
 
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/censor_btn"
+            android:id="@+id/save_btn"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/custom_btn_bg"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Censor"
+            android:text="Save"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />

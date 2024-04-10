@@ -7,9 +7,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -25,40 +24,28 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.api.ETagoAPI;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import java.io.OutputStream;
 
 public class DetectionActivity extends AppCompatActivity {
 
     private static final int INPUT_IMG_SIZE = 768;
     private static final float CONFIDENCE_THRESHOLD = 0.5f;
     private LinearLayout headerContainer;
-    private ImageButton backBtn, saveBtn;
+    private ImageButton backBtn;
     private TextView headerTxt;
     private CardView buttonsCardView;
     private AppCompatImageView detectedImg;
     private LinearLayout buttonsLayout;
-    private AppCompatButton censorBtn, cancelBtn;
+    private AppCompatButton cancelBtn, saveBtn;
     private ImageCapture imageCapture;
 
-    private Uri annotatedimageUri;
-    private Uri selectedImageUri;
+    private Uri censoredImageUri;
 
 
 
@@ -94,7 +81,6 @@ public class DetectionActivity extends AppCompatActivity {
         buttonsCardView = findViewById(R.id.buttons_cardview);
         detectedImg = findViewById(R.id.detected_img);
         buttonsLayout = findViewById(R.id.buttons_layout);
-        censorBtn = findViewById(R.id.censor_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
 
         //View
@@ -102,125 +88,83 @@ public class DetectionActivity extends AppCompatActivity {
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation())
                 .build();
 
+        censoredImageUri = Uri.parse(getIntent().getStringExtra("censored_image_uri"));
+        loadCensoredImage();
 
-        // Get the path of the annotated image
-        String uriString = getIntent().getStringExtra("annotated_image_uri");
-        String selectedImageUriString = getIntent().getStringExtra("selected_image_uri");
-        if (uriString != null && !uriString.isEmpty()) {
-            annotatedimageUri = Uri.parse(uriString);
-            selectedImageUri = Uri.parse(selectedImageUriString);
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(annotatedimageUri);
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                detectedImg.setImageBitmap(bitmap); // Ensure detectedImg is initialized
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Unable to load image", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "No annotated image received", Toast.LENGTH_SHORT).show();
+
+        backBtn.setOnClickListener(v -> finish());
+
+        cancelBtn.setOnClickListener(v -> {
+            startActivity(new Intent(DetectionActivity.this, MainActivity.class));
+            finish();
+        });
+
+        saveBtn.setOnClickListener(v -> savePicture());
+
+
+    }
+
+    private void savePicture() {
+        if (censoredImageUri == null) {
+            Toast.makeText(this, "No image to save", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
+        // Use ContentResolver to get InputStream from Uri
+        try (InputStream inputStream = getContentResolver().openInputStream(censoredImageUri)) {
+            if (inputStream == null) {
+                Toast.makeText(this, "Unable to open image", Toast.LENGTH_SHORT).show();
+                return;
             }
-        });
 
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(DetectionActivity.this, MainActivity.class);
-                startActivity(i);
-                finish();
+            File photoDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "YourAppName");
+            if (!photoDir.exists() && !photoDir.mkdirs()) {
+                Log.e("DetectionActivity", "Failed to create directory");
+                Toast.makeText(this, "Failed to create directory in gallery", Toast.LENGTH_SHORT).show();
+                return;
             }
-        });
 
-        censorBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(DetectionActivity.this, "Censoring image...", Toast.LENGTH_SHORT).show();
+            File photo = new File(photoDir, "censored_photo_" + System.currentTimeMillis() + ".jpg");
 
-                byte[] imageData = getImageData(selectedImageUri);
-
-                if (imageData != null) {
-                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
-
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(ETagoAPI.BASE_URL) // Ensure the port is included if necessary
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-
-                    ETagoAPI api = retrofit.create(ETagoAPI.class);
-                    Call<ResponseBody> call = api.uploadImageForCensoring(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
-                    call.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.isSuccessful()) {
-                                Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
-
-                                Toast.makeText(DetectionActivity.this, "Image censored successfully", Toast.LENGTH_SHORT).show();
-                                //Log the response
-                                Log.i("DetectionActivityLog", "Image censored successfully");
-
-                                // Save the bitmap to a temporary file
-                                String fileName = "temp_censored_image.jpg"; // Temporary file name
-                                File outputFile = new File(getExternalCacheDir(), fileName);
-                                try {
-                                    FileOutputStream out = new FileOutputStream(outputFile);
-                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                                    out.flush();
-                                    out.close();
-
-                                    // Pass the path of the temporary file to CensorActivity
-                                    Intent intent = new Intent(DetectionActivity.this, CensorActivity.class);
-                                    intent.putExtra("censored_image_path", outputFile.getAbsolutePath());
-                                    startActivity(intent);
-
-                                } catch (IOException e) {
-                                    Log.e("DetectionActivityLog", "Error saving censored image", e);
-                                    Toast.makeText(DetectionActivity.this, "Error saving censored image", Toast.LENGTH_SHORT).show();
-                                }
-
-                            } else {
-                                // Handling non-successful response
-                                String responseBody = "N/A";
-                                try {
-                                    responseBody = response.errorBody().string();
-                                } catch (Exception e) {
-                                    Log.e("DetectionActivityLog", "Error reading response body", e);
-                                }
-                                Log.e("DetectionActivityLog", "Failed to censor image: " + responseBody);
-                                Toast.makeText(DetectionActivity.this, "Failed to censor image", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(DetectionActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                            Log.e("DetectionActivityLog", "Error uploading image: " + t.getMessage());
-                        }
-                    });
-                } else {
-                    Toast.makeText(DetectionActivity.this, "Error preparing image for upload", Toast.LENGTH_SHORT).show();
-                    Log.e("DetectionActivityLog", "Error preparing image for upload");
+            // Copy the stream data to the new file
+            try (OutputStream out = new FileOutputStream(photo)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = inputStream.read(buf)) > 0) {
+                    out.write(buf, 0, len);
                 }
-            }
-        });
-    }
 
-    private byte[] getImageData(Uri imageUri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            return baos.toByteArray();
+                // Notify the gallery
+                addPicToGallery(photo.getAbsolutePath());
+                Toast.makeText(DetectionActivity.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
+            }
+        } catch (FileNotFoundException e) {
+            Log.e("DetectionActivity", "File not found", e);
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            Log.e("DetectionActivity", "Error saving image", e);
+            Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void addPicToGallery(String imagePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(imagePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+    private void loadCensoredImage() {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(censoredImageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            detectedImg.setImageBitmap(bitmap);  // Set the censored image to the imageView
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Unable to load image", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
 
 }
