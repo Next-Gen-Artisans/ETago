@@ -5,22 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".home.DetectionActivity">
+    tools:context=".home.UploadImg">
 
     <LinearLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_margin="20dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
 
         <ImageButton
             android:id="@+id/back_btn"
@@ -35,11 +31,12 @@
 
         <TextView
             android:id="@+id/header_txt"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginLeft="20dp"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Detected objects"
+            android:text="Upload Multiple Images"
             android:textColor="@color/alt_black"
             android:textSize="20sp" />
 
@@ -49,55 +46,85 @@
 
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/detected_img"
+        android:id="@+id/uploaded_img"
         android:layout_width="match_parent"
         android:layout_height="550dp"
+        android:background="@drawable/outline_drawable"
+        android:backgroundTint="@color/orange"
+        android:scaleType="fitCenter"
+        android:src="@drawable/image_icon"
+        android:padding="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_below="@+id/header_container"
+        android:visibility="gone"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_below="@+id/header_container"
+        android:padding="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/outline_drawable"
         android:backgroundTint="@color/orange"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/image_icon" />
+        >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/uploaded_imgs_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+    </ScrollView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/buttons_cardview"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="-30dp"
+        android:layout_marginBottom="-60dp"
         app:cardBackgroundColor="@color/light_blue"
-        app:cardCornerRadius="25dp" />
+        app:cardCornerRadius="25dp"
+
+        />
 
     <LinearLayout
-        android:id="@+id/buttons_layout"
+        android:id="@+id/buttons_cardview_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/buttons_cardview"
+        android:layout_alignTop="@+id/buttons_cardview"
         android:elevation="4dp"
         android:gravity="center"
-        android:orientation="vertical"
-        >
-
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/save_btn"
+            android:id="@+id/scan_photos_btn"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/custom_btn_bg"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Save"
+            android:text="Scan photos"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/reset_selection_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Reset selection"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancel_btn"
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/transparent"
             android:fontFamily="@font/montserrat_bold"
@@ -105,8 +132,6 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />
-
-
     </LinearLayout>
 
 

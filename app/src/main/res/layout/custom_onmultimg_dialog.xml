@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginHorizontal="25dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="25dp"
+    android:background="@drawable/signing_in_round_bg"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/onmult_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Image"
+        android:fontFamily="@font/montserrat_bold"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+
+        />
+
+    <ImageView
+        android:id="@+id/on_mult_detected_objects_img"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:id="@+id/on_mult_detected_objects_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="{Objects Detected}"
+        android:fontFamily="@font/montserrat_italic"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"/>
+
+
+
+
+    <LinearLayout
+        android:id="@+id/delete_acc_dialog_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/close_dialog_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Close"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/return_btn_bg"
+            android:visibility="visible" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/delete_acc_success"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/delete_acc_success_btn"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:fontFamily="@font/montserrat_semibold"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/return_btn_bg"
+            android:visibility="visible"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

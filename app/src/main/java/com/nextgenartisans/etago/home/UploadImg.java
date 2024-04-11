@@ -116,7 +116,6 @@ public class UploadImg extends AppCompatActivity {
         //Buttons
         scanBtn = findViewById(R.id.scan_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
-
         multiInputBtn = findViewById(R.id.multi_input_btn);
 
         // Initialize the Intent
@@ -128,6 +127,14 @@ public class UploadImg extends AppCompatActivity {
             public void onClick(View view) {
                 // Initialize the photo picker launcher
                 launchPhotoPicker();
+            }
+        });
+
+        multiInputBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), UploadMultiple.class);
+                startActivity(i);
             }
         });
 

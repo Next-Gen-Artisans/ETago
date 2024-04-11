@@ -25,4 +25,5 @@ public interface ETagoAPI {
     @POST("/detection/img_object_detection_to_censored_img")
     Call<ResponseBody> uploadImageForCensoring(@Part MultipartBody.Part file);
 
+
 }
