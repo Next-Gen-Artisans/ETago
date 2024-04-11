@@ -183,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-        //TODO DELETE ACCOUNT FUNCTIONALITY
+
         deleteAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

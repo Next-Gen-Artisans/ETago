@@ -316,10 +316,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
     int RC_SIGN_IN = 40;
 
     private void googleSignIn() {
@@ -352,10 +348,7 @@ public class SignUpActivity extends AppCompatActivity {
                 customSignInDialog.setMessage("Creating account failed.");
                 customSignInDialog.showAuthFailedProgress(false);
             }
-
-
         }
-
     }
 
     private void firebaseAuth(String idToken) {

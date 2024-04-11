@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -90,7 +91,18 @@ public class CustomDeleteAccDialog extends Dialog {
         cancelButton = view.findViewById(R.id.delete_acc_cancel_dialog_btn);
         successButton = view.findViewById(R.id.delete_acc_success_btn);
 
-        proceedButton.setOnClickListener(v -> attemptDelete(context));
+        proceedButton.setOnClickListener(v -> {
+            // Hide the keyboard
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            View currentFocus = getCurrentFocus();
+            if (currentFocus != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+
+            // Attempt to delete the account
+            attemptDelete(context);
+        });
+
         cancelButton.setOnClickListener(v -> dismiss());
         successButton.setOnClickListener(v -> navigateToLogin(context));
 

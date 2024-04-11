@@ -168,7 +168,7 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
     }
 
     private void uploadImages(ArrayList<Uri> uris) {
-        ongoingCalls.clear();
+
         for (int i = 0; i < uris.size(); i++) {
             int index = i;
             Uri uri = uris.get(index);
@@ -187,6 +187,7 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
                             File annotatedFile = saveBitmapToFile(bitmap);
                             if (annotatedFile != null) {
                                 Uri annotatedImageUri = Uri.fromFile(annotatedFile);
+                                processedImages.set(index, bitmap);
                                 selectedImages.set(index, annotatedImageUri);
                                 imagesAdapter.notifyItemChanged(index);
                             }

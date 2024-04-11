@@ -1,6 +1,5 @@
 package com.nextgenartisans.etago.profile;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,9 +60,9 @@ public class NewPassActivity extends AppCompatActivity {
         editPassHeaderContainer = findViewById(R.id.edit_pass_header_container);
 
         //Buttons
-        editPassBackBtn = findViewById(R.id.edit_pass_back_btn);
+        //editPassBackBtn = findViewById(R.id.edit_pass_back_btn);
         updatePassBtn = findViewById(R.id.update_pass_btn);
-        cancelPassBtn = findViewById(R.id.cancel_new_pass_btn);
+        //cancelPassBtn = findViewById(R.id.cancel_new_pass_btn);
 
         //Edit Texts Layouts
         editPassInputLayout2 = findViewById(R.id.edit_pass_input_2);
@@ -101,23 +100,6 @@ public class NewPassActivity extends AppCompatActivity {
                     // Restore the hint text only if the input is empty
                     editPassInputLayout3.setHint("Confirm Password");
                 }
-            }
-        });
-
-        //BACK BUTTON TO PROFILE ACTIVITY
-        editPassBackBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(NewPassActivity.this, ProfileActivity.class);
-                startActivity(i);
-                finish();
-            }
-        });
-
-        cancelPassBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
             }
         });
 
