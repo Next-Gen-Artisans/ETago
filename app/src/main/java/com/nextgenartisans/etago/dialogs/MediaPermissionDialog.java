@@ -67,7 +67,6 @@ public class MediaPermissionDialog extends Dialog {
         mediaPermissionDialogText = findViewById(R.id.media_permission_dialog_text);
         mediaPermissionDialogButtons = findViewById(R.id.media_permission_dialog_buttons);
         mediaPermissionDialogBtn = findViewById(R.id.media_permission_dialog_btn);
-        cancelMediaPermissionDialogBtn = findViewById(R.id.cancel_media_permission_dialog_btn);
 
         mediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,13 +98,6 @@ public class MediaPermissionDialog extends Dialog {
             }
         });
 
-        cancelMediaPermissionDialogBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // User cancelled the dialog
-                dismiss();
-            }
-        });
 
     }
 

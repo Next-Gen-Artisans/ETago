@@ -31,22 +31,14 @@
 
     <LinearLayout
         android:id="@+id/media_permission_dialog_buttons"
-        android:layout_width="wrap_content"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         >
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/cancel_media_permission_dialog_btn"
-            android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            android:text="Deny"
-            android:fontFamily="@font/montserrat_semibold"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            android:background="@color/transparent"
-            />
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/media_permission_dialog_btn"
