@@ -102,12 +102,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Call the method to load user data when the activity starts
         loadUserData();
 
-        // Show terms of service dialog
-        checkUserAgreement();
+        // Check if password is set before showing dialogs
+        checkPasswordAndShowDialogs();
 
-        //TODO: ASK MEDIA PERMISSIONS
-        askMediaPermissions();
+    }
 
+    private void checkPasswordAndShowDialogs() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userDoc = db.collection("Users").document(userId);
+            userDoc.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    DocumentSnapshot document = task.getResult();
+                    Boolean isPasswordSet = document.getBoolean("userPasswordSet");
+                    if (Boolean.TRUE.equals(isPasswordSet)) {
+                        // Check agreement and then permissions
+                        checkUserAgreement();
+                    }
+                } else {
+                    Log.d(TAG, "Error fetching user document:", task.getException());
+                }
+            });
+        }
     }
 
     private void askMediaPermissions() {
@@ -116,27 +134,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (currentUser != null) {
             DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists() && documentSnapshot.contains("userAgreedMedia")) {
-                        boolean hasAgreed = documentSnapshot.getBoolean("userAgreedMedia");
-                        if (!hasAgreed) {
-                            // User has not agreed yet, show the terms of service dialog
-                            showMediaPermissionDialog();
-                        }
+            docRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists() && documentSnapshot.contains("userAgreedMedia")) {
+                    boolean hasAgreed = documentSnapshot.getBoolean("userAgreedMedia");
+                    if (!hasAgreed && !mediaPermissionDialog.isShowing()) {
+                        mediaPermissionDialog.show();
                     }
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "User did not agree to terms and privacy policy!");
-                }
-            });
+            }).addOnFailureListener(e -> Log.d(TAG, "Failed to retrieve media agreement status.", e));
         }
-
-
     }
+
+
 
     private boolean hasMediaPermissions() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
@@ -293,8 +302,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
 
-        //TODO DISPLAY TERMS AND CONDITIONS, REQUEST PERMISSIONS
-
 
         //Toolbar
         setSupportActionBar(toolbar);
@@ -348,49 +355,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void checkUserAgreement() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
         if (currentUser != null) {
-            DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists() && documentSnapshot.contains("userAgreedTermsAndPrivacyPolicy")) {
-                        boolean hasAgreed = documentSnapshot.getBoolean("userAgreedTermsAndPrivacyPolicy");
-                        if (!hasAgreed) {
-                            // User has not agreed yet, show the terms of service dialog
-                            showTermsOfServiceDialog();
-                        }
+            DocumentReference docRef = FirebaseFirestore.getInstance().collection("Users").document(currentUser.getUid());
+            docRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists() && documentSnapshot.contains("userAgreedTermsAndPrivacyPolicy")) {
+                    boolean hasAgreed = documentSnapshot.getBoolean("userAgreedTermsAndPrivacyPolicy");
+                    if (!hasAgreed) {
+                        showTermsOfServiceDialog();
+                    } else {
+                        askMediaPermissions();
                     }
+                } else {
+                    // Assume no agreement if document or field is missing
+                    showTermsOfServiceDialog();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "User did not agree to terms and privacy policy!");
-                }
+            }).addOnFailureListener(e -> {
+                Log.d(TAG, "Failed to retrieve agreement status.", e);
+                // Fallback to show dialog anyway if there is an error
+                showTermsOfServiceDialog();
             });
         }
     }
 
     private void showTermsOfServiceDialog() {
         if (!termsOfServiceDialog.isShowing()) {
+            termsOfServiceDialog.setOnDismissListener(dialog -> {
+                // This callback will be triggered when the dialog is dismissed
+                askMediaPermissions();  // Now check for media permissions
+            });
             termsOfServiceDialog.show();
-            Toast.makeText(this, "Click \"agree\" to proceed.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Click \"agree\" to proceed.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    private void showMediaPermissionDialog(){
+    private void showMediaPermissionDialog() {
         if (!mediaPermissionDialog.isShowing()) {
             mediaPermissionDialog.show();
-            Toast.makeText(this, "Click \"allow\" to proceed.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Click \"allow\" to proceed.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
 
@@ -538,22 +539,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             //moveTaskToBack(true); // Move the task containing this activity to the back of the activity stack.
             exitAppDialog.show();
-//            // If doubleBackToExitPressedOnce is true, finish the activity
-//            if (doubleBackToExitPressedOnce) {
-//                super.onBackPressed();
-//                return;
-//            }
-//
-//            this.doubleBackToExitPressedOnce = true;
-//            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-//
-//            // If the user does not press back within 2 seconds, reset the flag
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    doubleBackToExitPressedOnce = false;
-//                }
-//            }, 2000);
+
 
         }
         super.onBackPressed();

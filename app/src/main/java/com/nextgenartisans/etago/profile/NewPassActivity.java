@@ -60,9 +60,7 @@ public class NewPassActivity extends AppCompatActivity {
         editPassHeaderContainer = findViewById(R.id.edit_pass_header_container);
 
         //Buttons
-        //editPassBackBtn = findViewById(R.id.edit_pass_back_btn);
         updatePassBtn = findViewById(R.id.update_pass_btn);
-        //cancelPassBtn = findViewById(R.id.cancel_new_pass_btn);
 
         //Edit Texts Layouts
         editPassInputLayout2 = findViewById(R.id.edit_pass_input_2);
