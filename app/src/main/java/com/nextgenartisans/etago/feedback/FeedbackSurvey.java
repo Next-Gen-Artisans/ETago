@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -24,11 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.about_us.AboutUs;
-import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
 import com.nextgenartisans.etago.home.MainActivity;
-import com.nextgenartisans.etago.settings.SettingsActivity;
-import com.nextgenartisans.etago.settings.TermsAndConditionsWebView;
 
 public class FeedbackSurvey extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -68,6 +63,15 @@ public class FeedbackSurvey extends AppCompatActivity {
         // Enable JavaScript
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+
+        // Set WebViewClient to keep navigation within the WebView
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return false;  // Returning false means that you are going to load this URL in the WebView
+            }
+        });
 
         String url = "https://docs.google.com/forms/d/e/1FAIpQLScOCEo5ro0vtuXZhJz66y4BhIfkR1fHmY0wYh8b6Unx0fsZfw/viewform?usp=sharing";
         webView.loadUrl(url);
