@@ -59,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     LinearLayout signupHeader, signupFooter, signupOptions;
-    ImageButton signupBackBtn, facebookSignupBtn, googleSignupBtn;
+    ImageButton signupBackBtn, googleSignupBtn;
     CardView signupForm;
     TextInputLayout signupUsernameInput, signupEmailInput, signupPassInput;
     TextInputEditText userSignupUsername, userSignupEmail, userSignupPass;
@@ -90,7 +90,6 @@ public class SignUpActivity extends AppCompatActivity {
         //Set id for clickable text and buttons
         signUpBtn = findViewById(R.id.signup_btn);
         textLogIn = findViewById(R.id.text_log_in);
-//        facebookSignupBtn = findViewById(R.id.facebook_signup_btn);
         googleSignupBtn = findViewById(R.id.google_signup_btn);
         signupBackBtn = findViewById(R.id.signup_back_btn);
 
@@ -248,13 +247,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-//        // TODO FB SIGN UP
-//        facebookSignupBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(), "Feature coming soon!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
         googleSignupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -316,10 +308,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
     int RC_SIGN_IN = 40;
 
     private void googleSignIn() {
@@ -352,10 +340,7 @@ public class SignUpActivity extends AppCompatActivity {
                 customSignInDialog.setMessage("Creating account failed.");
                 customSignInDialog.showAuthFailedProgress(false);
             }
-
-
         }
-
     }
 
     private void firebaseAuth(String idToken) {

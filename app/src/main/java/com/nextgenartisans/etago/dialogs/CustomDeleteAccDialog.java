@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -90,12 +91,47 @@ public class CustomDeleteAccDialog extends Dialog {
         cancelButton = view.findViewById(R.id.delete_acc_cancel_dialog_btn);
         successButton = view.findViewById(R.id.delete_acc_success_btn);
 
-        proceedButton.setOnClickListener(v -> attemptDelete(context));
-        cancelButton.setOnClickListener(v -> dismiss());
+        proceedButton.setOnClickListener(v -> {
+            // Hide the keyboard
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            View currentFocus = getCurrentFocus();
+            if (currentFocus != null) {
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+
+            // Attempt to delete the account
+            hideKeyboard();
+            attemptDelete(context);
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            resetDialog();
+            dismiss();
+        });
         successButton.setOnClickListener(v -> navigateToLogin(context));
 
         setupWindow();
     }
+
+    private void resetDialog() {
+        progressBar.setVisibility(View.GONE);
+        checkIcon.setVisibility(View.GONE);
+        xIcon.setVisibility(View.GONE);
+        progressText.setText("Delete Account");
+        subtitleText.setText("Please confirm your password below to delete your account.");
+        subtitleText.setVisibility(View.VISIBLE);
+
+        // Reset text fields
+        deleteAccPassInput.setText("");
+        deleteAccConfirmPassInput.setText("");
+
+        // Reset the visibility of containers
+        formContainer.setVisibility(View.VISIBLE);
+        buttonsContainer.setVisibility(View.VISIBLE);
+        successContainer.setVisibility(View.GONE);
+    }
+
+
 
     private void setupWindow() {
         // Set the background of the dialog window to transparent
@@ -133,7 +169,9 @@ public class CustomDeleteAccDialog extends Dialog {
             return;
         }
 
+        xIcon.setVisibility(View.GONE);
         showProgress(true);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
@@ -154,7 +192,7 @@ public class CustomDeleteAccDialog extends Dialog {
                     updateDialogForFailure("Failed to delete user data from Firestore: " + e.getMessage());
                 });
             }).addOnFailureListener(e -> {
-                updateDialogForFailure("Reauthentication failed: " + e.getMessage());
+                updateDialogForFailure("Reauthentication failed: Incorrect Password");
             });
         } else {
             Toast.makeText(context, "No user is signed in.", Toast.LENGTH_SHORT).show();
@@ -180,7 +218,6 @@ public class CustomDeleteAccDialog extends Dialog {
         checkIcon.setVisibility(View.VISIBLE);
         progressText.setText("Account deleted successfully.");
         successContainer.setVisibility(View.VISIBLE);
-
     }
 
     private void updateDialogForFailure(String message) {
@@ -188,8 +225,31 @@ public class CustomDeleteAccDialog extends Dialog {
         xIcon.setVisibility(View.VISIBLE);
         subtitleText.setVisibility(View.GONE);
         progressText.setText(message);
-        formContainer.setVisibility(View.VISIBLE);
+        formContainer.setVisibility(View.GONE);
         buttonsContainer.setVisibility(View.VISIBLE);
+        proceedButton.setText("Try Again"); // Change button text to "Try Again"
+        proceedButton.setOnClickListener(v -> resetAndRetry(getContext())); // Set click listener for retry
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+
+
+    private void resetAndRetry(Context context) {
+          // Hide the keyboard before resetting the dialog
+        resetDialog(); // Reset all fields and visibility states
+        proceedButton.setText("Proceed"); // Change back the button text to "Proceed"
+        proceedButton.setOnClickListener(v -> {
+            hideKeyboard();  // Also hide the keyboard when retry is attempted
+            attemptDelete(context);
+        });
+        subtitleText.setVisibility(View.VISIBLE); // Make sure to show the subtitle text again
     }
 
     private void navigateToLogin(Context context) {
