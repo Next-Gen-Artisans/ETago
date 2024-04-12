@@ -62,7 +62,6 @@ public class TermsAndConditionsWebView extends AppCompatActivity {
 
         termsOfServiceDialog = new TermsOfServiceDialog(TermsAndConditionsWebView.this);
 
-
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true); // Enable JavaScript
         webView.setWebViewClient(new WebViewClient()); // Add this line

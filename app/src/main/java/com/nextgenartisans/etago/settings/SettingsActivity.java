@@ -33,6 +33,7 @@ import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
 import com.nextgenartisans.etago.feedback.Feedback;
+import com.nextgenartisans.etago.feedback.FeedbackSurvey;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
@@ -264,7 +265,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         }if (id == R.id.nav_feedback) {
             //navigationView.setCheckedItem(R.id.nav_about1);
-            Intent intent = new Intent(SettingsActivity.this, Feedback.class);
+            Intent intent = new Intent(SettingsActivity.this, FeedbackSurvey.class);
             startActivity(intent);
         }
         else if (id == R.id.nav_logout) {
@@ -275,6 +276,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void surveywebview(){
+        openWebView("https://docs.google.com/forms/d/e/1FAIpQLScOCEo5ro0vtuXZhJz66y4BhIfkR1fHmY0wYh8b6Unx0fsZfw/viewform?usp=sharing", "Survey");
+
     }
 
 

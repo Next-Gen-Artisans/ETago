@@ -169,7 +169,7 @@ public class Feedback extends AppCompatActivity implements NavigationView.OnNavi
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
 
-        setContentView(R.layout.activity_feedback);
+        setContentView(R.layout.activity_feedback); //ito po ang kay ronabel, comment ko muna
 
         //Firebase
         auth = FirebaseAuth.getInstance();
