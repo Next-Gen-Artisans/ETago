@@ -239,19 +239,23 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         if (id == R.id.nav_home1) {
             Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_about1) {
             Intent intent = new Intent(SettingsActivity.this, AboutUs.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_profile1) {
             Intent intent = new Intent(SettingsActivity.this, ProfileActivity.class);
             startActivity(intent);
+            finish();
 
         }if (id == R.id.nav_feedback) {
             //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(SettingsActivity.this, FeedbackSurvey.class);
             startActivity(intent);
+            finish();
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog

@@ -9,7 +9,7 @@ import retrofit2.http.Part;
 
 public interface ETagoAPI {
 
-    String BASE_URL = "http://localhost:8080/";
+    String BASE_URL = "http://127.0.0.1:8080/";
     //Change this to your server's IP address https://magical-together-orca.ngrok-free.app/, https://weevil-content-locust.ngrok-free.app/, http://localhost:8080/
 
     @Multipart

@@ -45,7 +45,6 @@ import com.nextgenartisans.etago.dialogs.ExitAppDialog;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
 import com.nextgenartisans.etago.dialogs.MediaPermissionDialog;
 import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
-import com.nextgenartisans.etago.feedback.Feedback;
 import com.nextgenartisans.etago.feedback.FeedbackSurvey;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.onboarding.Welcome;
@@ -499,27 +498,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //navigationView.setCheckedItem(R.id.nav_profile1);
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
-
+            finish();
 
         }
         if (id == R.id.nav_settings1) {
             //navigationView.setCheckedItem(R.id.nav_settings1);
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
-
+            finish();
 
         }
         if (id == R.id.nav_about1) {
             //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(MainActivity.this, AboutUs.class);
             startActivity(intent);
+            finish();
 
         }
         if (id == R.id.nav_feedback) {
             //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(MainActivity.this, FeedbackSurvey.class);
             startActivity(intent);
-
+            finish();
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog
