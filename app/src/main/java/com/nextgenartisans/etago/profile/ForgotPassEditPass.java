@@ -80,8 +80,6 @@ public class ForgotPassEditPass extends AppCompatActivity {
         forgotPassBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(ForgotPassEditPass.this, EditPassActivity.class);
-                startActivity(i);
                 finish();
             }
         });

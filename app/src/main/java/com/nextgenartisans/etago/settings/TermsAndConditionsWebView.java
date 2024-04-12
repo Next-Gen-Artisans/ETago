@@ -1,11 +1,5 @@
 package com.nextgenartisans.etago.settings;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nextgenartisans.etago.home.MainActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
 
@@ -72,44 +70,11 @@ public class TermsAndConditionsWebView extends AppCompatActivity {
         webViewHeaderTxt.setText(webViewText);
         webView.loadUrl(url);
 
-//        webViewAgreeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // Update the Firestore document for the user to indicate they have agreed
-//                FirebaseFirestore db = FirebaseFirestore.getInstance();
-//                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-//                if (currentUser != null) {
-//                    DocumentReference userDocRef = db.collection("Users").document(currentUser.getUid());
-//                    userDocRef.update("userAgreedTermsAndPrivacyPolicy", true)
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    // Successfully updated the user's agreement status
-//                                    Toast.makeText(getApplicationContext(), "You agreed to Terms and Conditions.", Toast.LENGTH_SHORT).show();
-//                                    termsOfServiceDialog.dismiss();
-//                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-//                                    startActivity(i);
-//                                    finish();
-//
-//                                    // Proceed with the main activity or other logic after the user has agreed
-//                                    Log.d(TAG,"USER AGREED ON DIALOG");
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.d(TAG,"USER DID NOT AGREE ON DIALOG");
-//                                }
-//                            });
-//                }
-//            }
-//        });
+
 
         webViewBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivity(i);
                 finish();
             }
         });
@@ -121,8 +86,6 @@ public class TermsAndConditionsWebView extends AppCompatActivity {
     public void onBackPressed() {
         termsOfServiceDialog.dismiss();
         Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(i);
         finish();
         super.onBackPressed();
     }

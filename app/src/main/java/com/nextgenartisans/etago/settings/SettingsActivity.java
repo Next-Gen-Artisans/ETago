@@ -32,7 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
-import com.nextgenartisans.etago.feedback.Feedback;
 import com.nextgenartisans.etago.feedback.FeedbackSurvey;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
@@ -108,20 +107,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             loadUserData();
             String username = user.getDisplayName(); // Replace with your user data
             String email = user.getEmail(); // Replace with your user data
-
-//            if (username != null) {
-//                profileUsername.setText(username);
-//            } else {
-//                // Set a default value if username is null
-//                profileUsername.setText("Username");
-//            }
-//
-//            if (email != null) {
-//                profileEmail.setText(email);
-//            } else {
-//                // Set a default value if email is null
-//                profileEmail.setText("User Email");
-//            }
 
         }
 

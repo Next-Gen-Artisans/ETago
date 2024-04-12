@@ -46,8 +46,8 @@
                 android:layout_gravity="center_vertical"
                 android:background="@color/transparent"
                 android:src="@drawable/svg_arrow"
-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
             <TextView
                 android:id="@+id/web_view_header_txt"
