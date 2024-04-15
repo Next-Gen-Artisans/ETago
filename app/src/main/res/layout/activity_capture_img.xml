@@ -49,9 +49,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/reset_preview_btn"
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="50dp"
-
                 android:background="@color/transparent"
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Reset Preview"
@@ -61,7 +60,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/cancel_btn"
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:background="@color/transparent"
                 android:fontFamily="@font/montserrat_bold"

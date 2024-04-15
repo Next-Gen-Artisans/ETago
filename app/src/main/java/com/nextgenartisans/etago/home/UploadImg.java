@@ -56,7 +56,7 @@ public class UploadImg extends AppCompatActivity {
     private ImageButton multiInputBtn;
     private TextView headerTxt;
 
-    private AppCompatButton scanBtn, cancelBtn;
+    private AppCompatButton scanBtn, cancelBtn, resetBtn;
 
 
     //Photo Picker
@@ -115,6 +115,7 @@ public class UploadImg extends AppCompatActivity {
 
         //Buttons
         scanBtn = findViewById(R.id.scan_btn);
+        resetBtn = findViewById(R.id.reset_preview_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
         multiInputBtn = findViewById(R.id.multi_input_btn);
 
@@ -123,6 +124,14 @@ public class UploadImg extends AppCompatActivity {
 
         //Click image to replace
         uploadedImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Initialize the photo picker launcher
+                launchPhotoPicker();
+            }
+        });
+
+        resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Initialize the photo picker launcher

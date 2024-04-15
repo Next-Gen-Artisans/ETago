@@ -311,9 +311,9 @@ public class CaptureImg extends AppCompatActivity {
                                 objectsDetected.append(object.getString("name"))
                                         .append(" (")
                                         .append(String.format("%.2f", object.getDouble("confidence") * 100))
-                                        .append("% confidence)\n"); // Use \n for new line
+                                        .append("%)\n"); // Use \n for new line
                             }
-                            objectsDetected.setLength(objectsDetected.length() - 2); // Remove the last comma
+                            objectsDetected.setLength(objectsDetected.length() - 1); // Remove the last comma
                         } else {
                             objectsDetected.append(jsonObject.optString("message", "No objects detected."));
                         }
@@ -439,7 +439,16 @@ public class CaptureImg extends AppCompatActivity {
         AppCompatButton cancelButton = bottomSheetView.findViewById(R.id.btm_cancel_dialog_btn);
         AppCompatButton proceedButton = bottomSheetView.findViewById(R.id.btm_proceed_dialog_btn);
 
-        cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+        cancelButton.setOnClickListener(v -> {
+            // Dismiss the bottom sheet dialog
+            bottomSheetDialog.dismiss();
+
+            // Set the preview view to visible
+            previewView.setVisibility(View.VISIBLE);
+
+            // Set the captured image view to gone
+            capturedImg.setVisibility(View.GONE);
+        });
         proceedButton.setOnClickListener(v -> {
             detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri.toString());
             detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri.toString());

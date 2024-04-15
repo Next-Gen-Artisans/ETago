@@ -48,7 +48,7 @@
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="-30dp"
+        android:layout_marginBottom="-20dp"
         app:cardBackgroundColor="@color/light_blue"
         app:cardCornerRadius="25dp" />
 
@@ -71,7 +71,7 @@
         android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/buttons_cardview"
+        android:layout_alignTop="@+id/buttons_cardview"
         android:elevation="4dp"
         android:gravity="center"
         android:orientation="vertical"
@@ -83,11 +83,21 @@
             android:id="@+id/scan_btn"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/custom_btn_bg"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Scan photo"
+            android:text="Capture photo"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/reset_preview_btn"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Reset Preview"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />
