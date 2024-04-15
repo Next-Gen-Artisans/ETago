@@ -252,10 +252,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             finish();
 
         }if (id == R.id.nav_feedback) {
-            //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(SettingsActivity.this, FeedbackSurvey.class);
             startActivity(intent);
-            finish();
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog

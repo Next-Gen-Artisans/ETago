@@ -308,19 +308,22 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
         if (id == R.id.nav_home1) {
             Intent intent = new Intent(AboutUs.this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_settings1) {
             Intent intent = new Intent(AboutUs.this, SettingsActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_profile1) {
             Intent intent = new Intent(AboutUs.this, ProfileActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_feedback) {
-            //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(AboutUs.this, FeedbackSurvey.class);
             startActivity(intent);
+
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog

@@ -345,7 +345,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         if (id == R.id.nav_feedback) {
             Intent intent = new Intent(ProfileActivity.this, FeedbackSurvey.class);
             startActivity(intent);
-            finish();
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog

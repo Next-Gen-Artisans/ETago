@@ -99,12 +99,14 @@
                     android:id="@+id/nga_desc_NGA"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:justificationMode="inter_word"
                     android:layout_marginTop="25dp"
                     android:fontFamily="@font/montserrat_medium"
                     android:text="@string/nga_desc"
+                    android:textAlignment="viewStart"
+                    android:justificationMode="inter_word"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    />
 
 
 

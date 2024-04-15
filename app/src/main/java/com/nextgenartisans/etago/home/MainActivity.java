@@ -232,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
-
         setContentView(R.layout.activity_main);
 
         //Firebase
@@ -519,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //navigationView.setCheckedItem(R.id.nav_about1);
             Intent intent = new Intent(MainActivity.this, FeedbackSurvey.class);
             startActivity(intent);
-            finish();
+
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog
