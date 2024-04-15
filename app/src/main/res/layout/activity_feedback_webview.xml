@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".settings.TermsAndConditionsWebView">
+    tools:context=".feedback.FeedbackSurvey">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/home_header"
@@ -46,8 +46,8 @@
                 android:layout_gravity="center_vertical"
                 android:background="@color/transparent"
                 android:src="@drawable/svg_arrow"
-                app:tint="@color/white"
-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"
+                app:tint="@color/white" />
 
             <TextView
                 android:id="@+id/web_view_header_txt"
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:fontFamily="@font/montserrat_bold"
-                android:text="Placeholder"
+                android:text="Give Feedback"
                 android:textColor="@color/white"
                 android:textSize="26sp" />
 
@@ -90,21 +90,6 @@
 
 
     </LinearLayout>
-    <!--    <androidx.appcompat.widget.AppCompatButton-->
-    <!--        android:id="@+id/webview_agree_btn"-->
-    <!--        android:layout_width="200dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="10dp"-->
-    <!--        android:background="@drawable/custom_btn_bg"-->
-    <!--        android:fontFamily="@font/montserrat_bold"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/terms_policy_containers"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        android:text="I agree"-->
-    <!--        android:textAllCaps="false"-->
-    <!--        android:textColor="@color/white"-->
-    <!--        android:textSize="16sp" />-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

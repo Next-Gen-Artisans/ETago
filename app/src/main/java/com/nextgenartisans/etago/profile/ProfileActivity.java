@@ -34,7 +34,7 @@ import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.CustomDeleteAccDialog;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
-import com.nextgenartisans.etago.feedback.Feedback;
+import com.nextgenartisans.etago.feedback.FeedbackSurvey;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
@@ -183,7 +183,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-        //TODO DELETE ACCOUNT FUNCTIONALITY
+
         deleteAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -330,18 +330,22 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         if (id == R.id.nav_home1) {
             Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_settings1) {
             Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_about1) {
             Intent intent = new Intent(ProfileActivity.this, AboutUs.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_feedback) {
-            Intent intent = new Intent(ProfileActivity.this, Feedback.class);
+            Intent intent = new Intent(ProfileActivity.this, FeedbackSurvey.class);
             startActivity(intent);
+            finish();
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog

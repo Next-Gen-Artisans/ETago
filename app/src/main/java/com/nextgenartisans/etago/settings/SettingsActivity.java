@@ -32,7 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
-import com.nextgenartisans.etago.feedback.Feedback;
+import com.nextgenartisans.etago.feedback.FeedbackSurvey;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
@@ -107,20 +107,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             loadUserData();
             String username = user.getDisplayName(); // Replace with your user data
             String email = user.getEmail(); // Replace with your user data
-
-//            if (username != null) {
-//                profileUsername.setText(username);
-//            } else {
-//                // Set a default value if username is null
-//                profileUsername.setText("Username");
-//            }
-//
-//            if (email != null) {
-//                profileEmail.setText(email);
-//            } else {
-//                // Set a default value if email is null
-//                profileEmail.setText("User Email");
-//            }
 
         }
 
@@ -253,19 +239,23 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         if (id == R.id.nav_home1) {
             Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_about1) {
             Intent intent = new Intent(SettingsActivity.this, AboutUs.class);
             startActivity(intent);
+            finish();
         }
         if (id == R.id.nav_profile1) {
             Intent intent = new Intent(SettingsActivity.this, ProfileActivity.class);
             startActivity(intent);
+            finish();
 
         }if (id == R.id.nav_feedback) {
             //navigationView.setCheckedItem(R.id.nav_about1);
-            Intent intent = new Intent(SettingsActivity.this, Feedback.class);
+            Intent intent = new Intent(SettingsActivity.this, FeedbackSurvey.class);
             startActivity(intent);
+            finish();
         }
         else if (id == R.id.nav_logout) {
             //Show Dialog
@@ -275,6 +265,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void surveywebview(){
+        openWebView("https://docs.google.com/forms/d/e/1FAIpQLScOCEo5ro0vtuXZhJz66y4BhIfkR1fHmY0wYh8b6Unx0fsZfw/viewform?usp=sharing", "Survey");
+
     }
 
 

@@ -1,5 +1,6 @@
-package com.nextgenartisans.etago.settings;
+package com.nextgenartisans.etago.feedback;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -10,45 +11,45 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
 import com.nextgenartisans.etago.R;
-import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
+import com.nextgenartisans.etago.home.MainActivity;
 
-public class TermsAndConditionsWebView extends AppCompatActivity {
-
-    // Declare the variables for the views
-    private CardView homeHeader;
+public class FeedbackSurvey extends AppCompatActivity {
+    private DrawerLayout drawerLayout;
     private LinearLayout webViewHeaderContainer, termsPolicyContainers, cardviewWebViewContainer;
+    private ScrollView scrollView;
+    private ConstraintLayout supportContainer;
+
+    private AppCompatTextView title;
+    private CardView homeHeader;
+    private WebView webView;
     private ImageButton webViewBackBtn;
     private TextView webViewHeaderTxt;
-    private WebView webView;
-    private AppCompatButton webViewAgreeBtn;
 
-    private TermsOfServiceDialog termsOfServiceDialog;
+    private NavigationView navView;
 
-    @Override
+
+
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
-
-        //Change status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
 
-        setContentView(R.layout.activity_terms_and_conditions_webview);
-
-        // Initialize the variables with the corresponding views from the layout
+        setContentView(R.layout.activity_feedback_webview);
         homeHeader = findViewById(R.id.home_header);
         termsPolicyContainers = findViewById(R.id.terms_policy_containers);
         webViewHeaderContainer = findViewById(R.id.web_view_header_container);
@@ -56,37 +57,34 @@ public class TermsAndConditionsWebView extends AppCompatActivity {
         webViewHeaderTxt = findViewById(R.id.web_view_header_txt);
         cardviewWebViewContainer = findViewById(R.id.cardview_web_view_container);
         webView = findViewById(R.id.web_view);
-        //webViewAgreeBtn = findViewById(R.id.webview_agree_btn);
 
-        termsOfServiceDialog = new TermsOfServiceDialog(TermsAndConditionsWebView.this);
+        webView = findViewById(R.id.web_view);
 
+        // Enable JavaScript
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true); // Enable JavaScript
-        webView.setWebViewClient(new WebViewClient()); // Add this line
-        String url = getIntent().getStringExtra("url");
-        String webViewText = getIntent().getStringExtra("webViewText");
+        webSettings.setJavaScriptEnabled(true);
 
-        //Set Dynamic Components
-        webViewHeaderTxt.setText(webViewText);
+        // Set WebViewClient to keep navigation within the WebView
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return false;  // Returning false means that you are going to load this URL in the WebView
+            }
+        });
+
+        String url = "https://docs.google.com/forms/d/e/1FAIpQLScOCEo5ro0vtuXZhJz66y4BhIfkR1fHmY0wYh8b6Unx0fsZfw/viewform?usp=sharing";
         webView.loadUrl(url);
-
 
 
         webViewBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
                 finish();
             }
         });
 
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        termsOfServiceDialog.dismiss();
-        Toast.makeText(this, "Click \"I agree\" to proceed.", Toast.LENGTH_SHORT).show();
-        finish();
-        super.onBackPressed();
     }
 }

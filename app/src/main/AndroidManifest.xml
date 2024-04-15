@@ -101,6 +101,9 @@
         <activity
             android:name=".feedback.Feedback"
             android:exported="false"/>
+        <activity
+            android:name=".feedback.FeedbackSurvey"
+            android:exported="false"/>
 
         <activity
             android:name=".onboarding.Splash"

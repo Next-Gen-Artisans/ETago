@@ -30,8 +30,8 @@
             android:background="@color/transparent"
             android:src="@drawable/svg_arrow"
             app:tint="@color/alt_black"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />  <!-- Apply tint here -->
-        />
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
 
         <TextView
             android:id="@+id/header_txt"

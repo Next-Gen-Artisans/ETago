@@ -9,7 +9,8 @@ import retrofit2.http.Part;
 
 public interface ETagoAPI {
 
-    String BASE_URL = "http://192.168.1.22:8080/"; //Change this to your server's IP address https://magical-together-orca.ngrok-free.app/
+    String BASE_URL = "https://magical-together-orca.ngrok-free.app/";
+    //Change this to your server's IP address https://magical-together-orca.ngrok-free.app/, https://weevil-content-locust.ngrok-free.app/, http://192.168.1.22:8080/,
 
     @Multipart
     @POST("/detection/img_object_detection_to_json")

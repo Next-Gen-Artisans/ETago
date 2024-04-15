@@ -61,11 +61,12 @@
 
     <LinearLayout
         android:id="@+id/terms_of_service_dialog_buttons"
-        android:layout_width="wrap_content"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         >
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/agree_terms_dialog_btn"

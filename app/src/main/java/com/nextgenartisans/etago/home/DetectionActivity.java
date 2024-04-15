@@ -124,7 +124,7 @@ public class DetectionActivity extends AppCompatActivity {
                 return;
             }
 
-            File photoDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "YourAppName");
+            File photoDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "ETago");
             if (!photoDir.exists() && !photoDir.mkdirs()) {
                 Log.e("DetectionActivity", "Failed to create directory");
                 Toast.makeText(this, "Failed to create directory in gallery", Toast.LENGTH_SHORT).show();

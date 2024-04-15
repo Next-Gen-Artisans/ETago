@@ -1,21 +1,15 @@
 package com.nextgenartisans.etago.about_us;
 
 import android.content.Intent;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -38,12 +32,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.dialogs.LogoutDialog;
-import com.nextgenartisans.etago.feedback.Feedback;
+import com.nextgenartisans.etago.feedback.FeedbackSurvey;
 import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.login_signup.LoginActivity;
 import com.nextgenartisans.etago.profile.ProfileActivity;
 import com.nextgenartisans.etago.settings.SettingsActivity;
-import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 
 public class AboutUs extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -326,7 +319,7 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
         }
         if (id == R.id.nav_feedback) {
             //navigationView.setCheckedItem(R.id.nav_about1);
-            Intent intent = new Intent(AboutUs.this, Feedback.class);
+            Intent intent = new Intent(AboutUs.this, FeedbackSurvey.class);
             startActivity(intent);
         }
         else if (id == R.id.nav_logout) {
