@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.onboarding.Welcome;
 
@@ -180,16 +182,34 @@ public class CustomDeleteAccDialog extends Dialog {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 // Get a reference to the user's document in Firestore
                 DocumentReference userRef = db.collection("Users").document(user.getUid());
-                // Delete the user's document
-                userRef.delete().addOnSuccessListener(aVoid1 -> {
-                    // Now, delete the user's account from Firebase Authentication
-                    user.delete().addOnSuccessListener(aVoid2 -> {
-                        updateDialogForSuccess();
-                    }).addOnFailureListener(e -> {
-                        updateDialogForFailure("Failed to delete account: " + e.getMessage());
-                    });
+                userRef.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String profilePicUrl = documentSnapshot.getString("profilePic");
+                        if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                            // Create a reference to the file in Firebase Storage
+                            FirebaseStorage storage = FirebaseStorage.getInstance();
+                            StorageReference profilePicRef = storage.getReferenceFromUrl(profilePicUrl);
+
+                            // Delete the file from Firebase Storage
+                            profilePicRef.delete().addOnSuccessListener(aVoid1 -> {
+                                // File deleted successfully, now delete the user's document
+                                userRef.delete().addOnSuccessListener(aVoid2 -> {
+                                    // Now, delete the user's account from Firebase Authentication
+                                    user.delete().addOnSuccessListener(aVoid3 -> {
+                                        updateDialogForSuccess();
+                                    }).addOnFailureListener(e -> {
+                                        updateDialogForFailure("Failed to delete account: " + e.getMessage());
+                                    });
+                                }).addOnFailureListener(e -> {
+                                    updateDialogForFailure("Failed to delete user data from Firestore: " + e.getMessage());
+                                });
+                            }).addOnFailureListener(e -> {
+                                updateDialogForFailure("Failed to delete profile picture from Firebase Storage: " + e.getMessage());
+                            });
+                        }
+                    }
                 }).addOnFailureListener(e -> {
-                    updateDialogForFailure("Failed to delete user data from Firestore: " + e.getMessage());
+                    updateDialogForFailure("Failed to get user data from Firestore: " + e.getMessage());
                 });
             }).addOnFailureListener(e -> {
                 updateDialogForFailure("Reauthentication failed: Incorrect Password");

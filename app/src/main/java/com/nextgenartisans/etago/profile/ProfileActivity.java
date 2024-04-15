@@ -3,17 +3,23 @@ package com.nextgenartisans.etago.profile;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -30,6 +36,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.CustomDeleteAccDialog;
@@ -49,8 +57,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private ShapeableImageView profileUserPic, profileEditUsername, profileEditEmail, profileEditPass;
     private TextView numCensoredImgs, profileUsername, profileEmail, profilePass;
     private View divider;
-    private androidx.appcompat.widget.AppCompatButton profileInfoLogoutBtn, deleteAccountBtn;
+    private AppCompatButton profileInfoLogoutBtn, deleteAccountBtn;
+    private ImageButton profileEditPic;
     private NavigationView profileNavView;
+
+    //Photo Picker
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
     // Get the navigation header view items
     View headerView;
@@ -69,6 +81,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         super.onStart();
         // Call the method to load user data when the activity starts
         loadUserData();
+        loadUserProfilePicture();
     }
 
     @Override
@@ -83,6 +96,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
 
         setContentView(R.layout.activity_profile);
+
+
 
         //Firebase
         auth = FirebaseAuth.getInstance();
@@ -113,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         profileEditUsername = findViewById(R.id.profile_edit_username);
         profileEditEmail = findViewById(R.id.profile_edit_email);
         profileEditPass = findViewById(R.id.profile_edit_pass);
+        profileEditPic = findViewById(R.id.profile_edit_pic);
 
 
         //Navigation View
@@ -169,6 +185,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
         profileNavView.setNavigationItemSelectedListener(this);
 
+
+
+
+
         // Add an OnClickListener to your custom icon
         toolbarProfile.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,7 +243,70 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(intent);
             }
         });
+
+        //Change profile pic:
+        ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                    if (uri != null) {
+                        // Use Glide to load the image, resize it to fit the ImageView and center crop
+                        Glide.with(ProfileActivity.this)
+                                .load(uri)
+                                .override(profileUserPic.getWidth(), profileUserPic.getHeight())
+                                .centerCrop()
+                                .into(profileUserPic);
+                        Log.d("PhotoPicker", "Selected URI: " + uri);
+
+                        // Initialize Firebase Storage
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        StorageReference storageRef = storage.getReference();
+
+                        // Create a reference to the file to upload
+                        StorageReference profilePicRef = storageRef.child("profile_pics/" + user.getUid() + ".jpg");
+
+                        // Upload the file to Firebase Storage
+                        profilePicRef.putFile(uri)
+                                .addOnSuccessListener(taskSnapshot -> {
+                                    // Get the download URL of the uploaded file
+                                    profilePicRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                                        // Update the profilePic field in the Firebase User collection
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        DocumentReference docRef = db.collection("Users").document(user.getUid());
+                                        docRef.update("profilePic", downloadUri.toString())
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("Firestore", "DocumentSnapshot successfully updated!");
+                                                    // Load the updated profile picture into the ImageView
+                                                    Glide.with(ProfileActivity.this)
+                                                            .load(downloadUri.toString())
+                                                            .centerCrop()
+                                                            .into(profileUserPic);
+                                                    // Load the updated profile picture into the navigation bar ImageView
+                                                    Glide.with(ProfileActivity.this)
+                                                            .load(downloadUri.toString())
+                                                            .centerCrop()
+                                                            .into(profileUserPicHeader);
+                                                })
+                                                .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
+                                    });
+                                })
+                                .addOnFailureListener(e -> Log.w("Firebase Storage", "Error uploading file", e));
+                    } else {
+                        Log.d("PhotoPicker", "No media selected");
+                    }
+                });
+
+        profileEditPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Launch the photo picker activity
+                pickMedia.launch(new PickVisualMediaRequest.Builder().build());
+
+
+            }
+        });
+
     }
+
+
 
     private void showDeleteAccountDialog() {
         // Create an instance of the CustomDeleteAccDialog
@@ -245,12 +328,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                                 Glide.with(ProfileActivity.this)
                                         .load(imageUrl)
                                         .placeholder(R.drawable.round_bg)
+                                        .centerCrop()
                                         .into(profileUserPic);
-                            }
-                            if (imageUrl != null && !imageUrl.isEmpty()) {
                                 Glide.with(ProfileActivity.this)
                                         .load(imageUrl)
                                         .placeholder(R.drawable.round_bg)
+                                        .centerCrop()
                                         .into(profileUserPicHeader);
                             }
                         }

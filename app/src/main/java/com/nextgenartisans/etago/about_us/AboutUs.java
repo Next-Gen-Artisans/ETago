@@ -288,6 +288,7 @@ public class AboutUs extends AppCompatActivity implements NavigationView.OnNavig
             Glide.with(AboutUs.this)
                     .load(profilePicUrl)
                     .placeholder(R.drawable.round_bg) // Replace with your default image
+                    .centerCrop()
                     .into(profileUserPicHeader);
         } else {
             profileUserPicHeader.setImageResource(R.drawable.round_bg); // Set default image

@@ -58,24 +58,48 @@
                 android:id="@+id/profile_info_containers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="48dp"
                 android:background="@color/transparent"
                 android:elevation="10dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@+id/profile_header">
+                app:layout_constraintTop_toBottomOf="@+id/profile_header"
+                tools:layout_editor_absoluteX="0dp">
 
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/profile_user_pic"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:src="@drawable/profile_username_icon"
-                    app:shapeAppearanceOverlay="@style/roundedImageView"
-                    android:layout_gravity="center"
-                    app:strokeColor="@color/alt_black"
-                    app:strokeWidth="1dp"
-                    />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/profile_user_pic"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/profile_username_icon"
+                        app:shapeAppearanceOverlay="@style/roundedImageView"
+                        app:strokeColor="@color/alt_black"
+                        app:strokeWidth="1dp" />
+
+                    <ImageButton
+                        android:id="@+id/profile_edit_pic"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignEnd="@id/profile_user_pic"
+                        android:layout_alignBottom="@id/profile_user_pic"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/custom_btn_bg_gray"
+                        android:padding="20dp"
+                        android:src="@drawable/edit_icon"
+                        app:tint="@color/light_blue" />
+
+
+                </RelativeLayout>
+
 
                 <TextView
                     android:id="@+id/num_censored_imgs"
@@ -106,8 +130,8 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="40dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="40dp"
                     android:layout_marginTop="25dp"
                     android:fontFamily="@font/montserrat_semibold"
                     android:text="Account Information"
@@ -117,8 +141,8 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_username_cardview"
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="30dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_marginTop="20dp"
                     app:cardBackgroundColor="@color/light_gray"
                     app:cardCornerRadius="15dp">
@@ -134,28 +158,25 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:src="@drawable/profile_username_icon"
-                            />
+                            android:src="@drawable/profile_username_icon" />
 
                         <TextView
                             android:id="@+id/profile_username"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
                             android:fontFamily="@font/montserrat_medium"
                             android:text="Username"
                             android:textColor="@color/alt_black"
-                            android:textSize="14sp"
-                            android:layout_weight="1"
-                            />
+                            android:textSize="14sp" />
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/profile_edit_username"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/edit_icon"
-                            android:tint="@color/light_blue"
-                            />
+                            android:tint="@color/light_blue" />
 
                     </LinearLayout>
 
@@ -165,8 +186,8 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_email_cardview"
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="30dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_marginTop="16dp"
                     app:cardBackgroundColor="@color/light_gray"
                     app:cardCornerRadius="15dp">
@@ -181,28 +202,25 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:src="@drawable/email"
-                            />
+                            android:src="@drawable/email" />
 
                         <TextView
                             android:id="@+id/profile_email"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
                             android:fontFamily="@font/montserrat_medium"
                             android:text="Email"
                             android:textColor="@color/alt_black"
-                            android:textSize="14sp"
-                            android:layout_weight="1"
-                            />
+                            android:textSize="14sp" />
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/profile_edit_email"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/edit_icon"
-                            android:tint="@color/light_blue"
-                            />
+                            android:tint="@color/light_blue" />
 
                     </LinearLayout>
 
@@ -211,8 +229,8 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/profile_pass_cardview"
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="30dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_marginTop="16dp"
                     app:cardBackgroundColor="@color/light_gray"
                     app:cardCornerRadius="15dp">
@@ -227,28 +245,25 @@
                         <com.google.android.material.imageview.ShapeableImageView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-                            android:src="@drawable/password_icon"
-                            />
+                            android:src="@drawable/password_icon" />
 
                         <TextView
                             android:id="@+id/profile_pass"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
+                            android:layout_weight="1"
                             android:fontFamily="@font/montserrat_medium"
                             android:text="Change password?"
                             android:textColor="@color/alt_black"
-                            android:textSize="14sp"
-                            android:layout_weight="1"
-                            />
+                            android:textSize="14sp" />
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/profile_edit_pass"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/edit_icon"
-                            android:tint="@color/light_blue"
-                            />
+                            android:tint="@color/light_blue" />
 
                     </LinearLayout>
 
@@ -258,8 +273,8 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/profile_info_logout_btn"
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="30dp"
                     android:layout_height="50dp"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_marginTop="40dp"
                     android:background="@drawable/custom_btn_bg"
                     android:fontFamily="@font/montserrat_bold"
@@ -273,16 +288,15 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/delete_account_btn"
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="30dp"
                     android:layout_height="50dp"
+                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginBottom="40dp"
                     android:background="@color/transparent"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Delete Account"
                     android:textAllCaps="false"
                     android:textColor="@color/red"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="40dp"
-                    />
+                    android:textSize="14sp" />
 
 
             </LinearLayout>

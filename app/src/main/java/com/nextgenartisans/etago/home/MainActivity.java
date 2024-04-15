@@ -409,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 Glide.with(MainActivity.this)
                                         .load(imageUrl)
                                         .placeholder(R.drawable.round_bg)
+                                        .centerCrop()
                                         .into(userProfilePic);
                             }
                         }
@@ -457,6 +458,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (profilePicUrl != null && !profilePicUrl.equals("default_profile_pic_url")) {
             Glide.with(MainActivity.this)
                     .load(profilePicUrl)
+                    .centerCrop()
                     .placeholder(R.drawable.round_bg) // Replace with your default image
                     .into(userProfilePic);
         } else {

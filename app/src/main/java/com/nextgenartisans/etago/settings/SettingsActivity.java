@@ -219,6 +219,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             Glide.with(SettingsActivity.this)
                     .load(profilePicUrl)
                     .placeholder(R.drawable.round_bg) // Replace with your default image
+                    .centerCrop()
                     .into(profileUserPicHeader);
         } else {
             profileUserPicHeader.setImageResource(R.drawable.round_bg); // Set default image
