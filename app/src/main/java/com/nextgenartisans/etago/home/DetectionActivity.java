@@ -27,6 +27,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.adapter.ECommerceAdapter;
 import com.nextgenartisans.etago.model.ECommercePlatform;
@@ -145,6 +150,14 @@ public class DetectionActivity extends AppCompatActivity {
                 addPicToGallery(photo.getAbsolutePath());
                 Toast.makeText(DetectionActivity.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
                 showECommercePlatformsBottomSheet();
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                FirebaseUser user = mAuth.getCurrentUser();
+                DocumentReference docRef = db.collection("Users").document(user.getUid());
+                docRef.update("numCensoredImgs", FieldValue.increment(1))
+                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
+                        .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
 
             }
         } catch (FileNotFoundException e) {
