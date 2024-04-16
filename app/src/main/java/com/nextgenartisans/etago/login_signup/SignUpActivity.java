@@ -509,7 +509,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void promptLogin() {
         mGoogleSignInClient.signOut();
-        //mAuth.signOut();
+        mAuth.signOut();
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(i);
         finish();

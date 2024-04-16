@@ -57,7 +57,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private ShapeableImageView profileUserPic, profileEditUsername, profileEditEmail, profileEditPass;
     private TextView numCensoredImgs, profileUsername, profileEmail, profilePass;
     private View divider;
-    private AppCompatButton profileInfoLogoutBtn, deleteAccountBtn;
+    private AppCompatButton profileInfoLogoutBtn, deleteAccountBtn, openStatsBtn;
     private ImageButton profileEditPic;
     private NavigationView profileNavView;
 
@@ -123,6 +123,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
 
         //Buttons
+        openStatsBtn = findViewById(R.id.open_stats_btn);
         deleteAccountBtn = findViewById(R.id.delete_account_btn);
         profileInfoLogoutBtn = findViewById(R.id.profile_info_logout_btn);
         profileEditUsername = findViewById(R.id.profile_edit_username);
@@ -203,6 +204,13 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             }
         });
 
+        openStatsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, StatsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         deleteAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override

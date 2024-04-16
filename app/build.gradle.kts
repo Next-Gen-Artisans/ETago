@@ -42,19 +42,13 @@ configurations.all {
 }
 
 
+
 dependencies {
     // about us feedback form
     implementation ("me.zhanghai.android.materialratingbar:library:1.4.0")
 
-    // Tensorflow Lite dependencies for Google Play services
-    implementation("com.google.android.gms:play-services-tflite-java:16.0.1")
-    // Optional: include Tensorflow Lite Support Library
-    implementation("com.google.android.gms:play-services-tflite-support:16.0.1")
-    //To use the GPU delegate with the Task APIs:
-    implementation("com.google.android.gms:play-services-tflite-gpu:16.1.0")
-    implementation("org.tensorflow:tensorflow-lite-task-vision-play-services:0.4.4")
-    implementation("org.tensorflow:tensorflow-lite:2.15.0")
-    implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
+    //Charting Library
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.0.3")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
@@ -88,6 +82,7 @@ dependencies {
     //ShapeableImageView
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.activity:activity:1.8.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     testImplementation("junit:junit:4.13.2")

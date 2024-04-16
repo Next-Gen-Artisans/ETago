@@ -182,6 +182,7 @@ public class CustomDeleteAccDialog extends Dialog {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 // Get a reference to the user's document in Firestore
                 DocumentReference userRef = db.collection("Users").document(user.getUid());
+                //Delete also CensorshipInstances and SaveAndShareInstances of the user
                 userRef.get().addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         String profilePicUrl = documentSnapshot.getString("profilePic");
@@ -195,6 +196,17 @@ public class CustomDeleteAccDialog extends Dialog {
                                 // File deleted successfully, now delete the user's document
                                 userRef.delete().addOnSuccessListener(aVoid2 -> {
                                     // Now, delete the user's account from Firebase Authentication
+                                    db.collection("CensorshipInstances").whereEqualTo("userId", user.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                                            db.collection("CensorshipInstances").document(queryDocumentSnapshots.getDocuments().get(i).getId()).delete();
+                                        }
+                                    });
+                                    db.collection("SaveAndShareInstances").whereEqualTo("userId", user.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                                            db.collection("SaveAndShareInstances").document(queryDocumentSnapshots.getDocuments().get(i).getId()).delete();
+                                        }
+                                    });
+
                                     user.delete().addOnSuccessListener(aVoid3 -> {
                                         updateDialogForSuccess();
                                     }).addOnFailureListener(e -> {

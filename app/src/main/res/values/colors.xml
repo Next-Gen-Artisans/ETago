@@ -10,4 +10,11 @@
     <color name="gray">#9496A1</color>
     <color name="light_gray">#ECECEC</color>
     <color name="red">#FF0000</color>
+
+    <!--CHART COLORS-->
+    <color name="chart_blue">#7D9FD6</color>
+    <color name="chart_orange">#FDA650</color>
+    <color name="chart_lightgray">#CDD3DE</color>
+    <color name="chart_lightblue">#6EBAE7</color>
+    <color name="chart_gray">#BBB2B4</color>
 </resources>
