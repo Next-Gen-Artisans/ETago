@@ -1,7 +1,5 @@
 package com.nextgenartisans.etago.model;
 
-import com.google.type.Date;
-
 public class Users {
 
     // Attributes
@@ -13,6 +11,8 @@ public class Users {
     private boolean userAgreedTermsAndPrivacyPolicy;
     private boolean userPasswordSet;
     private int numCensoredImgs;
+
+    private int apiCallsLimit;
 
     public Users(){
 
@@ -80,5 +80,13 @@ public class Users {
 
     public void setNumCensoredImgs(int numCensoredImgs) {
         this.numCensoredImgs = numCensoredImgs;
+    }
+
+    public int getApiCallsLimit() {
+        return apiCallsLimit;
+    }
+
+    public void setApiCallsLimit(int apiCallsLimit) {
+        this.apiCallsLimit = apiCallsLimit;
     }
 }

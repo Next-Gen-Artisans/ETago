@@ -278,6 +278,7 @@ public class SignUpActivity extends AppCompatActivity {
                 userMap.put("userPasswordSet", true);
                 userMap.put("userID", firebaseUser.getUid());
                 userMap.put("username", username);
+                userMap.put("apiCallsLimit", 50); // Set the initial API calls limit here
 
                 // Store in Firestore
                 db.collection("Users").document(firebaseUser.getUid())
@@ -402,6 +403,7 @@ public class SignUpActivity extends AppCompatActivity {
         users.setUsername(firebaseUser.getDisplayName());
         users.setEmail(firebaseUser.getEmail());
         users.setProfilePic(firebaseUser.getPhotoUrl().toString());
+        users.setApiCallsLimit(50); // Set the initial API calls limit here
 
         db.collection("Users").document(firebaseUser.getUid())
                 .set(users)

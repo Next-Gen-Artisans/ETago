@@ -1,5 +1,7 @@
 package com.nextgenartisans.etago.home;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -20,13 +22,21 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
@@ -58,6 +68,9 @@ public class UploadImg extends AppCompatActivity {
     private TextView headerTxt;
 
     private AppCompatButton scanBtn, cancelBtn, resetBtn;
+
+    private FirebaseFirestore db;
+    private FirebaseUser firebaseUser;
 
 
     //Photo Picker
@@ -120,6 +133,13 @@ public class UploadImg extends AppCompatActivity {
         cancelBtn = findViewById(R.id.cancel_btn);
         multiInputBtn = findViewById(R.id.multi_input_btn);
 
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+
+        // Initialize FirebaseUser
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
         // Initialize the Intent
         detectionActivityIntent = new Intent(UploadImg.this, DetectionActivity.class);
 
@@ -174,82 +194,123 @@ public class UploadImg extends AppCompatActivity {
                     byte[] imageData = getImageData(selectedImageUri, 768, 100);
 
                     if (imageData != null) {
-                        RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
-                        Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl(ETagoAPI.BASE_URL)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-
-                        ETagoAPI api = retrofit.create(ETagoAPI.class);
-                        StringBuilder objectsDetected = new StringBuilder();
-
-                        // First API Call - Object Detection JSON
-                        Call<ResponseBody> call1 = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
-                        call1.enqueue(new Callback<ResponseBody>() {
+                        // Fetch the current apiCallsLimit
+                        DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.isSuccessful()) {
-                                    try {
-                                        String jsonResponse = response.body().string();
-                                        JSONObject jsonObject = new JSONObject(jsonResponse);
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document != null && document.exists()) {
+                                        long currentApiCallsLimit = document.getLong("apiCallsLimit");
+                                        if (currentApiCallsLimit > 0) {
+                                            // If apiCallsLimit is greater than 0, proceed with the API calls
+                                            RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
+                                            Retrofit retrofit = new Retrofit.Builder()
+                                                    .baseUrl(ETagoAPI.BASE_URL)
+                                                    .addConverterFactory(GsonConverterFactory.create())
+                                                    .build();
 
-                                        if (jsonObject.has("detect_objects") && jsonObject.getJSONArray("detect_objects").length() > 0) {
-                                            JSONArray detectedObjects = jsonObject.getJSONArray("detect_objects");
-                                            for (int i = 0; i < detectedObjects.length(); i++) {
-                                                JSONObject object = detectedObjects.getJSONObject(i);
-                                                objectsDetected.append(object.getString("name"))
-                                                        .append(" (")
-                                                        .append(String.format("%.2f", object.getDouble("confidence") * 100))
-                                                        .append("%)\n"); // Use \n for new line
-                                            }
-                                            objectsDetected.setLength(objectsDetected.length() - 1); // Remove the last comma
+                                            ETagoAPI api = retrofit.create(ETagoAPI.class);
+                                            StringBuilder objectsDetected = new StringBuilder();
+
+                                            // First API Call - Object Detection JSON
+                                            Call<ResponseBody> call1 = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
+                                            call1.enqueue(new Callback<ResponseBody>() {
+                                                @Override
+                                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                    if (response.isSuccessful()) {
+                                                        try {
+                                                            String jsonResponse = response.body().string();
+                                                            JSONObject jsonObject = new JSONObject(jsonResponse);
+
+                                                            if (jsonObject.has("detect_objects") && jsonObject.getJSONArray("detect_objects").length() > 0) {
+                                                                JSONArray detectedObjects = jsonObject.getJSONArray("detect_objects");
+                                                                for (int i = 0; i < detectedObjects.length(); i++) {
+                                                                    JSONObject object = detectedObjects.getJSONObject(i);
+                                                                    objectsDetected.append(object.getString("name"))
+                                                                            .append(" (")
+                                                                            .append(String.format("%.2f", object.getDouble("confidence") * 100))
+                                                                            .append("%)\n"); // Use \n for new line
+                                                                }
+                                                                objectsDetected.setLength(objectsDetected.length() - 1); // Remove the last comma
+                                                            } else {
+                                                                objectsDetected.append(jsonObject.optString("message", "No objects detected."));
+                                                            }
+
+                                                            // Now that JSON processing is done, proceed to annotated image processing
+                                                            processAnnotatedImage(api, requestFile, objectsDetected);
+                                                            dialog.dismiss();
+
+                                                        } catch (Exception e) {
+                                                            Log.e("UploadImgLog", "Error parsing detection results: " + e.getMessage());
+                                                            dialog.setMessage("Failed to scan the image. Try Again later.");
+                                                            dialog.showAuthFailedProgress(true);
+                                                            dialog.showAuthProgress(false);
+                                                            dialog.setProceedButtonVisible(true); // Show the proceed button
+                                                            dialog.setProceedButtonClickListener(v -> {
+                                                                dialog.dismiss(); // Close the dialog
+                                                                launchPhotoPicker(); // Relaunch the photo picker
+                                                            });
+                                                        }
+                                                    } else {
+                                                        logError("API Call1", response);
+                                                        dialog.setMessage("Failed to scan the image. Try Again later.");
+                                                        dialog.showAuthProgress(false);
+                                                        dialog.showAuthFailedProgress(true);
+                                                        dialog.setProceedButtonVisible(true); // Show the proceed button
+                                                        dialog.setProceedButtonClickListener(v -> {
+                                                            dialog.dismiss(); // Close the dialog
+                                                            launchPhotoPicker(); // Relaunch the photo picker
+                                                        });
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                    logFailure("API Call1", t);
+                                                    dialog.setMessage("Error uploading image. Server may be down. Please notify the administrator.");
+                                                    dialog.showAuthFailedProgress(true);
+                                                    dialog.showAuthFailedProgress(false);
+                                                    dialog.setProceedButtonVisible(true); // Show the proceed button
+                                                    dialog.setProceedButtonClickListener(v -> dialog.dismiss()); // Set click listener to dismiss the dialog
+                                                }
+                                            });
                                         } else {
-                                            objectsDetected.append(jsonObject.optString("message", "No objects detected."));
+                                            // If apiCallsLimit is 0 or less, show a message to the user
+                                            dialog.setMessage("You have reached your free limit. Please notify the administrator.");
+                                            dialog.showAuthFailedProgress(true);
+                                            dialog.showAuthFailedProgress(false);
+                                            dialog.setProceedButtonVisible(true); // Show the proceed button
+                                            dialog.setProceedButtonClickListener(v -> {
+                                                dialog.dismiss(); // Close the dialog
+                                                finish();
+                                            });// Set click listener to dismiss the dialog
+
                                         }
-
-                                        // Now that JSON processing is done, proceed to annotated image processing
-                                        processAnnotatedImage(api, requestFile, objectsDetected);
-                                        dialog.dismiss();
-
-                                    } catch (Exception e) {
-                                        Log.e("UploadImgLog", "Error parsing detection results: " + e.getMessage());
-                                        dialog.setMessage("Failed to scan the image. Try Again later.");
-                                        dialog.showAuthFailedProgress(true);
-                                        dialog.showAuthProgress(false);
-                                        dialog.setProceedButtonVisible(true); // Show the proceed button
-                                        dialog.setProceedButtonClickListener(v -> {
-                                            dialog.dismiss(); // Close the dialog
-                                            launchPhotoPicker(); // Relaunch the photo picker
-                                        });
                                     }
                                 } else {
-                                    logError("API Call1", response);
-                                    dialog.setMessage("Failed to scan the image. Try Again later.");
-                                    dialog.showAuthProgress(false);
-                                    dialog.showAuthFailedProgress(true);
-                                    dialog.setProceedButtonVisible(true); // Show the proceed button
-                                    dialog.setProceedButtonClickListener(v -> {
-                                        dialog.dismiss(); // Close the dialog
-                                        launchPhotoPicker(); // Relaunch the photo picker
-                                    });
+                                    Log.d(TAG, "Error getting document", task.getException());
                                 }
                             }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                logFailure("API Call1", t);
-                                dialog.setMessage("Error uploading image. Server may be down. Please notify the administrator.");
-                                dialog.showAuthFailedProgress(true);
-                                dialog.showAuthFailedProgress(false);
-                                dialog.setProceedButtonVisible(true); // Show the proceed button
-                                dialog.setProceedButtonClickListener(v -> dialog.dismiss()); // Set click listener to dismiss the dialog
-                            }
                         });
+
                     } else {
-                        Toast.makeText(UploadImg.this, "Error preparing image for upload", Toast.LENGTH_SHORT).show();
+                        //log error using method
+                        dialog.setMessage("Error preparing image for upload.");
+                        dialog.showAuthFailedProgress(true);
+                        dialog.showAuthFailedProgress(false);
+                        dialog.setProceedButtonVisible(true); // Show the proceed button
+                        dialog.setProceedButtonClickListener(v -> dialog.dismiss()); // Set click listener to dismiss the dialog
                     }
                 } else {
-                    Toast.makeText(UploadImg.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    //log error using method
+                    logFailure("API Call1", new Throwable("No image selected."));
+                    dialog.setMessage("No image selected.");
+                    dialog.showAuthFailedProgress(true);
+                    dialog.showAuthFailedProgress(false);
+                    dialog.setProceedButtonVisible(true); // Show the proceed button
+                    dialog.setProceedButtonClickListener(v -> dialog.dismiss()); // Set click listener to dismiss the dialog
                 }
             }
 
@@ -270,6 +331,7 @@ public class UploadImg extends AppCompatActivity {
                                 //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
 
                                 // Proceed to process the censored image
+                                decrementApiCallsLimit(firebaseUser);
                                 processCensoredImage(api, requestFile, objectsDetected);
                             } else {
                                 Log.e("UploadImgLog", "Failed to save annotated image.");
@@ -303,6 +365,8 @@ public class UploadImg extends AppCompatActivity {
                                 //detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri);
                                 //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
                                 // Now that both URIs are added to the Intent, show the bottom sheet dialog
+                                // Decrement the API calls limit
+
                                 showBottomSheetDialog(objectsDetected.toString(), annotatedImageUri, censoredImageUri);
                             } else {
                                 Log.e("UploadImgLog", "Failed to save censored image.");
@@ -331,6 +395,29 @@ public class UploadImg extends AppCompatActivity {
         });
 
 
+    }
+
+    private void decrementApiCallsLimit(FirebaseUser firebaseUser) {
+        DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null && document.exists()) {
+                        long currentApiCallsLimit = document.getLong("apiCallsLimit");
+                        if (currentApiCallsLimit >= 1) {
+                            docRef.update("apiCallsLimit", currentApiCallsLimit - 1);
+                        } else {
+                            Log.d(TAG, "API calls limit reached.");
+
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Error getting document", task.getException());
+                }
+            }
+        });
     }
 
     private File saveBitmapToFile(Bitmap bitmap, String filename) {

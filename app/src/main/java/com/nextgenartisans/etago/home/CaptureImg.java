@@ -1,5 +1,7 @@
 package com.nextgenartisans.etago.home;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,8 +41,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
@@ -104,6 +113,10 @@ public class CaptureImg extends AppCompatActivity {
     private ImageButton flashButton;
     private boolean isFrontCamera = false;
 
+    private FirebaseFirestore db;
+    private FirebaseUser firebaseUser;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +153,12 @@ public class CaptureImg extends AppCompatActivity {
         captureBtn = findViewById(R.id.capture_scan_btn);
         resetPreviewBtn = findViewById(R.id.reset_preview_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
+
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Initialize FirebaseUser
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Initialize the Intent
         detectionActivityIntent = new Intent(CaptureImg.this, DetectionActivity.class);
@@ -261,7 +280,37 @@ public class CaptureImg extends AppCompatActivity {
 
                         byte[] imageData = getImageData(capturedImageUri, 768, 100);
                         if (imageData != null) {
-                            uploadImage(imageData, capturedImageUri);
+                            // Fetch the current apiCallsLimit
+                            DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
+                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if (document != null && document.exists()) {
+                                            long currentApiCallsLimit = document.getLong("apiCallsLimit");
+                                            if (currentApiCallsLimit > 0) {
+                                                // If apiCallsLimit is greater than 0, proceed with the API calls
+                                                uploadImage(imageData, capturedImageUri);
+                                            } else {
+                                                // If apiCallsLimit is 0 or less, show a message to the user
+                                                dialog.show();
+                                                dialog.setMessage("You have reached your free limit. Please notify the administrator.");
+                                                dialog.showAuthFailedProgress(true);
+                                                dialog.showAuthFailedProgress(false);
+                                                dialog.setProceedButtonVisible(true); // Show the proceed button
+                                                dialog.setProceedButtonClickListener(v -> {
+                                                    dialog.dismiss(); // Close the dialog
+                                                    finish();
+                                                });// Set click listener to dismiss the dialog
+                                            }
+                                        }
+                                    } else {
+                                        Log.d(TAG, "Error getting document", task.getException());
+                                    }
+                                }
+                            });
+
                         } else {
                             dialog.show();
                             dialog.setMessage("Error preparing image for upload");
@@ -277,6 +326,7 @@ public class CaptureImg extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
+                        dialog.show();
                         dialog.setMessage("Image unsaved" + exception.toString());
                         dialog.showAuthFailedProgress(true);
                         dialog.setProceedButtonVisible(true); // Show the proceed button
@@ -449,6 +499,8 @@ public class CaptureImg extends AppCompatActivity {
                         //detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri);
                         //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
                         // Now that both URIs are added to the Intent, show the bottom sheet dialog
+                        // Decrement the API calls limit
+                        decrementApiCallsLimit(firebaseUser);
                         showBottomSheetDialog(objectsDetected.toString(), annotatedImageUri, censoredImageUri);
                     } else {
                         Log.e("CaptureImgLog", "Failed to save censored image.");
@@ -471,10 +523,28 @@ public class CaptureImg extends AppCompatActivity {
         //Toast to tell the user that this method is called
         Toast.makeText(CaptureImg.this, "Response received", Toast.LENGTH_SHORT).show();
 
+    }
 
-
-
-
+    private void decrementApiCallsLimit(FirebaseUser firebaseUser) {
+        DocumentReference docRef = db.collection("Users").document(firebaseUser.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null && document.exists()) {
+                        long currentApiCallsLimit = document.getLong("apiCallsLimit");
+                        if (currentApiCallsLimit > 0) {
+                            docRef.update("apiCallsLimit", currentApiCallsLimit - 1);
+                        } else {
+                            Log.d(TAG, "API calls limit reached.");
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Error getting document", task.getException());
+                }
+            }
+        });
     }
 
     private void showBottomSheetDialog(String detectedText, Uri annotatedImageUri, Uri censoredImageUri) {
