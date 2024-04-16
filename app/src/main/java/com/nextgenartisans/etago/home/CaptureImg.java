@@ -49,10 +49,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
+import com.nextgenartisans.etago.model.CensorshipInstance;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,7 +64,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import okhttp3.MediaType;
@@ -116,6 +120,8 @@ public class CaptureImg extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser firebaseUser;
 
+    //Initialize captured classes
+    Map<String, Double> capturedClasses = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -385,6 +391,7 @@ public class CaptureImg extends AppCompatActivity {
                             JSONArray detectedObjects = jsonObject.getJSONArray("detect_objects");
                             for (int i = 0; i < detectedObjects.length(); i++) {
                                 JSONObject object = detectedObjects.getJSONObject(i);
+                                capturedClasses.put(object.getString("name"), object.getDouble("confidence"));
                                 objectsDetected.append(object.getString("name"))
                                         .append(" (")
                                         .append(String.format("%.2f", object.getDouble("confidence") * 100))
@@ -499,6 +506,17 @@ public class CaptureImg extends AppCompatActivity {
                         //detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri);
                         //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
                         // Now that both URIs are added to the Intent, show the bottom sheet dialog
+
+
+                        // Generate a unique ID for this censorship instance
+                        String censorshipID = UUID.randomUUID().toString();
+                        // Create a new CensorshipInstance object
+                        CensorshipInstance censorshipInstance = new CensorshipInstance();
+                        censorshipInstance.setCensorshipID(censorshipID);
+                        censorshipInstance.setUserID(firebaseUser.getUid());
+                        censorshipInstance.setCapturedClasses(capturedClasses);
+                        censorshipInstance.setDateCensored(FieldValue.serverTimestamp());
+
                         // Decrement the API calls limit
                         decrementApiCallsLimit(firebaseUser);
                         showBottomSheetDialog(objectsDetected.toString(), annotatedImageUri, censoredImageUri);

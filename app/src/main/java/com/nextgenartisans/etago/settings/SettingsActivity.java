@@ -156,24 +156,13 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-//        helpSupport.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent cel = new Intent(SettingsActivity.this, HelpSupport.class);
-//                startActivity(cel);
-//            }
-//        });
         helpSupport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openWebView("https://drive.google.com/file/d/16zQ9hGLzlN2TzXKq8nG1H5n0s7MVCE--/view?usp=sharing", "Help and Support");
-
+                openWebView("https://docs.google.com/presentation/d/1g_tPeQyOG23fTMADdxPZLlSCvpGkdJd-xtvfUOErvWY/edit?usp=sharing", "Help and Support");
             }
         });
-
     }
-
-
 
     private void openWebView(String url, String webViewText) {
         Intent intent = new Intent(this, TermsAndConditionsWebView.class);

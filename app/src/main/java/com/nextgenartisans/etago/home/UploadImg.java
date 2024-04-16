@@ -30,16 +30,20 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
 import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
+import com.nextgenartisans.etago.model.CensorshipInstance;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,6 +52,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -82,6 +89,9 @@ public class UploadImg extends AppCompatActivity {
 
     // Declare the global Intent
     private Intent detectionActivityIntent;
+
+    //Initialize captured classes
+    Map<String, Double> capturedClasses = new HashMap<>();
 
 
     @Override
@@ -228,6 +238,7 @@ public class UploadImg extends AppCompatActivity {
                                                                 JSONArray detectedObjects = jsonObject.getJSONArray("detect_objects");
                                                                 for (int i = 0; i < detectedObjects.length(); i++) {
                                                                     JSONObject object = detectedObjects.getJSONObject(i);
+                                                                    capturedClasses.put(object.getString("name"), object.getDouble("confidence"));
                                                                     objectsDetected.append(object.getString("name"))
                                                                             .append(" (")
                                                                             .append(String.format("%.2f", object.getDouble("confidence") * 100))
@@ -361,11 +372,30 @@ public class UploadImg extends AppCompatActivity {
 
                             if (censoredFile != null) {
                                 censoredImageUri = Uri.fromFile(censoredFile);
-                                // Update the global Intent with the censored image URI
-                                //detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri);
-                                //detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri);
-                                // Now that both URIs are added to the Intent, show the bottom sheet dialog
-                                // Decrement the API calls limit
+
+                                // Generate a unique ID for this censorship instance
+                                String censorshipID = UUID.randomUUID().toString();
+                                // Create a new CensorshipInstance object
+                                CensorshipInstance censorshipInstance = new CensorshipInstance();
+                                censorshipInstance.setCensorshipID(censorshipID);
+                                censorshipInstance.setUserID(firebaseUser.getUid());
+                                censorshipInstance.setCapturedClasses(capturedClasses);
+                                censorshipInstance.setDateCensored(FieldValue.serverTimestamp());
+
+                                // Save the CensorshipInstance object to Firestore
+                                db.collection("CensorshipInstances").add(censorshipInstance)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Log.d("UploadImg", "Censorship instance recorded with ID: " + documentReference.getId());
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("UploadImg", "Error recording censorship instance", e);
+                                            }
+                                        });
 
                                 showBottomSheetDialog(objectsDetected.toString(), annotatedImageUri, censoredImageUri);
                             } else {

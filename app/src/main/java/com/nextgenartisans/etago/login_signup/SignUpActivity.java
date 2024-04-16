@@ -45,6 +45,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -287,6 +288,7 @@ public class SignUpActivity extends AppCompatActivity {
                 userMap.put("userID", firebaseUser.getUid());
                 userMap.put("username", username);
                 userMap.put("apiCallsLimit", 50); // Set the initial API calls limit here
+                userMap.put("accountCreationTimestamp", FieldValue.serverTimestamp());
 
                 // Store in Firestore
                 db.collection("Users").document(firebaseUser.getUid())
@@ -415,6 +417,7 @@ public class SignUpActivity extends AppCompatActivity {
         users.setUsername(firebaseUser.getDisplayName());
         users.setEmail(firebaseUser.getEmail());
         users.setApiCallsLimit(50); // Set the initial API calls limit here
+        users.setAccountCreationTimestamp(FieldValue.serverTimestamp());
 
         // Download the profile picture from the URL provided by Google
         if (firebaseUser.getPhotoUrl() != null) {

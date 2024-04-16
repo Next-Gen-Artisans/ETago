@@ -11,10 +11,10 @@ public class Users {
     private boolean userAgreedTermsAndPrivacyPolicy;
     private boolean userPasswordSet;
     private int numCensoredImgs;
-
     private int apiCallsLimit;
+    private Object accountCreationTimestamp;
 
-    public Users(){
+    public Users() {
 
     }
 
@@ -89,4 +89,14 @@ public class Users {
     public void setApiCallsLimit(int apiCallsLimit) {
         this.apiCallsLimit = apiCallsLimit;
     }
+
+    public Object getAccountCreationTimestamp() {
+        return accountCreationTimestamp;
+    }
+
+    public void setAccountCreationTimestamp(Object accountCreationTimestamp) {
+        this.accountCreationTimestamp = accountCreationTimestamp;
+
+    }
+
 }

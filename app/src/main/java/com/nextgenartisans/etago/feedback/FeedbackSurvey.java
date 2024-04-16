@@ -73,7 +73,7 @@ public class FeedbackSurvey extends AppCompatActivity {
             }
         });
 
-        String url = "https://docs.google.com/forms/d/e/1FAIpQLScOCEo5ro0vtuXZhJz66y4BhIfkR1fHmY0wYh8b6Unx0fsZfw/viewform?usp=sharing";
+        String url = "https://forms.gle/iKUGyB74hJib664K7";
         webView.loadUrl(url);
 
 

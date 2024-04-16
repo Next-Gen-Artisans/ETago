@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.adapter.ECommerceAdapter;
 import com.nextgenartisans.etago.model.ECommercePlatform;
@@ -43,7 +44,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DetectionActivity extends AppCompatActivity {
 
@@ -124,6 +127,7 @@ public class DetectionActivity extends AppCompatActivity {
     private void savePicture() {
         if (censoredImageUri == null) {
             Toast.makeText(this, "No image to save", Toast.LENGTH_SHORT).show();
+
             return;
         }
 
@@ -163,6 +167,17 @@ public class DetectionActivity extends AppCompatActivity {
                 docRef.update("numCensoredImgs", FieldValue.increment(1))
                         .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
                         .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
+
+
+                DocumentReference docRef2 = db.collection("SaveAndShareInstances").document(user.getUid());
+                // Increment the numSaveInstance field
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("numSaveInstance", FieldValue.increment(1));
+                updates.put("userID", user.getUid());
+                docRef2.set(updates, SetOptions.merge())
+                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
+                        .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
+
 
             }
         } catch (FileNotFoundException e) {
