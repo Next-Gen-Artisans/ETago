@@ -554,7 +554,7 @@ public class CaptureImg extends AppCompatActivity {
             requestPermission();
         }
 
-        //requestPermissions();
+
     }
 
     // Method to request permissions
@@ -564,6 +564,8 @@ public class CaptureImg extends AppCompatActivity {
 
     // Replace this with your own method to start the camera
     private void startCamera() {
+        previewView.setVisibility(View.VISIBLE);
+        capturedImg.setVisibility(View.GONE);
         Toast.makeText(this, "Camera started", Toast.LENGTH_SHORT).show();
     }
 

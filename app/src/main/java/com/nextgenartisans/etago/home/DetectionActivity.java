@@ -54,7 +54,7 @@ public class DetectionActivity extends AppCompatActivity {
     private CardView buttonsCardView;
     private AppCompatImageView detectedImg;
     private LinearLayout buttonsLayout;
-    private AppCompatButton cancelBtn, saveBtn;
+    private AppCompatButton cancelBtn, saveBtn, resetDetectBtn;
     private ImageCapture imageCapture;
 
     private Uri censoredImageUri;
@@ -89,6 +89,7 @@ public class DetectionActivity extends AppCompatActivity {
         headerContainer = findViewById(R.id.header_container);
         backBtn = findViewById(R.id.back_btn);
         saveBtn = findViewById(R.id.save_btn);
+        resetDetectBtn = findViewById(R.id.reset_detection_btn);
         headerTxt = findViewById(R.id.header_txt);
         buttonsCardView = findViewById(R.id.buttons_cardview);
         detectedImg = findViewById(R.id.detected_img);
@@ -112,6 +113,10 @@ public class DetectionActivity extends AppCompatActivity {
         });
 
         saveBtn.setOnClickListener(v -> savePicture());
+
+        resetDetectBtn.setOnClickListener(v -> {
+            onBackPressed();
+        });
 
 
     }

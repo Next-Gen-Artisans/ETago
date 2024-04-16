@@ -48,6 +48,7 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
     private ImagesAdapter imagesAdapter;
     private ArrayList<Uri> selectedImages = new ArrayList<>();
     private ArrayList<Bitmap> processedImages = new ArrayList<>();
+    private ArrayList<Bitmap> censoredImages = new ArrayList<>();
     private List<Call<ResponseBody>> ongoingCalls = new ArrayList<>();
 
     private AppCompatButton scanPhotosBtn, resetSelectionBtn, cancelBtn;
@@ -131,8 +132,9 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
             }
             ongoingCalls.clear();
 
-            // Clear the selected images list and notify the adapter
+            // Clear the selected images list and processed images list, and notify the adapter
             selectedImages.clear();
+            processedImages.clear();
             imagesAdapter.notifyDataSetChanged();
 
             // Relaunch the media picker to select images again
@@ -168,6 +170,8 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
     }
 
     private void uploadImages(ArrayList<Uri> uris) {
+        // Ensure the capacity of processedImages before starting the upload process
+        processedImages.ensureCapacity(uris.size());
 
         for (int i = 0; i < uris.size(); i++) {
             int index = i;
@@ -187,7 +191,9 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
                             File annotatedFile = saveBitmapToFile(bitmap);
                             if (annotatedFile != null) {
                                 Uri annotatedImageUri = Uri.fromFile(annotatedFile);
-                                processedImages.set(index, bitmap);
+                                // Add the processed image to processedImages at the same index
+                                processedImages.add(index, bitmap);
+                                // Update the selected image at the same index
                                 selectedImages.set(index, annotatedImageUri);
                                 imagesAdapter.notifyItemChanged(index);
                             }

@@ -64,7 +64,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/buttons_cardview"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="-30dp"
@@ -87,7 +87,7 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/custom_btn_bg"
             android:fontFamily="@font/montserrat_bold"
             android:text="Save"
@@ -96,9 +96,21 @@
             android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/reset_detection_btn"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Reset detection"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancel_btn"
             android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:fontFamily="@font/montserrat_bold"
             android:text="Cancel"
