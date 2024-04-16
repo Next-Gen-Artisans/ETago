@@ -38,7 +38,7 @@
             android:src="@drawable/multi_input"
             app:tint="@color/orange"
             android:clickable="false"
-            android:visibility="visible"
+            android:visibility="invisible"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
     </LinearLayout>
 

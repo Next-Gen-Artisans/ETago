@@ -170,12 +170,7 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
     }
 
     private void uploadImages(ArrayList<Uri> uris) {
-        // Ensure the capacity of processedImages before starting the upload process
-        processedImages.ensureCapacity(uris.size());
-
-        for (int i = 0; i < uris.size(); i++) {
-            int index = i;
-            Uri uri = uris.get(index);
+        for (Uri uri : uris) {
             byte[] imageData = getImageData(uri, 768, 100);
             if (imageData != null) {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("image/png"), imageData);
@@ -188,14 +183,17 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (!call.isCanceled() && response.isSuccessful()) {
                             Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                            // Save the processed bitmap to a file and get the URI
                             File annotatedFile = saveBitmapToFile(bitmap);
                             if (annotatedFile != null) {
                                 Uri annotatedImageUri = Uri.fromFile(annotatedFile);
-                                // Add the processed image to processedImages at the same index
-                                processedImages.add(index, bitmap);
-                                // Update the selected image at the same index
-                                selectedImages.set(index, annotatedImageUri);
-                                imagesAdapter.notifyItemChanged(index);
+                                // Update the UI with the new processed image
+                                runOnUiThread(() -> {
+                                    // Add the URI of the processed image to a list
+                                    selectedImages.add(annotatedImageUri);
+                                    // Notify the adapter to refresh the RecyclerView
+                                    imagesAdapter.notifyItemInserted(selectedImages.size() - 1);
+                                });
                             }
                         } else if (!call.isCanceled()) {
                             Toast.makeText(UploadMultiple.this, "Failed to upload and process image.", Toast.LENGTH_SHORT).show();
@@ -212,6 +210,7 @@ public class UploadMultiple extends AppCompatActivity implements ImagesAdapter.O
             }
         }
     }
+
 
     private File saveBitmapToFile(Bitmap bitmap) {
         // Create a file in the external cache directory
