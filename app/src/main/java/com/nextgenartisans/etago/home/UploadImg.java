@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
+import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -162,7 +163,12 @@ public class UploadImg extends AppCompatActivity {
         scanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(UploadImg.this, "Scanning image...", Toast.LENGTH_SHORT).show();
+                // Create and show the dialog
+                CustomSignInDialog dialog = new CustomSignInDialog(UploadImg.this);
+                dialog.setMessage("Scanning image...");
+                dialog.showAuthProgress(true);
+                dialog.setProceedButtonVisible(false); // Hide the proceed button
+                dialog.show();
 
                 if (selectedImageUri != null) {
                     byte[] imageData = getImageData(selectedImageUri, 768, 100);
@@ -203,19 +209,40 @@ public class UploadImg extends AppCompatActivity {
 
                                         // Now that JSON processing is done, proceed to annotated image processing
                                         processAnnotatedImage(api, requestFile, objectsDetected);
+                                        dialog.dismiss();
 
                                     } catch (Exception e) {
                                         Log.e("UploadImgLog", "Error parsing detection results: " + e.getMessage());
-                                        Toast.makeText(UploadImg.this, "Failed to parse detection results.", Toast.LENGTH_SHORT).show();
+                                        dialog.setMessage("Failed to scan the image. Try Again later.");
+                                        dialog.showAuthFailedProgress(true);
+                                        dialog.showAuthProgress(false);
+                                        dialog.setProceedButtonVisible(true); // Show the proceed button
+                                        dialog.setProceedButtonClickListener(v -> {
+                                            dialog.dismiss(); // Close the dialog
+                                            launchPhotoPicker(); // Relaunch the photo picker
+                                        });
                                     }
                                 } else {
                                     logError("API Call1", response);
+                                    dialog.setMessage("Failed to scan the image. Try Again later.");
+                                    dialog.showAuthProgress(false);
+                                    dialog.showAuthFailedProgress(true);
+                                    dialog.setProceedButtonVisible(true); // Show the proceed button
+                                    dialog.setProceedButtonClickListener(v -> {
+                                        dialog.dismiss(); // Close the dialog
+                                        launchPhotoPicker(); // Relaunch the photo picker
+                                    });
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 logFailure("API Call1", t);
+                                dialog.setMessage("Error uploading image. Server may be down. Please notify the administrator.");
+                                dialog.showAuthFailedProgress(true);
+                                dialog.showAuthFailedProgress(false);
+                                dialog.setProceedButtonVisible(true); // Show the proceed button
+                                dialog.setProceedButtonClickListener(v -> dialog.dismiss()); // Set click listener to dismiss the dialog
                             }
                         });
                     } else {
@@ -295,12 +322,11 @@ public class UploadImg extends AppCompatActivity {
 
             private void logError(String tag, Response<ResponseBody> response) {
                 Log.e("UploadImgLog", tag + " Failed: " + response.errorBody().charStream().toString());
-                Toast.makeText(UploadImg.this, tag + " Failed to scan the image.", Toast.LENGTH_SHORT).show();
+
             }
 
             private void logFailure(String tag, Throwable t) {
                 Log.e("UploadImgLog", tag + " Error uploading image: " + t.getMessage());
-                Toast.makeText(UploadImg.this, tag + " Error uploading image.", Toast.LENGTH_SHORT).show();
             }
         });
 

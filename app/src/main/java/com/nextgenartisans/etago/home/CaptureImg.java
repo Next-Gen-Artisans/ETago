@@ -43,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.api.ETagoAPI;
+import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -245,11 +246,14 @@ public class CaptureImg extends AppCompatActivity {
         ImageCapture.OutputFileOptions outputFileOptions =
                 new ImageCapture.OutputFileOptions.Builder(file).build();
 
+        // Create the dialog
+        CustomSignInDialog dialog = new CustomSignInDialog(CaptureImg.this);
+
         imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(this),
                 new ImageCapture.OnImageSavedCallback() {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                        Toast.makeText(CaptureImg.this, "Image captured, starting upload...", Toast.LENGTH_SHORT).show();
+
                         Uri capturedImageUri = Uri.fromFile(file); // 'file' is the File object used in takePicture()
 
                         // Display the snapshot
@@ -259,13 +263,28 @@ public class CaptureImg extends AppCompatActivity {
                         if (imageData != null) {
                             uploadImage(imageData, capturedImageUri);
                         } else {
-                            Toast.makeText(CaptureImg.this, "Error preparing image for upload", Toast.LENGTH_SHORT).show();
+                            dialog.show();
+                            dialog.setMessage("Error preparing image for upload");
+                            dialog.showAuthFailedProgress(true);
+                            dialog.setProceedButtonVisible(true); // Show the proceed button
+                            dialog.setProceedButtonClickListener(v -> {
+                                dialog.dismiss(); // Close the dialog
+                                previewView.setVisibility(View.VISIBLE);
+                                capturedImg.setVisibility(View.GONE); // Reset the preview
+                            }); // Set click listener to dismiss the dialog
                         }
                     }
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
-                        Toast.makeText(CaptureImg.this, "Image unsaved" + exception.toString(), Toast.LENGTH_SHORT).show();
+                        dialog.setMessage("Image unsaved" + exception.toString());
+                        dialog.showAuthFailedProgress(true);
+                        dialog.setProceedButtonVisible(true); // Show the proceed button
+                        dialog.setProceedButtonClickListener(v -> {
+                            dialog.dismiss(); // Close the dialog
+                            previewView.setVisibility(View.VISIBLE);
+                            capturedImg.setVisibility(View.GONE); // Reset the preview
+                        }); // Set click listener to dismiss the dialog
                     }
                 });
     }
@@ -294,6 +313,14 @@ public class CaptureImg extends AppCompatActivity {
     }
 
     private void handleImageUpload(ETagoAPI api, RequestBody requestFile, Uri capturedImageUri) {
+
+        // Create and show the dialog
+        CustomSignInDialog dialog = new CustomSignInDialog(CaptureImg.this);
+        dialog.setMessage("Uploading image...");
+        dialog.showAuthProgress(true);
+        dialog.setProceedButtonVisible(false); // Hide the proceed button
+        dialog.show();
+
         objectsDetected = new StringBuilder();
         Call<ResponseBody> call1 = api.uploadImageForJson(MultipartBody.Part.createFormData("file", "image.jpg", requestFile));
         call1.enqueue(new Callback<ResponseBody>() {
@@ -318,33 +345,58 @@ public class CaptureImg extends AppCompatActivity {
                             objectsDetected.append(jsonObject.optString("message", "No objects detected."));
                         }
                         // Now that JSON processing is done, proceed to annotated image processing
+                        dialog.dismiss();
                         processAnnotatedImage(api, requestFile, objectsDetected);
 
                     } catch (Exception e) {
                         Log.e("CaptureImgLog", "Error parsing detection results: " + e.getMessage());
-                        Toast.makeText(CaptureImg.this, "Failed to parse detection results.", Toast.LENGTH_SHORT).show();
+                        dialog.setMessage("Error processing detection results. Please try again.");
+                        dialog.showAuthProgress(false);
+                        dialog.showAuthFailedProgress(true);
+                        dialog.setProceedButtonVisible(true); // Show the proceed button
+                        dialog.setProceedButtonClickListener(v -> {
+                            dialog.dismiss(); // Close the dialog
+                            previewView.setVisibility(View.VISIBLE);
+                            capturedImg.setVisibility(View.GONE); // Reset the preview
+                        }); // Set click listener to dismiss the dialog
                     }
                 } else {
                     logError("API Call1", response);
+                    dialog.setMessage("Failed to upload the image. Server may be down. Please notify the administrator.");
+                    dialog.showAuthProgress(false);
+                    dialog.showAuthFailedProgress(true);
+                    dialog.setProceedButtonVisible(true); // Show the proceed button
+                    dialog.setProceedButtonClickListener(v -> {
+                        dialog.dismiss(); // Close the dialog
+                        previewView.setVisibility(View.VISIBLE);
+                        capturedImg.setVisibility(View.GONE); // Reset the preview
+                    }); // Set click listener to dismiss the dialog
                 }
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(CaptureImg.this, "API Call Error capturing image: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                logFailure("API Call1", t);
+                dialog.setMessage("Error uploading image. Server may be down. Please notify the administrator.");
+                dialog.showAuthFailedProgress(true);
+                dialog.showAuthFailedProgress(false);
+                dialog.setProceedButtonVisible(true); // Show the proceed button
+                dialog.setProceedButtonClickListener(v -> {
+                    dialog.dismiss(); // Close the dialog
+                    previewView.setVisibility(View.VISIBLE);
+                    capturedImg.setVisibility(View.GONE); // Reset the preview
+                }); // Set click listener to dismiss the dialog
             }
         });
     }
 
     private void logError(String tag, Response<ResponseBody> response) {
         Log.e("CaptureImgLog", tag + " Failed: " + response.errorBody().charStream().toString());
-        Toast.makeText(CaptureImg.this, tag + " Failed to scan the image.", Toast.LENGTH_SHORT).show();
     }
 
     private void logFailure(String tag, Throwable t) {
         Log.e("CaptureImgLog", tag + " Error uploading image: " + t.getMessage());
-        Toast.makeText(CaptureImg.this, tag + " Error uploading image.", Toast.LENGTH_SHORT).show();
     }
 
     private void processAnnotatedImage(ETagoAPI api, RequestBody requestFile, StringBuilder objectsDetected) {
