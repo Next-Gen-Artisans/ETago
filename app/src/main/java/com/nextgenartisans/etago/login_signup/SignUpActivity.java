@@ -3,7 +3,10 @@ package com.nextgenartisans.etago.login_signup;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -45,6 +48,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.dialogs.CustomSignInDialog;
 import com.nextgenartisans.etago.dialogs.TermsOfServiceDialog;
@@ -52,8 +56,11 @@ import com.nextgenartisans.etago.home.MainActivity;
 import com.nextgenartisans.etago.model.Users;
 import com.nextgenartisans.etago.onboarding.Welcome;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -268,6 +275,7 @@ public class SignUpActivity extends AppCompatActivity {
                 // Got the download URL for the default profile picture
                 String defaultProfilePicUrl = uri.toString();
 
+
                 // Prepare user data with the default profile picture URL
                 Map<String, Object> userMap = new HashMap<>();
                 userMap.put("email", firebaseUser.getEmail());
@@ -388,6 +396,10 @@ public class SignUpActivity extends AppCompatActivity {
 
                     } else {
                         // User does not exist, create a new user document
+                        customSignInDialog.setMessage("Account created successfully.");
+                        customSignInDialog.showAuthProgress(false);
+                        customSignInDialog.setProceedButtonVisible(true);
+                        // Redirect to login or main activity as required
                         createUserInFirestore(firebaseUser);
                     }
                 } else {
@@ -402,31 +414,88 @@ public class SignUpActivity extends AppCompatActivity {
         users.setUserID(firebaseUser.getUid());
         users.setUsername(firebaseUser.getDisplayName());
         users.setEmail(firebaseUser.getEmail());
-        users.setProfilePic(firebaseUser.getPhotoUrl().toString());
         users.setApiCallsLimit(50); // Set the initial API calls limit here
 
-        db.collection("Users").document(firebaseUser.getUid())
-                .set(users)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Successfully added new user
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+        // Download the profile picture from the URL provided by Google
+        if (firebaseUser.getPhotoUrl() != null) {
+            String googleProfilePicUrl = firebaseUser.getPhotoUrl().toString();
+            new DownloadImageTask(bitmap -> {
+                // Upload the downloaded image to Firebase Storage
+                uploadImageToFirebaseStorage(bitmap, firebaseUser.getUid(), users);
+            }).execute(googleProfilePicUrl);
+        } else {
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("profile_username_icon.png");
+            // If the user doesn't have a profile picture on Google, you can set a default one
+            storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    String defaultProfilePicUrl = uri.toString();
+                    users.setProfilePic(defaultProfilePicUrl);
+                    saveUserToFirestore(users);
+                }
+            });
 
-                        // Redirect to main activity or update UI
-                        // Authentication success
-                        customSignInDialog.setMessage("Account created.");
-                        customSignInDialog.showAuthProgress(false); // Show check icon
-                        customSignInDialog.setProceedButtonVisible(true); // Show proceed button
-                    }
+
+        }
+    }
+
+    private void uploadImageToFirebaseStorage(Bitmap bitmap, String userId, Users users) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference profilePicRef = storageRef.child("profilePics/" + userId + ".jpg");
+
+        UploadTask uploadTask = profilePicRef.putBytes(data);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            // Get the download URL of the uploaded image
+            profilePicRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String firebaseProfilePicUrl = uri.toString();
+                users.setProfilePic(firebaseProfilePicUrl);
+                saveUserToFirestore(users);
+            });
+        }).addOnFailureListener(e -> {
+            // Handle the error
+        });
+    }
+
+    private void saveUserToFirestore(Users users) {
+        db.collection("Users").document(users.getUserID())
+                .set(users)
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully added new user
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle the error
-                        Log.w(TAG, "Error writing document", e);
-                    }
+                .addOnFailureListener(e -> {
+                    // Handle the error
+                    Log.w(TAG, "Error writing document", e);
                 });
+    }
+
+    private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private final Consumer<Bitmap> consumer;
+
+        public DownloadImageTask(Consumer<Bitmap> consumer) {
+            this.consumer = consumer;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap bitmap = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                bitmap = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            consumer.accept(result);
+        }
     }
 
     private void updateUI() {

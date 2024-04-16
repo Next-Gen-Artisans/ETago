@@ -261,7 +261,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                         StorageReference storageRef = storage.getReference();
 
                         // Create a reference to the file to upload
-                        StorageReference profilePicRef = storageRef.child("profile_pics/" + user.getUid() + ".jpg");
+                        StorageReference profilePicRef = storageRef.child("profilePics/" + user.getUid() + ".jpg");
 
                         // Upload the file to Firebase Storage
                         profilePicRef.putFile(uri)
