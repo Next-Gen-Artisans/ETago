@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 // Show the custom dialog indicating progress
-                customSignInDialog.setMessage("Logging in...");
+                customSignInDialog.setMessage("Authenticating...");
                 customSignInDialog.showAuthProgress(true);
                 customSignInDialog.setProceedButtonVisible(false);
                 customSignInDialog.show();
@@ -214,8 +214,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                     // Show the custom dialog indicating failed authentication progress
                                     customSignInDialog.setMessage("Incorrect credentials.");
-                                    customSignInDialog.showAuthProgress(true);
-                                    customSignInDialog.showAuthFailedProgress(false);
+                                    customSignInDialog.showAuthProgress(false);
+                                    customSignInDialog.showAuthFailedProgress(true);
                                     customSignInDialog.setProceedButtonVisible(true);
 
 

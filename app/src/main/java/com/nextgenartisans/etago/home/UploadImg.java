@@ -453,6 +453,15 @@ public class UploadImg extends AppCompatActivity {
 
         cancelButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
         proceedButton.setOnClickListener(v -> {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            FirebaseUser user = mAuth.getCurrentUser();
+            DocumentReference docRef = db.collection("Users").document(user.getUid());
+            docRef.update("numCensoredImgs", FieldValue.increment(1))
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
+                    .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
+
+
             // Generate a unique ID for this censorship instance
             String censorshipID = UUID.randomUUID().toString();
             // Create a new CensorshipInstance object

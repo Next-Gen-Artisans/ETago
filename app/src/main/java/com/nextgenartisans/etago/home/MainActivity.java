@@ -2,9 +2,9 @@ package com.nextgenartisans.etago.home;
 
 import static android.content.ContentValues.TAG;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +39,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nextgenartisans.etago.R;
 import com.nextgenartisans.etago.about_us.AboutUs;
 import com.nextgenartisans.etago.dialogs.ExitAppDialog;
@@ -93,12 +95,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean doubleBackToExitPressedOnce = false;
     private Handler handler = new Handler();
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
 
         // Call the method to load user data when the activity starts
         loadUserData();
+        updateUI();
 
         //Set New Password
         setNewPassword();
@@ -106,6 +111,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Check if password is set before showing dialogs
         checkPasswordAndShowDialogs();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserData();
+        updateUI();
     }
 
     private void checkPasswordAndShowDialogs() {
@@ -145,15 +157,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }).addOnFailureListener(e -> Log.d(TAG, "Failed to retrieve media agreement status.", e));
         }
     }
-
-
-
-    private boolean hasMediaPermissions() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -226,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadUserData();
 
         //Change status bar color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -235,8 +239,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         setContentView(R.layout.activity_main);
 
-        // Call the method to load user data when the activity starts
-        loadUserData();
 
         //Firebase
         auth = FirebaseAuth.getInstance();
@@ -433,29 +435,106 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
 
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()) {
-                        // Extract the profile picture, username, and email
-                        String profilePicUrl = documentSnapshot.getString("profilePic");
-                        String username = documentSnapshot.getString("username");
-                        String email = documentSnapshot.getString("email");
+            docRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    // Extract the profile picture, username, and email
+                    String profilePicUrl = documentSnapshot.getString("profilePic");
+                    String username = documentSnapshot.getString("username");
+                    String email = documentSnapshot.getString("email");
 
-                        // Update the UI with the retrieved data
-                        updateUI(profilePicUrl, username, email);
-                    } else {
-                        // Document does not exist, handle this case
-                    }
+                    // Update the UI with the retrieved data
+                    runOnUiThread(() -> updateUI(profilePicUrl, username, email));
+                } else {
+                    Log.w(TAG, "Document does not exist");
+                }
+            }).addOnFailureListener(e -> Log.w(TAG, "Error fetching user data", e));
+        } else {
+            // Handle case where user is not logged in
+            goToLogin();
+        }
+    }
+
+    private void updateUI(String profilePicUrl, String username, String email, int numCensoredImgs) {
+        // Update UI elements directly, ensuring this method is called on the UI thread if called from a background thread
+        if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+            Glide.with(this).load(profilePicUrl).centerCrop().into(userProfilePic);
+        } else {
+            //Set default image from Firebase Storage profile_username_icon.png
+            // Load default image from Firebase Storage
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference defaultPicRef = storage.getReference().child("profile_username_icon.png");
+            defaultPicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(MainActivity.this)
+                            .load(uri.toString())
+                            .centerCrop()
+                            .into(userProfilePic);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    // Handle the error
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    Log.d(TAG, "Failed to load default profile picture", exception);
                 }
             });
         }
+        usernameTextView.setText(username != null ? username : "Username");
+        emailTextView.setText(email != null ? email : "Email");
     }
+
+    private void goToLogin() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void updateUI() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("Users").document(currentUser.getUid());
+
+            docRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    // Extract the profile picture, username, and email
+                    String profilePicUrl = documentSnapshot.getString("profilePic");
+                    String username = documentSnapshot.getString("username");
+                    String email = documentSnapshot.getString("email");
+
+                    // Update UI elements directly, ensuring this method is called on the UI thread if called from a background thread
+                    if (profilePicUrl != null && !profilePicUrl.equals("default_profile_pic_url")) {
+                        Glide.with(MainActivity.this)
+                                .load(profilePicUrl)
+                                .centerCrop()
+                                .placeholder(R.drawable.round_bg) // Replace with your default image
+                                .into(userProfilePic);
+                    } else {
+                        userProfilePic.setImageResource(R.drawable.round_bg); // Set default image
+                    }
+
+                    // Set the username and email
+                    usernameTextView.setText(username != null ? username : "Username");
+                    // Split the username to get the first name
+                    if (username != null && !username.isEmpty()) {
+                        String[] nameParts = username.split(" ");
+                        String firstName = nameParts[0] + "!";
+                        usernameHeaderTextView.setText(firstName);
+                    } else {
+                        usernameHeaderTextView.setText("Username");
+                    }
+
+                    emailTextView.setText(email != null ? email : "Email");
+                } else {
+                    Log.w(TAG, "Document does not exist");
+                }
+            }).addOnFailureListener(e -> Log.w(TAG, "Error fetching user data", e));
+        } else {
+            // Handle case where user is not logged in
+            goToLogin();
+        }
+    }
+
 
     private void updateUI(String profilePicUrl, String username, String email) {
         // Set the profile picture using Glide or another image loading library
@@ -481,8 +560,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         emailTextView.setText(email != null ? email : "Email");
-
-
     }
 
     public void goToWelcome() {

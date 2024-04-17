@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.nextgenartisans.etago.R;
@@ -171,52 +173,56 @@ public class CustomDeleteAccDialog extends Dialog {
             return;
         }
 
-        xIcon.setVisibility(View.GONE);
         showProgress(true);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
             user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
-
-                // Get a Firestore instance
+                // Proceed with deletion only if reauthentication succeeds
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
+                String userId = user.getUid();
 
-                // Get a reference to the user's document in Firestore
-                DocumentReference userRef = db.collection("Users").document(user.getUid());
-                //Delete also CensorshipInstances and SaveAndShareInstances of the user
-                userRef.get().addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String profilePicUrl = documentSnapshot.getString("profilePic");
-                        if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
-                            // Create a reference to the file in Firebase Storage
-                            FirebaseStorage storage = FirebaseStorage.getInstance();
-                            StorageReference profilePicRef = storage.getReferenceFromUrl(profilePicUrl);
+                // Begin transaction to delete user data from Firestore
+                db.collection("CensorshipInstances")
+                        .whereEqualTo("userId", userId)
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    document.getReference().delete();
+                                }
+                            } else {
+                                Log.d("DeleteUserData", "Error getting documents: ", task.getException());
+                            }
+                        });
 
-                            // Delete the file from Firebase Storage
-                            profilePicRef.delete().addOnSuccessListener(aVoid1 -> {
-                                // File deleted successfully, now delete the user's document
-                                userRef.delete().addOnSuccessListener(aVoid2 -> {
+                // Begin transaction to delete user data from Firestore
+                db.runTransaction(transaction -> {
+                    DocumentReference userRef = db.collection("Users").document(userId);
+                    DocumentReference saveShareRef = db.collection("SaveAndShareInstances").document(userId);
 
-                                    // Now, delete the user's account from Firebase Authentication
-                                    user.delete().addOnSuccessListener(aVoid3 -> {
+                    // Attempt to delete the user document
+                    transaction.delete(userRef);
+                    transaction.delete(saveShareRef);
 
-                                        updateDialogForSuccess();
-                                    }).addOnFailureListener(e -> {
-                                        updateDialogForFailure("Failed to delete account: " + e.getMessage());
-                                    });
-                                }).addOnFailureListener(e -> {
-                                    updateDialogForFailure("Failed to delete user data from Firestore: " + e.getMessage());
-                                });
-                            }).addOnFailureListener(e -> {
-                                updateDialogForFailure("Failed to delete profile picture from Firebase Storage: " + e.getMessage());
-                            });
-                        }
-                    }
+                    return null;  // Placeholder to satisfy Transaction.Function interface
+                }).addOnSuccessListener(aVoid12 -> {
+                    // Proceed to delete profile picture from Firebase Storage
+                    StorageReference profilePicRef = FirebaseStorage.getInstance().getReference().child("profilePics/" +  userId + ".jpg");
+                    profilePicRef.delete().addOnSuccessListener(aVoid121 -> {
+                        // Finally delete the user account
+                        user.delete().addOnSuccessListener(aVoid1211 -> {
+                            updateDialogForSuccess();
+                        }).addOnFailureListener(e -> {
+                            updateDialogForFailure("Failed to delete Firebase user: " + e.getMessage());
+                        });
+                    }).addOnFailureListener(e -> {
+                        updateDialogForFailure("Failed to delete profile picture: " + e.getMessage());
+                    });
                 }).addOnFailureListener(e -> {
-                    updateDialogForFailure("Failed to get user data from Firestore: " + e.getMessage());
+                    updateDialogForFailure("Failed to delete Firestore data: " + e.getMessage());
                 });
-
             }).addOnFailureListener(e -> {
                 updateDialogForFailure("Reauthentication failed: Incorrect Password");
             });

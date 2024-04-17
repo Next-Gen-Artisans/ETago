@@ -163,10 +163,7 @@ public class DetectionActivity extends AppCompatActivity {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 FirebaseUser user = mAuth.getCurrentUser();
-                DocumentReference docRef = db.collection("Users").document(user.getUid());
-                docRef.update("numCensoredImgs", FieldValue.increment(1))
-                        .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
-                        .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
+
 
 
                 DocumentReference docRef2 = db.collection("SaveAndShareInstances").document(user.getUid());
