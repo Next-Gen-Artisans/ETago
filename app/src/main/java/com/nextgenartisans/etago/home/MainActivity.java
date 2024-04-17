@@ -235,11 +235,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         setContentView(R.layout.activity_main);
 
-        // Check if a new user has signed up
-        boolean newUser = getIntent().getBooleanExtra("newUser", false);
-        if (newUser) {
-            loadUserData();
-        }
+        // Call the method to load user data when the activity starts
+        loadUserData();
 
         //Firebase
         auth = FirebaseAuth.getInstance();

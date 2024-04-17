@@ -444,9 +444,13 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initializeSaveAndShareInstances(String userId) {
+        // Log the input for debugging
+        Log.d("InitInstances", "Initializing SaveAndShareInstances for user: " + userId);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("SaveAndShareInstances").document(userId);
         Map<String, Object> data = new HashMap<>();
+        data.put("userID", userId);
         data.put("numShareInstance", 0);
         data.put("numSaveInstance", 0);
         docRef.set(data).addOnSuccessListener(aVoid -> {
@@ -523,7 +527,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void promptLogin() {
         mGoogleSignInClient.signOut();
-        mAuth.signOut();
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(i);
         finish();

@@ -278,8 +278,11 @@ public class StatsActivity extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 // Get the "numSaveInstance" and "numShareInstance" fields from the document
-                                int numSaveInstance = document.getLong("numSaveInstance").intValue();
-                                int numShareInstance = document.getLong("numShareInstance").intValue();
+                                Long numSaveInstanceLong = document.getLong("numSaveInstance");
+                                int numSaveInstance = numSaveInstanceLong != null ? numSaveInstanceLong.intValue() : 0;
+
+                                Long numShareInstanceLong = document.getLong("numShareInstance");
+                                int numShareInstance = numShareInstanceLong != null ? numShareInstanceLong.intValue() : 0;
 
                                 // Create a list to hold the BarEntry objects
                                 ArrayList<BarEntry> entries = new ArrayList<>();

@@ -79,7 +79,6 @@ public class ECommerceAdapter extends RecyclerView.Adapter<ECommerceAdapter.View
             FirebaseUser user = mAuth.getCurrentUser();
             DocumentReference docRef = db.collection("SaveAndShareInstances").document(user.getUid());
 
-
             // Increment the numShareInstance field
             Map<String, Object> updates = new HashMap<>();
             updates.put("numShareInstance", FieldValue.increment(1));

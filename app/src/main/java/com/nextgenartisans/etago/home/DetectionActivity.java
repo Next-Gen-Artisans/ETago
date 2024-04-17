@@ -158,7 +158,7 @@ public class DetectionActivity extends AppCompatActivity {
                 // Notify the gallery
                 addPicToGallery(photo.getAbsolutePath());
                 Toast.makeText(DetectionActivity.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
-                showECommercePlatformsBottomSheet();
+
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -177,6 +177,8 @@ public class DetectionActivity extends AppCompatActivity {
                 docRef2.set(updates, SetOptions.merge())
                         .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
                         .addOnFailureListener(e -> Log.w("Firestore", "Error updating document", e));
+
+                showECommercePlatformsBottomSheet();
 
 
             }

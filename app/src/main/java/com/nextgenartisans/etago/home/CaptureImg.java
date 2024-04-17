@@ -510,32 +510,6 @@ public class CaptureImg extends AppCompatActivity {
                         // Now that both URIs are added to the Intent, show the bottom sheet dialog
 
 
-                        // Generate a unique ID for this censorship instance
-                        String censorshipID = UUID.randomUUID().toString();
-                        // Create a new CensorshipInstance object
-                        CensorshipInstance censorshipInstance = new CensorshipInstance();
-                        censorshipInstance.setCensorshipID(censorshipID);
-                        censorshipInstance.setUserID(firebaseUser.getUid());
-                        censorshipInstance.setCapturedClasses(capturedClasses);
-                        censorshipInstance.setDateCensored(FieldValue.serverTimestamp());
-
-                        // Save the CensorshipInstance object to Firestore
-                        db.collection("CensorshipInstances").add(censorshipInstance)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Log.d("CaptureImg", "Censorship instance recorded with ID: " + documentReference.getId());
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("CaptureImg", "Error recording censorship instance", e);
-                                    }
-                                });
-
-                        // Decrement the API calls limit
-                        decrementApiCallsLimit(firebaseUser);
                         showBottomSheetDialog(objectsDetected.toString(), annotatedImageUri, censoredImageUri);
                     } else {
                         Log.e("CaptureImgLog", "Failed to save censored image.");
@@ -607,6 +581,32 @@ public class CaptureImg extends AppCompatActivity {
             capturedImg.setVisibility(View.GONE);
         });
         proceedButton.setOnClickListener(v -> {
+            // Generate a unique ID for this censorship instance
+            String censorshipID = UUID.randomUUID().toString();
+            // Create a new CensorshipInstance object
+            CensorshipInstance censorshipInstance = new CensorshipInstance();
+            censorshipInstance.setCensorshipID(censorshipID);
+            censorshipInstance.setUserID(firebaseUser.getUid());
+            censorshipInstance.setCapturedClasses(capturedClasses);
+            censorshipInstance.setDateCensored(FieldValue.serverTimestamp());
+
+            // Save the CensorshipInstance object to Firestore
+            db.collection("CensorshipInstances").add(censorshipInstance)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d("CaptureImg", "Censorship instance recorded with ID: " + documentReference.getId());
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("CaptureImg", "Error recording censorship instance", e);
+                        }
+                    });
+
+            // Decrement the API calls limit
+            decrementApiCallsLimit(firebaseUser);
             detectionActivityIntent.putExtra("censored_image_uri", censoredImageUri.toString());
             detectionActivityIntent.putExtra("annotated_image_uri", annotatedImageUri.toString());
             bottomSheetDialog.cancel();
