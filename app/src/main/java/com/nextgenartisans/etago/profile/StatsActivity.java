@@ -240,6 +240,8 @@ public class StatsActivity extends AppCompatActivity {
                                 barChart.setDrawGridBackground(false);
                                 barChart.setDrawBarShadow(false);
                                 barChart.setGridBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+                                // Animate the Y axis of the PieChart
+                                barChart.animateY(1000);
 
 
                                 //Set BarChart legend
@@ -308,6 +310,7 @@ public class StatsActivity extends AppCompatActivity {
                                 barChart2.setDrawGridBackground(false);
                                 barChart2.setDrawBarShadow(false);
                                 barChart2.setGridBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+                                barChart2.animateY(1000);
 
                                 //Set BarChart legend
                                 Legend legend = barChart2.getLegend();

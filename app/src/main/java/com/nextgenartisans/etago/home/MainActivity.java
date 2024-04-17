@@ -96,11 +96,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        //Set New Password
-        setNewPassword();
 
         // Call the method to load user data when the activity starts
         loadUserData();
+
+        //Set New Password
+        setNewPassword();
 
         // Check if password is set before showing dialogs
         checkPasswordAndShowDialogs();
@@ -233,6 +234,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
         }
         setContentView(R.layout.activity_main);
+
+        // Check if a new user has signed up
+        boolean newUser = getIntent().getBooleanExtra("newUser", false);
+        if (newUser) {
+            loadUserData();
+        }
 
         //Firebase
         auth = FirebaseAuth.getInstance();

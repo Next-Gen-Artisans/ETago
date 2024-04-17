@@ -435,11 +435,25 @@ public class SignUpActivity extends AppCompatActivity {
                     String defaultProfilePicUrl = uri.toString();
                     users.setProfilePic(defaultProfilePicUrl);
                     saveUserToFirestore(users);
+                    initializeSaveAndShareInstances(firebaseUser.getUid());
                 }
             });
 
 
         }
+    }
+
+    private void initializeSaveAndShareInstances(String userId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("SaveAndShareInstances").document(userId);
+        Map<String, Object> data = new HashMap<>();
+        data.put("numShareInstance", 0);
+        data.put("numSaveInstance", 0);
+        docRef.set(data).addOnSuccessListener(aVoid -> {
+            Log.d(TAG, "SaveAndShareInstances successfully initialized for user: " + userId);
+        }).addOnFailureListener(e -> {
+            Log.w(TAG, "Error initializing SaveAndShareInstances for user: " + userId, e);
+        });
     }
 
     private void uploadImageToFirebaseStorage(Bitmap bitmap, String userId, Users users) {

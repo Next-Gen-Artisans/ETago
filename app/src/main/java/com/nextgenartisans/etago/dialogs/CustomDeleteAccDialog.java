@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,8 +179,12 @@ public class CustomDeleteAccDialog extends Dialog {
         if (user != null) {
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
             user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
+
                 // Get a Firestore instance
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
+                deleteUserData(db, "SaveAndShareInstances", user.getUid());
+                deleteUserData(db, "CensorshipInstances", user.getUid());
+
                 // Get a reference to the user's document in Firestore
                 DocumentReference userRef = db.collection("Users").document(user.getUid());
                 //Delete also CensorshipInstances and SaveAndShareInstances of the user
@@ -195,18 +200,9 @@ public class CustomDeleteAccDialog extends Dialog {
                             profilePicRef.delete().addOnSuccessListener(aVoid1 -> {
                                 // File deleted successfully, now delete the user's document
                                 userRef.delete().addOnSuccessListener(aVoid2 -> {
+                                    // Delete the user's documents in "CensorshipInstances" and "SaveAndShareInstances" collections
+                                    deleteUserData(db, "CensorshipInstances", user.getUid());
                                     // Now, delete the user's account from Firebase Authentication
-                                    db.collection("CensorshipInstances").whereEqualTo("userId", user.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                                            db.collection("CensorshipInstances").document(queryDocumentSnapshots.getDocuments().get(i).getId()).delete();
-                                        }
-                                    });
-                                    db.collection("SaveAndShareInstances").whereEqualTo("userId", user.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                                            db.collection("SaveAndShareInstances").document(queryDocumentSnapshots.getDocuments().get(i).getId()).delete();
-                                        }
-                                    });
-
                                     user.delete().addOnSuccessListener(aVoid3 -> {
                                         updateDialogForSuccess();
                                     }).addOnFailureListener(e -> {
@@ -223,12 +219,34 @@ public class CustomDeleteAccDialog extends Dialog {
                 }).addOnFailureListener(e -> {
                     updateDialogForFailure("Failed to get user data from Firestore: " + e.getMessage());
                 });
+
             }).addOnFailureListener(e -> {
                 updateDialogForFailure("Reauthentication failed: Incorrect Password");
             });
         } else {
             Toast.makeText(context, "No user is signed in.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void deleteUserData(FirebaseFirestore db, String collectionName, String userId) {
+        // Get a reference to the user's document in Firestore
+        DocumentReference userRef = db.collection(collectionName).document(userId);
+
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Delete the user's document
+                userRef.delete().addOnSuccessListener(aVoid -> {
+                    // Document deleted successfully
+                    Log.d("DeleteUserData", "Successfully deleted user data from " + collectionName);
+                }).addOnFailureListener(e -> {
+                    // Log the error
+                    Log.e("DeleteUserData", "Failed to delete user data from " + collectionName + ": " + e.getMessage());
+                });
+            }
+        }).addOnFailureListener(e -> {
+            // Log the error
+            Log.e("DeleteUserData", "Failed to get user data from " + collectionName + ": " + e.getMessage());
+        });
     }
 
 

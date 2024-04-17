@@ -42,6 +42,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -516,6 +518,21 @@ public class CaptureImg extends AppCompatActivity {
                         censorshipInstance.setUserID(firebaseUser.getUid());
                         censorshipInstance.setCapturedClasses(capturedClasses);
                         censorshipInstance.setDateCensored(FieldValue.serverTimestamp());
+
+                        // Save the CensorshipInstance object to Firestore
+                        db.collection("CensorshipInstances").add(censorshipInstance)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Log.d("CaptureImg", "Censorship instance recorded with ID: " + documentReference.getId());
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("CaptureImg", "Error recording censorship instance", e);
+                                    }
+                                });
 
                         // Decrement the API calls limit
                         decrementApiCallsLimit(firebaseUser);
