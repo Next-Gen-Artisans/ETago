@@ -11,6 +11,19 @@ E-Tago is an Android-based mobile application that utilizes a Web-Based Applicat
 - **Image Censorship**: Provides automatic censorship options, allowing users to review and modify redactions before saving or sharing the images.
 - **Alerts**: Notifies users about the detected personal information to take necessary actions.
 
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-1.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 1" width="200">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-2.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 2" width="200">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-3.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 3" width="200">
+</p>
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-4.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 4" width="200">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-5.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 5" width="200">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-6.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 6" width="200">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/Store_Listing-7.png?alt=media&token=77c97e4d-947b-4866-8732-d77a78134832" alt="E-Tago App Mockup 7" width="200">
+</p>
+
+
 ## User Guide
 
 For detailed instructions on how to use E-Tago, view the user guide here:
