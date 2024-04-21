@@ -1,5 +1,9 @@
 # E-Tago
 
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/e-tago-d12a3.appspot.com/o/splash_logo.png?alt=media&token=aba83413-23b7-4537-843e-dfa9ece8ba4e" alt="Logo of E-Tago App" width="500">
+</p>
+
 E-Tago is an Android-based mobile application that utilizes a Web-Based Application Programming Interface (API) to apply deep learning techniques for detecting and censoring personal information in product review images. This application is designed to enhance user privacy and data protection by providing the following features:
 
 - **Image Upload and Processing**: Users can upload or capture product review images directly within the app.
