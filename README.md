@@ -33,9 +33,9 @@ For detailed instructions on how to use E-Tago, view the user guide here:
 
 Watch these demo videos to see E-Tago in action:
 
-- [E-Tago: Landing Page](https://youtu.be/uXblS15wSyA)
-- [E-Tago: API](https://youtu.be/hnxFQgUKhWI)
-- [E Tago: Mobile App](https://youtu.be/6bKKKlsG2Nc)
+[![E-Tago: Landing Page](https://img.youtube.com/vi/uXblS15wSyA/0.jpg)](https://youtu.be/uXblS15wSyA)
+[![E-Tago: API](https://img.youtube.com/vi/hnxFQgUKhWI/0.jpg)](https://youtu.be/hnxFQgUKhWI)
+[![E Tago: Mobile App](https://img.youtube.com/vi/6bKKKlsG2Nc/0.jpg)](https://youtu.be/6bKKKlsG2Nc)
 
 ## Getting Started
 
