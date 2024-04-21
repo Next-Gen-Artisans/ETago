@@ -7,6 +7,19 @@ E-Tago is an Android-based mobile application that utilizes a Web-Based Applicat
 - **Image Censorship**: Provides automatic censorship options, allowing users to review and modify redactions before saving or sharing the images.
 - **Alerts**: Notifies users about the detected personal information to take necessary actions.
 
+## User Guide
+
+For detailed instructions on how to use E-Tago, view the user guide here:
+[User Guide](https://docs.google.com/presentation/d/1g_tPeQyOG23fTMADdxPZLlSCvpGkdJd-xtvfUOErvWY/edit)
+
+## Demo Videos
+
+Watch these demo videos to see E-Tago in action:
+
+- [E-Tago: Landing Page](https://youtu.be/uXblS15wSyA)
+- [E-Tago: API](https://youtu.be/hnxFQgUKhWI)
+- [E Tago: Mobile App](https://youtu.be/6bKKKlsG2Nc)
+
 ## Getting Started
 
 These instructions will guide you on how to get a copy of the project up and running on your local machine for development and testing purposes.
